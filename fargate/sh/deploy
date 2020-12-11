@@ -1,0 +1,7 @@
+export tag=0.1
+export localRep=exabroker:$tag
+export remoteRep=203303191911.dkr.ecr.ap-northeast-1.amazonaws.com/exabroker-app-repository:$tag
+docker build --tag $localRep .
+docker tag $localRep $remoteRep
+docker push $remoteRep
+aws ecs update-service --cluster exabroker-cluster --service exabroker-service | head

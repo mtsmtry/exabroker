@@ -1,0 +1,1099 @@
+2020/12/10 20:16:59 [INFO] Terraform version: 0.14.0  
+2020/12/10 20:16:59 [INFO] Go runtime version: go1.15.5
+2020/12/10 20:16:59 [INFO] CLI args: []string{"/usr/local/bin/terraform", "import", "aws_lambda_function.exabroker_scraping", "arn:aws:lambda:ap-northeast-1:203303191911:function:exabroker-scraping"}
+2020/12/10 20:16:59 [DEBUG] Attempting to open CLI config file: /Users/ryoui/.terraformrc
+2020/12/10 20:16:59 [DEBUG] File doesn't exist, but doesn't need to. Ignoring.
+2020/12/10 20:16:59 [DEBUG] checking for credentials in "/Users/ryoui/.terraform.d/plugins"
+2020/12/10 20:16:59 [DEBUG] checking for credentials in "/Users/ryoui/.terraform.d/plugins/darwin_amd64"
+2020/12/10 20:16:59 [DEBUG] ignoring non-existing provider search directory terraform.d/plugins
+2020/12/10 20:16:59 [DEBUG] will search for provider plugins in /Users/ryoui/.terraform.d/plugins
+2020/12/10 20:16:59 [TRACE] getproviders.SearchLocalDirectory: /Users/ryoui/.terraform.d/plugins is a symlink to /Users/ryoui/.terraform.d/plugins
+2020/12/10 20:16:59 [DEBUG] ignoring non-existing provider search directory /Users/ryoui/Library/Application Support/io.terraform/plugins
+2020/12/10 20:16:59 [DEBUG] ignoring non-existing provider search directory /Library/Application Support/io.terraform/plugins
+2020/12/10 20:16:59 [INFO] CLI command args: []string{"import", "aws_lambda_function.exabroker_scraping", "arn:aws:lambda:ap-northeast-1:203303191911:function:exabroker-scraping"}
+2020/12/10 20:16:59 [TRACE] Meta.Backend: no config given or present on disk, so returning nil config
+2020/12/10 20:16:59 [TRACE] Meta.Backend: backend has not previously been initialized in this working directory
+2020/12/10 20:16:59 [DEBUG] New state was assigned lineage "99cbfce2-273b-19a8-c497-7621db52c96b"
+2020/12/10 20:16:59 [TRACE] Meta.Backend: using default local state only (no backend configuration, and no existing initialized backend)
+2020/12/10 20:16:59 [TRACE] Meta.Backend: instantiated backend of type <nil>
+2020/12/10 20:16:59 [TRACE] providercache.fillMetaCache: scanning directory .terraform/providers
+2020/12/10 20:16:59 [TRACE] getproviders.SearchLocalDirectory: .terraform/providers is a symlink to .terraform/providers
+2020/12/10 20:16:59 [TRACE] getproviders.SearchLocalDirectory: found registry.terraform.io/hashicorp/aws v2.70.0 for darwin_amd64 at .terraform/providers/registry.terraform.io/hashicorp/aws/2.70.0/darwin_amd64
+2020/12/10 20:16:59 [TRACE] getproviders.SearchLocalDirectory: found registry.terraform.io/hashicorp/aws v3.20.0 for darwin_amd64 at .terraform/providers/registry.terraform.io/hashicorp/aws/3.20.0/darwin_amd64
+2020/12/10 20:16:59 [TRACE] getproviders.SearchLocalDirectory: found registry.terraform.io/hashicorp/template v2.2.0 for darwin_amd64 at .terraform/providers/registry.terraform.io/hashicorp/template/2.2.0/darwin_amd64
+2020/12/10 20:16:59 [TRACE] providercache.fillMetaCache: including .terraform/providers/registry.terraform.io/hashicorp/aws/2.70.0/darwin_amd64 as a candidate package for registry.terraform.io/hashicorp/aws 2.70.0
+2020/12/10 20:16:59 [TRACE] providercache.fillMetaCache: including .terraform/providers/registry.terraform.io/hashicorp/aws/3.20.0/darwin_amd64 as a candidate package for registry.terraform.io/hashicorp/aws 3.20.0
+2020/12/10 20:16:59 [TRACE] providercache.fillMetaCache: including .terraform/providers/registry.terraform.io/hashicorp/template/2.2.0/darwin_amd64 as a candidate package for registry.terraform.io/hashicorp/template 2.2.0
+2020/12/10 20:17:00 [TRACE] providercache.fillMetaCache: using cached result from previous scan of .terraform/providers
+2020/12/10 20:17:00 [DEBUG] checking for provisioner in "."
+2020/12/10 20:17:00 [DEBUG] checking for provisioner in "/usr/local/bin"
+2020/12/10 20:17:00 [DEBUG] checking for provisioner in "/Users/ryoui/.terraform.d/plugins"
+2020/12/10 20:17:00 [DEBUG] checking for provisioner in "/Users/ryoui/.terraform.d/plugins/darwin_amd64"
+2020/12/10 20:17:00 [INFO] Failed to read plugin lock file .terraform/plugins/darwin_amd64/lock.json: open .terraform/plugins/darwin_amd64/lock.json: no such file or directory
+2020/12/10 20:17:00 [TRACE] Meta.Backend: backend <nil> does not support operations, so wrapping it in a local backend
+2020/12/10 20:17:00 [TRACE] backend/local: requesting state manager for workspace "pro"
+2020/12/10 20:17:00 [TRACE] backend/local: state manager for workspace "pro" will:
+ - read initial snapshot from terraform.tfstate.d/pro/terraform.tfstate
+ - write new snapshots to terraform.tfstate.d/pro/terraform.tfstate
+ - create any backup at terraform.tfstate.d/pro/terraform.tfstate.backup
+2020/12/10 20:17:00 [TRACE] backend/local: requesting state lock for workspace "pro"
+2020/12/10 20:17:00 [TRACE] statemgr.Filesystem: preparing to manage state snapshots at terraform.tfstate.d/pro/terraform.tfstate
+2020/12/10 20:17:00 [TRACE] statemgr.Filesystem: existing snapshot has lineage "bef0f6f1-6004-9826-bbda-06206af69c27" serial 69
+2020/12/10 20:17:00 [TRACE] statemgr.Filesystem: locking terraform.tfstate.d/pro/terraform.tfstate using fcntl flock
+2020/12/10 20:17:00 [TRACE] statemgr.Filesystem: writing lock metadata to terraform.tfstate.d/pro/.terraform.tfstate.lock.info
+2020/12/10 20:17:00 [TRACE] backend/local: reading remote state for workspace "pro"
+2020/12/10 20:17:00 [TRACE] statemgr.Filesystem: reading latest snapshot from terraform.tfstate.d/pro/terraform.tfstate
+2020/12/10 20:17:00 [TRACE] statemgr.Filesystem: read snapshot with lineage "bef0f6f1-6004-9826-bbda-06206af69c27" serial 69
+2020/12/10 20:17:00 [TRACE] backend/local: retrieving local state snapshot for workspace "pro"
+2020/12/10 20:17:00 [TRACE] backend/local: building context for current working directory
+2020/12/10 20:17:00 [TRACE] terraform.NewContext: starting
+2020/12/10 20:17:00 [TRACE] terraform.NewContext: loading provider schemas
+2020/12/10 20:17:00 [TRACE] LoadSchemas: retrieving schema for provider type "registry.terraform.io/hashicorp/aws"
+2020-12-10T20:17:00.208+0900 [INFO]  plugin: configuring client automatic mTLS
+2020-12-10T20:17:00.250+0900 [DEBUG] plugin: starting plugin: path=.terraform/providers/registry.terraform.io/hashicorp/aws/3.20.0/darwin_amd64/terraform-provider-aws_v3.20.0_x5 args=[.terraform/providers/registry.terraform.io/hashicorp/aws/3.20.0/darwin_amd64/terraform-provider-aws_v3.20.0_x5]
+2020-12-10T20:17:00.284+0900 [DEBUG] plugin: plugin started: path=.terraform/providers/registry.terraform.io/hashicorp/aws/3.20.0/darwin_amd64/terraform-provider-aws_v3.20.0_x5 pid=62050
+2020-12-10T20:17:00.284+0900 [DEBUG] plugin: waiting for RPC address: path=.terraform/providers/registry.terraform.io/hashicorp/aws/3.20.0/darwin_amd64/terraform-provider-aws_v3.20.0_x5
+2020-12-10T20:17:00.352+0900 [INFO]  plugin.terraform-provider-aws_v3.20.0_x5: configuring server automatic mTLS: timestamp=2020-12-10T20:17:00.351+0900
+2020-12-10T20:17:00.398+0900 [DEBUG] plugin.terraform-provider-aws_v3.20.0_x5: plugin address: address=/var/folders/9c/djglm4j1545fvsf2t5sjj93r0000gn/T/plugin997255785 network=unix timestamp=2020-12-10T20:17:00.398+0900
+2020-12-10T20:17:00.398+0900 [DEBUG] plugin: using plugin: version=5
+2020/12/10 20:17:00 [TRACE] GRPCProvider: GetSchema
+2020-12-10T20:17:00.539+0900 [TRACE] plugin.stdio: waiting for stdio data
+2020/12/10 20:17:00 [TRACE] GRPCProvider: Close
+2020-12-10T20:17:00.849+0900 [WARN]  plugin.stdio: received EOF, stopping recv loop: err="rpc error: code = Unavailable desc = transport is closing"
+2020-12-10T20:17:00.859+0900 [DEBUG] plugin: plugin process exited: path=.terraform/providers/registry.terraform.io/hashicorp/aws/3.20.0/darwin_amd64/terraform-provider-aws_v3.20.0_x5 pid=62050
+2020-12-10T20:17:00.859+0900 [DEBUG] plugin: plugin exited
+2020/12/10 20:17:00 [TRACE] LoadSchemas: retrieving schema for provider type "registry.terraform.io/hashicorp/template"
+2020-12-10T20:17:00.859+0900 [INFO]  plugin: configuring client automatic mTLS
+2020-12-10T20:17:00.907+0900 [DEBUG] plugin: starting plugin: path=.terraform/providers/registry.terraform.io/hashicorp/template/2.2.0/darwin_amd64/terraform-provider-template_v2.2.0_x4 args=[.terraform/providers/registry.terraform.io/hashicorp/template/2.2.0/darwin_amd64/terraform-provider-template_v2.2.0_x4]
+2020-12-10T20:17:00.915+0900 [DEBUG] plugin: plugin started: path=.terraform/providers/registry.terraform.io/hashicorp/template/2.2.0/darwin_amd64/terraform-provider-template_v2.2.0_x4 pid=62054
+2020-12-10T20:17:00.915+0900 [DEBUG] plugin: waiting for RPC address: path=.terraform/providers/registry.terraform.io/hashicorp/template/2.2.0/darwin_amd64/terraform-provider-template_v2.2.0_x4
+2020-12-10T20:17:00.926+0900 [INFO]  plugin.terraform-provider-template_v2.2.0_x4: configuring server automatic mTLS: timestamp=2020-12-10T20:17:00.926+0900
+2020-12-10T20:17:00.982+0900 [DEBUG] plugin.terraform-provider-template_v2.2.0_x4: plugin address: address=/var/folders/9c/djglm4j1545fvsf2t5sjj93r0000gn/T/plugin249536589 network=unix timestamp=2020-12-10T20:17:00.982+0900
+2020-12-10T20:17:00.982+0900 [DEBUG] plugin: using plugin: version=5
+2020/12/10 20:17:01 [TRACE] GRPCProvider: GetSchema
+2020-12-10T20:17:01.066+0900 [TRACE] plugin.stdio: waiting for stdio data
+2020-12-10T20:17:01.066+0900 [WARN]  plugin.stdio: received EOF, stopping recv loop: err="rpc error: code = Unimplemented desc = unknown service plugin.GRPCStdio"
+2020/12/10 20:17:01 [TRACE] No provider meta schema returned
+2020/12/10 20:17:01 [TRACE] GRPCProvider: Close
+2020-12-10T20:17:01.071+0900 [DEBUG] plugin: plugin process exited: path=.terraform/providers/registry.terraform.io/hashicorp/template/2.2.0/darwin_amd64/terraform-provider-template_v2.2.0_x4 pid=62054
+2020-12-10T20:17:01.071+0900 [DEBUG] plugin: plugin exited
+2020/12/10 20:17:01 [TRACE] terraform.NewContext: complete
+2020/12/10 20:17:01 [TRACE] backend/local: finished building terraform.Context
+2020/12/10 20:17:01 [TRACE] Executing graph transform *terraform.ConfigTransformer
+2020/12/10 20:17:01 [TRACE] ConfigTransformer: Starting for path: 
+2020/12/10 20:17:01 [TRACE] Completed graph transform *terraform.ConfigTransformer with new graph:
+  aws_db_subnet_group.default - *terraform.NodeAbstractResource
+  aws_ecr_repository.default - *terraform.NodeAbstractResource
+  aws_ecr_repository.exabroker_scraping - *terraform.NodeAbstractResource
+  aws_ecs_cluster.default - *terraform.NodeAbstractResource
+  aws_ecs_service.default - *terraform.NodeAbstractResource
+  aws_ecs_task_definition.default - *terraform.NodeAbstractResource
+  aws_iam_role.ECSTaskExecutionRole - *terraform.NodeAbstractResource
+  aws_iam_role.exabroker_scraping - *terraform.NodeAbstractResource
+  aws_iam_role_policy_attachment.ECSTaskExecutionRole - *terraform.NodeAbstractResource
+  aws_lambda_function.exabroker_scraping - *terraform.NodeAbstractResource
+  aws_lambda_permission.exabroker_scraping_event - *terraform.NodeAbstractResource
+  aws_rds_cluster.default - *terraform.NodeAbstractResource
+  aws_rds_cluster_parameter_group.default - *terraform.NodeAbstractResource
+  aws_s3_bucket.exabroker_crawled - *terraform.NodeAbstractResource
+  aws_s3_bucket_notification.exabroker_scraping_event - *terraform.NodeAbstractResource
+  aws_security_group.incentknow_vpc - *terraform.NodeAbstractResource
+  aws_subnet.subnet_1a - *terraform.NodeAbstractResource
+  aws_subnet.subnet_1c - *terraform.NodeAbstractResource
+  aws_subnet.subnet_1d - *terraform.NodeAbstractResource
+  aws_vpc.incentknow_vpc - *terraform.NodeAbstractResource
+  data.aws_iam_policy_document.ECSTaskExecutionRoleAssumeRolePolicy - *terraform.NodeAbstractResource
+  data.aws_iam_policy_document.ExabrokerScrapingLambdaRoleAssumeRolePolicy - *terraform.NodeAbstractResource
+  data.template_file.container_defininitions - *terraform.NodeAbstractResource
+  ------
+2020/12/10 20:17:01 [TRACE] Executing graph transform *terraform.RootVariableTransformer
+2020/12/10 20:17:01 [TRACE] Completed graph transform *terraform.RootVariableTransformer (no changes)
+2020/12/10 20:17:01 [TRACE] Executing graph transform *terraform.ModuleVariableTransformer
+2020/12/10 20:17:01 [TRACE] Completed graph transform *terraform.ModuleVariableTransformer (no changes)
+2020/12/10 20:17:01 [TRACE] Executing graph transform *terraform.LocalTransformer
+2020/12/10 20:17:01 [TRACE] Completed graph transform *terraform.LocalTransformer with new graph:
+  aws_db_subnet_group.default - *terraform.NodeAbstractResource
+  aws_ecr_repository.default - *terraform.NodeAbstractResource
+  aws_ecr_repository.exabroker_scraping - *terraform.NodeAbstractResource
+  aws_ecs_cluster.default - *terraform.NodeAbstractResource
+  aws_ecs_service.default - *terraform.NodeAbstractResource
+  aws_ecs_task_definition.default - *terraform.NodeAbstractResource
+  aws_iam_role.ECSTaskExecutionRole - *terraform.NodeAbstractResource
+  aws_iam_role.exabroker_scraping - *terraform.NodeAbstractResource
+  aws_iam_role_policy_attachment.ECSTaskExecutionRole - *terraform.NodeAbstractResource
+  aws_lambda_function.exabroker_scraping - *terraform.NodeAbstractResource
+  aws_lambda_permission.exabroker_scraping_event - *terraform.NodeAbstractResource
+  aws_rds_cluster.default - *terraform.NodeAbstractResource
+  aws_rds_cluster_parameter_group.default - *terraform.NodeAbstractResource
+  aws_s3_bucket.exabroker_crawled - *terraform.NodeAbstractResource
+  aws_s3_bucket_notification.exabroker_scraping_event - *terraform.NodeAbstractResource
+  aws_security_group.incentknow_vpc - *terraform.NodeAbstractResource
+  aws_subnet.subnet_1a - *terraform.NodeAbstractResource
+  aws_subnet.subnet_1c - *terraform.NodeAbstractResource
+  aws_subnet.subnet_1d - *terraform.NodeAbstractResource
+  aws_vpc.incentknow_vpc - *terraform.NodeAbstractResource
+  data.aws_iam_policy_document.ECSTaskExecutionRoleAssumeRolePolicy - *terraform.NodeAbstractResource
+  data.aws_iam_policy_document.ExabrokerScrapingLambdaRoleAssumeRolePolicy - *terraform.NodeAbstractResource
+  data.template_file.container_defininitions - *terraform.NodeAbstractResource
+  local.service_name (expand) - *terraform.nodeExpandLocal
+  ------
+2020/12/10 20:17:01 [TRACE] Executing graph transform *terraform.OutputTransformer
+2020/12/10 20:17:01 [TRACE] Completed graph transform *terraform.OutputTransformer (no changes)
+2020/12/10 20:17:01 [TRACE] Executing graph transform *terraform.AttachResourceConfigTransformer
+2020/12/10 20:17:01 [TRACE] AttachResourceConfigTransformer: attaching to "aws_security_group.incentknow_vpc" (*terraform.NodeAbstractResource) config from /Users/ryoui/Dropbox/GigaOrder/incentknow_security_group.tf:2,1-47
+2020/12/10 20:17:01 [TRACE] AttachResourceConfigTransformer: attaching provider meta configs to aws_security_group.incentknow_vpc
+2020/12/10 20:17:01 [TRACE] AttachResourceConfigTransformer: attaching to "data.aws_iam_policy_document.ECSTaskExecutionRoleAssumeRolePolicy" (*terraform.NodeAbstractResource) config from hcl.Range{Filename:"/Users/ryoui/Dropbox/GigaOrder/exabroker_app.tf", Start:hcl.Pos{Line:7, Column:1, Byte:68}, End:hcl.Pos{Line:7, Column:70, Byte:137}}
+2020/12/10 20:17:01 [TRACE] AttachResourceConfigTransformer: attaching provider meta configs to data.aws_iam_policy_document.ECSTaskExecutionRoleAssumeRolePolicy
+2020/12/10 20:17:01 [TRACE] AttachResourceConfigTransformer: attaching to "aws_s3_bucket.exabroker_crawled" (*terraform.NodeAbstractResource) config from /Users/ryoui/Dropbox/GigaOrder/exabroker_scraping.tf:3,1-46
+2020/12/10 20:17:01 [TRACE] AttachResourceConfigTransformer: attaching provider meta configs to aws_s3_bucket.exabroker_crawled
+2020/12/10 20:17:01 [TRACE] AttachResourceConfigTransformer: attaching to "aws_s3_bucket_notification.exabroker_scraping_event" (*terraform.NodeAbstractResource) config from /Users/ryoui/Dropbox/GigaOrder/exabroker_scraping.tf:8,1-66
+2020/12/10 20:17:01 [TRACE] AttachResourceConfigTransformer: attaching provider meta configs to aws_s3_bucket_notification.exabroker_scraping_event
+2020/12/10 20:17:01 [TRACE] AttachResourceConfigTransformer: attaching to "aws_iam_role_policy_attachment.ECSTaskExecutionRole" (*terraform.NodeAbstractResource) config from /Users/ryoui/Dropbox/GigaOrder/exabroker_app.tf:26,1-65
+2020/12/10 20:17:01 [TRACE] AttachResourceConfigTransformer: attaching provider meta configs to aws_iam_role_policy_attachment.ECSTaskExecutionRole
+2020/12/10 20:17:01 [TRACE] AttachResourceConfigTransformer: attaching to "aws_lambda_permission.exabroker_scraping_event" (*terraform.NodeAbstractResource) config from /Users/ryoui/Dropbox/GigaOrder/exabroker_scraping.tf:17,1-61
+2020/12/10 20:17:01 [TRACE] AttachResourceConfigTransformer: attaching provider meta configs to aws_lambda_permission.exabroker_scraping_event
+2020/12/10 20:17:01 [TRACE] AttachResourceConfigTransformer: attaching to "aws_ecs_service.default" (*terraform.NodeAbstractResource) config from /Users/ryoui/Dropbox/GigaOrder/exabroker_app.tf:72,1-37
+2020/12/10 20:17:01 [TRACE] AttachResourceConfigTransformer: attaching provider meta configs to aws_ecs_service.default
+2020/12/10 20:17:01 [TRACE] AttachResourceConfigTransformer: attaching to "aws_iam_role.exabroker_scraping" (*terraform.NodeAbstractResource) config from /Users/ryoui/Dropbox/GigaOrder/exabroker_scraping.tf:40,1-46
+2020/12/10 20:17:01 [TRACE] AttachResourceConfigTransformer: attaching provider meta configs to aws_iam_role.exabroker_scraping
+2020/12/10 20:17:01 [TRACE] AttachResourceConfigTransformer: attaching to "aws_rds_cluster.default" (*terraform.NodeAbstractResource) config from /Users/ryoui/Dropbox/GigaOrder/incentknow_rds.tf:22,1-37
+2020/12/10 20:17:01 [TRACE] AttachResourceConfigTransformer: attaching provider meta configs to aws_rds_cluster.default
+2020/12/10 20:17:01 [TRACE] AttachResourceConfigTransformer: attaching to "aws_iam_role.ECSTaskExecutionRole" (*terraform.NodeAbstractResource) config from /Users/ryoui/Dropbox/GigaOrder/exabroker_app.tf:20,1-47
+2020/12/10 20:17:01 [TRACE] AttachResourceConfigTransformer: attaching provider meta configs to aws_iam_role.ECSTaskExecutionRole
+2020/12/10 20:17:01 [TRACE] AttachResourceConfigTransformer: attaching to "aws_lambda_function.exabroker_scraping" (*terraform.NodeAbstractResource) config from /Users/ryoui/Dropbox/GigaOrder/exabroker_scraping.tf:55,1-53
+2020/12/10 20:17:01 [TRACE] AttachResourceConfigTransformer: attaching provider meta configs to aws_lambda_function.exabroker_scraping
+2020/12/10 20:17:01 [TRACE] AttachResourceConfigTransformer: attaching to "aws_vpc.incentknow_vpc" (*terraform.NodeAbstractResource) config from /Users/ryoui/Dropbox/GigaOrder/incentknow_vpc.tf:1,1-36
+2020/12/10 20:17:01 [TRACE] AttachResourceConfigTransformer: attaching provider meta configs to aws_vpc.incentknow_vpc
+2020/12/10 20:17:01 [TRACE] AttachResourceConfigTransformer: attaching to "aws_subnet.subnet_1d" (*terraform.NodeAbstractResource) config from /Users/ryoui/Dropbox/GigaOrder/incentknow_vpc.tf:38,1-34
+2020/12/10 20:17:01 [TRACE] AttachResourceConfigTransformer: attaching provider meta configs to aws_subnet.subnet_1d
+2020/12/10 20:17:01 [TRACE] AttachResourceConfigTransformer: attaching to "data.aws_iam_policy_document.ExabrokerScrapingLambdaRoleAssumeRolePolicy" (*terraform.NodeAbstractResource) config from hcl.Range{Filename:"/Users/ryoui/Dropbox/GigaOrder/exabroker_scraping.tf", Start:hcl.Pos{Line:27, Column:1, Byte:693}, End:hcl.Pos{Line:27, Column:78, Byte:770}}
+2020/12/10 20:17:01 [TRACE] AttachResourceConfigTransformer: attaching provider meta configs to data.aws_iam_policy_document.ExabrokerScrapingLambdaRoleAssumeRolePolicy
+2020/12/10 20:17:01 [TRACE] AttachResourceConfigTransformer: attaching to "aws_subnet.subnet_1a" (*terraform.NodeAbstractResource) config from /Users/ryoui/Dropbox/GigaOrder/incentknow_vpc.tf:26,1-34
+2020/12/10 20:17:01 [TRACE] AttachResourceConfigTransformer: attaching provider meta configs to aws_subnet.subnet_1a
+2020/12/10 20:17:01 [TRACE] AttachResourceConfigTransformer: attaching to "aws_ecs_task_definition.default" (*terraform.NodeAbstractResource) config from /Users/ryoui/Dropbox/GigaOrder/exabroker_app.tf:59,1-45
+2020/12/10 20:17:01 [TRACE] AttachResourceConfigTransformer: attaching provider meta configs to aws_ecs_task_definition.default
+2020/12/10 20:17:01 [TRACE] AttachResourceConfigTransformer: attaching to "aws_subnet.subnet_1c" (*terraform.NodeAbstractResource) config from /Users/ryoui/Dropbox/GigaOrder/incentknow_vpc.tf:15,1-34
+2020/12/10 20:17:01 [TRACE] AttachResourceConfigTransformer: attaching provider meta configs to aws_subnet.subnet_1c
+2020/12/10 20:17:01 [TRACE] AttachResourceConfigTransformer: attaching to "aws_ecs_cluster.default" (*terraform.NodeAbstractResource) config from /Users/ryoui/Dropbox/GigaOrder/exabroker_app.tf:33,1-37
+2020/12/10 20:17:01 [TRACE] AttachResourceConfigTransformer: attaching provider meta configs to aws_ecs_cluster.default
+2020/12/10 20:17:01 [TRACE] AttachResourceConfigTransformer: attaching to "aws_db_subnet_group.default" (*terraform.NodeAbstractResource) config from /Users/ryoui/Dropbox/GigaOrder/incentknow_rds.tf:17,1-41
+2020/12/10 20:17:01 [TRACE] AttachResourceConfigTransformer: attaching provider meta configs to aws_db_subnet_group.default
+2020/12/10 20:17:01 [TRACE] AttachResourceConfigTransformer: attaching to "aws_rds_cluster_parameter_group.default" (*terraform.NodeAbstractResource) config from /Users/ryoui/Dropbox/GigaOrder/incentknow_rds.tf:3,1-53
+2020/12/10 20:17:01 [TRACE] AttachResourceConfigTransformer: attaching provider meta configs to aws_rds_cluster_parameter_group.default
+2020/12/10 20:17:01 [TRACE] AttachResourceConfigTransformer: attaching to "aws_ecr_repository.default" (*terraform.NodeAbstractResource) config from /Users/ryoui/Dropbox/GigaOrder/exabroker_app.tf:39,1-40
+2020/12/10 20:17:01 [TRACE] AttachResourceConfigTransformer: attaching provider meta configs to aws_ecr_repository.default
+2020/12/10 20:17:01 [TRACE] AttachResourceConfigTransformer: attaching to "aws_ecr_repository.exabroker_scraping" (*terraform.NodeAbstractResource) config from /Users/ryoui/Dropbox/GigaOrder/exabroker_scraping.tf:46,1-52
+2020/12/10 20:17:01 [TRACE] AttachResourceConfigTransformer: attaching provider meta configs to aws_ecr_repository.exabroker_scraping
+2020/12/10 20:17:01 [TRACE] AttachResourceConfigTransformer: attaching to "data.template_file.container_defininitions" (*terraform.NodeAbstractResource) config from hcl.Range{Filename:"/Users/ryoui/Dropbox/GigaOrder/exabroker_app.tf", Start:hcl.Pos{Line:50, Column:1, Byte:1094}, End:hcl.Pos{Line:50, Column:47, Byte:1140}}
+2020/12/10 20:17:01 [TRACE] AttachResourceConfigTransformer: attaching provider meta configs to data.template_file.container_defininitions
+2020/12/10 20:17:01 [TRACE] Completed graph transform *terraform.AttachResourceConfigTransformer (no changes)
+2020/12/10 20:17:01 [TRACE] Executing graph transform *terraform.ImportStateTransformer
+2020/12/10 20:17:01 [TRACE] Completed graph transform *terraform.ImportStateTransformer with new graph:
+  aws_db_subnet_group.default - *terraform.NodeAbstractResource
+  aws_ecr_repository.default - *terraform.NodeAbstractResource
+  aws_ecr_repository.exabroker_scraping - *terraform.NodeAbstractResource
+  aws_ecs_cluster.default - *terraform.NodeAbstractResource
+  aws_ecs_service.default - *terraform.NodeAbstractResource
+  aws_ecs_task_definition.default - *terraform.NodeAbstractResource
+  aws_iam_role.ECSTaskExecutionRole - *terraform.NodeAbstractResource
+  aws_iam_role.exabroker_scraping - *terraform.NodeAbstractResource
+  aws_iam_role_policy_attachment.ECSTaskExecutionRole - *terraform.NodeAbstractResource
+  aws_lambda_function.exabroker_scraping - *terraform.NodeAbstractResource
+  aws_lambda_function.exabroker_scraping (import id "arn:aws:lambda:ap-northeast-1:203303191911:function:exabroker-scraping") - *terraform.graphNodeImportState
+  aws_lambda_permission.exabroker_scraping_event - *terraform.NodeAbstractResource
+  aws_rds_cluster.default - *terraform.NodeAbstractResource
+  aws_rds_cluster_parameter_group.default - *terraform.NodeAbstractResource
+  aws_s3_bucket.exabroker_crawled - *terraform.NodeAbstractResource
+  aws_s3_bucket_notification.exabroker_scraping_event - *terraform.NodeAbstractResource
+  aws_security_group.incentknow_vpc - *terraform.NodeAbstractResource
+  aws_subnet.subnet_1a - *terraform.NodeAbstractResource
+  aws_subnet.subnet_1c - *terraform.NodeAbstractResource
+  aws_subnet.subnet_1d - *terraform.NodeAbstractResource
+  aws_vpc.incentknow_vpc - *terraform.NodeAbstractResource
+  data.aws_iam_policy_document.ECSTaskExecutionRoleAssumeRolePolicy - *terraform.NodeAbstractResource
+  data.aws_iam_policy_document.ExabrokerScrapingLambdaRoleAssumeRolePolicy - *terraform.NodeAbstractResource
+  data.template_file.container_defininitions - *terraform.NodeAbstractResource
+  local.service_name (expand) - *terraform.nodeExpandLocal
+  ------
+2020/12/10 20:17:01 [TRACE] Executing graph transform *terraform.graphTransformerMulti
+2020/12/10 20:17:01 [TRACE] (graphTransformerMulti) Executing graph transform *terraform.ProviderConfigTransformer
+2020/12/10 20:17:01 [TRACE] ProviderConfigTransformer: attaching to "provider[\"registry.terraform.io/hashicorp/aws\"]" provider configuration from /Users/ryoui/Dropbox/GigaOrder/provider.tf:1,1-15
+2020/12/10 20:17:01 [TRACE] (graphTransformerMulti) Completed graph transform *terraform.ProviderConfigTransformer with new graph:
+  aws_db_subnet_group.default - *terraform.NodeAbstractResource
+  aws_ecr_repository.default - *terraform.NodeAbstractResource
+  aws_ecr_repository.exabroker_scraping - *terraform.NodeAbstractResource
+  aws_ecs_cluster.default - *terraform.NodeAbstractResource
+  aws_ecs_service.default - *terraform.NodeAbstractResource
+  aws_ecs_task_definition.default - *terraform.NodeAbstractResource
+  aws_iam_role.ECSTaskExecutionRole - *terraform.NodeAbstractResource
+  aws_iam_role.exabroker_scraping - *terraform.NodeAbstractResource
+  aws_iam_role_policy_attachment.ECSTaskExecutionRole - *terraform.NodeAbstractResource
+  aws_lambda_function.exabroker_scraping - *terraform.NodeAbstractResource
+  aws_lambda_function.exabroker_scraping (import id "arn:aws:lambda:ap-northeast-1:203303191911:function:exabroker-scraping") - *terraform.graphNodeImportState
+  aws_lambda_permission.exabroker_scraping_event - *terraform.NodeAbstractResource
+  aws_rds_cluster.default - *terraform.NodeAbstractResource
+  aws_rds_cluster_parameter_group.default - *terraform.NodeAbstractResource
+  aws_s3_bucket.exabroker_crawled - *terraform.NodeAbstractResource
+  aws_s3_bucket_notification.exabroker_scraping_event - *terraform.NodeAbstractResource
+  aws_security_group.incentknow_vpc - *terraform.NodeAbstractResource
+  aws_subnet.subnet_1a - *terraform.NodeAbstractResource
+  aws_subnet.subnet_1c - *terraform.NodeAbstractResource
+  aws_subnet.subnet_1d - *terraform.NodeAbstractResource
+  aws_vpc.incentknow_vpc - *terraform.NodeAbstractResource
+  data.aws_iam_policy_document.ECSTaskExecutionRoleAssumeRolePolicy - *terraform.NodeAbstractResource
+  data.aws_iam_policy_document.ExabrokerScrapingLambdaRoleAssumeRolePolicy - *terraform.NodeAbstractResource
+  data.template_file.container_defininitions - *terraform.NodeAbstractResource
+  local.service_name (expand) - *terraform.nodeExpandLocal
+  provider["registry.terraform.io/hashicorp/aws"] - *terraform.NodeApplyableProvider
+  ------
+2020/12/10 20:17:01 [TRACE] (graphTransformerMulti) Executing graph transform *terraform.MissingProviderTransformer
+2020/12/10 20:17:01 [DEBUG] adding implicit provider configuration provider["registry.terraform.io/hashicorp/template"], implied first by data.template_file.container_defininitions
+2020/12/10 20:17:01 [TRACE] (graphTransformerMulti) Completed graph transform *terraform.MissingProviderTransformer with new graph:
+  aws_db_subnet_group.default - *terraform.NodeAbstractResource
+  aws_ecr_repository.default - *terraform.NodeAbstractResource
+  aws_ecr_repository.exabroker_scraping - *terraform.NodeAbstractResource
+  aws_ecs_cluster.default - *terraform.NodeAbstractResource
+  aws_ecs_service.default - *terraform.NodeAbstractResource
+  aws_ecs_task_definition.default - *terraform.NodeAbstractResource
+  aws_iam_role.ECSTaskExecutionRole - *terraform.NodeAbstractResource
+  aws_iam_role.exabroker_scraping - *terraform.NodeAbstractResource
+  aws_iam_role_policy_attachment.ECSTaskExecutionRole - *terraform.NodeAbstractResource
+  aws_lambda_function.exabroker_scraping - *terraform.NodeAbstractResource
+  aws_lambda_function.exabroker_scraping (import id "arn:aws:lambda:ap-northeast-1:203303191911:function:exabroker-scraping") - *terraform.graphNodeImportState
+  aws_lambda_permission.exabroker_scraping_event - *terraform.NodeAbstractResource
+  aws_rds_cluster.default - *terraform.NodeAbstractResource
+  aws_rds_cluster_parameter_group.default - *terraform.NodeAbstractResource
+  aws_s3_bucket.exabroker_crawled - *terraform.NodeAbstractResource
+  aws_s3_bucket_notification.exabroker_scraping_event - *terraform.NodeAbstractResource
+  aws_security_group.incentknow_vpc - *terraform.NodeAbstractResource
+  aws_subnet.subnet_1a - *terraform.NodeAbstractResource
+  aws_subnet.subnet_1c - *terraform.NodeAbstractResource
+  aws_subnet.subnet_1d - *terraform.NodeAbstractResource
+  aws_vpc.incentknow_vpc - *terraform.NodeAbstractResource
+  data.aws_iam_policy_document.ECSTaskExecutionRoleAssumeRolePolicy - *terraform.NodeAbstractResource
+  data.aws_iam_policy_document.ExabrokerScrapingLambdaRoleAssumeRolePolicy - *terraform.NodeAbstractResource
+  data.template_file.container_defininitions - *terraform.NodeAbstractResource
+  local.service_name (expand) - *terraform.nodeExpandLocal
+  provider["registry.terraform.io/hashicorp/aws"] - *terraform.NodeApplyableProvider
+  provider["registry.terraform.io/hashicorp/template"] - *terraform.NodeApplyableProvider
+  ------
+2020/12/10 20:17:01 [TRACE] (graphTransformerMulti) Executing graph transform *terraform.ProviderTransformer
+2020/12/10 20:17:01 [TRACE] ProviderTransformer: exact match for provider["registry.terraform.io/hashicorp/aws"] serving aws_s3_bucket_notification.exabroker_scraping_event
+2020/12/10 20:17:01 [DEBUG] ProviderTransformer: "aws_s3_bucket_notification.exabroker_scraping_event" (*terraform.NodeAbstractResource) needs provider["registry.terraform.io/hashicorp/aws"]
+2020/12/10 20:17:01 [TRACE] ProviderTransformer: exact match for provider["registry.terraform.io/hashicorp/aws"] serving aws_lambda_permission.exabroker_scraping_event
+2020/12/10 20:17:01 [DEBUG] ProviderTransformer: "aws_lambda_permission.exabroker_scraping_event" (*terraform.NodeAbstractResource) needs provider["registry.terraform.io/hashicorp/aws"]
+2020/12/10 20:17:01 [TRACE] ProviderTransformer: exact match for provider["registry.terraform.io/hashicorp/aws"] serving aws_rds_cluster.default
+2020/12/10 20:17:01 [DEBUG] ProviderTransformer: "aws_rds_cluster.default" (*terraform.NodeAbstractResource) needs provider["registry.terraform.io/hashicorp/aws"]
+2020/12/10 20:17:01 [TRACE] ProviderTransformer: exact match for provider["registry.terraform.io/hashicorp/aws"] serving aws_vpc.incentknow_vpc
+2020/12/10 20:17:01 [DEBUG] ProviderTransformer: "aws_vpc.incentknow_vpc" (*terraform.NodeAbstractResource) needs provider["registry.terraform.io/hashicorp/aws"]
+2020/12/10 20:17:01 [TRACE] ProviderTransformer: exact match for provider["registry.terraform.io/hashicorp/aws"] serving aws_ecs_cluster.default
+2020/12/10 20:17:01 [DEBUG] ProviderTransformer: "aws_ecs_cluster.default" (*terraform.NodeAbstractResource) needs provider["registry.terraform.io/hashicorp/aws"]
+2020/12/10 20:17:01 [TRACE] ProviderTransformer: exact match for provider["registry.terraform.io/hashicorp/aws"] serving aws_ecr_repository.exabroker_scraping
+2020/12/10 20:17:01 [DEBUG] ProviderTransformer: "aws_ecr_repository.exabroker_scraping" (*terraform.NodeAbstractResource) needs provider["registry.terraform.io/hashicorp/aws"]
+2020/12/10 20:17:01 [TRACE] ProviderTransformer: exact match for provider["registry.terraform.io/hashicorp/aws"] serving aws_lambda_function.exabroker_scraping (import id "arn:aws:lambda:ap-northeast-1:203303191911:function:exabroker-scraping")
+2020/12/10 20:17:01 [DEBUG] ProviderTransformer: "aws_lambda_function.exabroker_scraping (import id \"arn:aws:lambda:ap-northeast-1:203303191911:function:exabroker-scraping\")" (*terraform.graphNodeImportState) needs provider["registry.terraform.io/hashicorp/aws"]
+2020/12/10 20:17:01 [TRACE] ProviderTransformer: exact match for provider["registry.terraform.io/hashicorp/aws"] serving aws_s3_bucket.exabroker_crawled
+2020/12/10 20:17:01 [DEBUG] ProviderTransformer: "aws_s3_bucket.exabroker_crawled" (*terraform.NodeAbstractResource) needs provider["registry.terraform.io/hashicorp/aws"]
+2020/12/10 20:17:01 [TRACE] ProviderTransformer: exact match for provider["registry.terraform.io/hashicorp/aws"] serving aws_iam_role_policy_attachment.ECSTaskExecutionRole
+2020/12/10 20:17:01 [DEBUG] ProviderTransformer: "aws_iam_role_policy_attachment.ECSTaskExecutionRole" (*terraform.NodeAbstractResource) needs provider["registry.terraform.io/hashicorp/aws"]
+2020/12/10 20:17:01 [TRACE] ProviderTransformer: exact match for provider["registry.terraform.io/hashicorp/aws"] serving aws_iam_role.ECSTaskExecutionRole
+2020/12/10 20:17:01 [DEBUG] ProviderTransformer: "aws_iam_role.ECSTaskExecutionRole" (*terraform.NodeAbstractResource) needs provider["registry.terraform.io/hashicorp/aws"]
+2020/12/10 20:17:01 [TRACE] ProviderTransformer: exact match for provider["registry.terraform.io/hashicorp/aws"] serving aws_security_group.incentknow_vpc
+2020/12/10 20:17:01 [DEBUG] ProviderTransformer: "aws_security_group.incentknow_vpc" (*terraform.NodeAbstractResource) needs provider["registry.terraform.io/hashicorp/aws"]
+2020/12/10 20:17:01 [TRACE] ProviderTransformer: exact match for provider["registry.terraform.io/hashicorp/aws"] serving aws_subnet.subnet_1a
+2020/12/10 20:17:01 [DEBUG] ProviderTransformer: "aws_subnet.subnet_1a" (*terraform.NodeAbstractResource) needs provider["registry.terraform.io/hashicorp/aws"]
+2020/12/10 20:17:01 [TRACE] ProviderTransformer: exact match for provider["registry.terraform.io/hashicorp/aws"] serving aws_db_subnet_group.default
+2020/12/10 20:17:01 [DEBUG] ProviderTransformer: "aws_db_subnet_group.default" (*terraform.NodeAbstractResource) needs provider["registry.terraform.io/hashicorp/aws"]
+2020/12/10 20:17:01 [TRACE] ProviderTransformer: exact match for provider["registry.terraform.io/hashicorp/aws"] serving aws_ecs_service.default
+2020/12/10 20:17:01 [DEBUG] ProviderTransformer: "aws_ecs_service.default" (*terraform.NodeAbstractResource) needs provider["registry.terraform.io/hashicorp/aws"]
+2020/12/10 20:17:01 [TRACE] ProviderTransformer: exact match for provider["registry.terraform.io/hashicorp/aws"] serving aws_ecs_task_definition.default
+2020/12/10 20:17:01 [DEBUG] ProviderTransformer: "aws_ecs_task_definition.default" (*terraform.NodeAbstractResource) needs provider["registry.terraform.io/hashicorp/aws"]
+2020/12/10 20:17:01 [TRACE] ProviderTransformer: exact match for provider["registry.terraform.io/hashicorp/template"] serving data.template_file.container_defininitions
+2020/12/10 20:17:01 [DEBUG] ProviderTransformer: "data.template_file.container_defininitions" (*terraform.NodeAbstractResource) needs provider["registry.terraform.io/hashicorp/template"]
+2020/12/10 20:17:01 [TRACE] ProviderTransformer: exact match for provider["registry.terraform.io/hashicorp/aws"] serving data.aws_iam_policy_document.ECSTaskExecutionRoleAssumeRolePolicy
+2020/12/10 20:17:01 [DEBUG] ProviderTransformer: "data.aws_iam_policy_document.ECSTaskExecutionRoleAssumeRolePolicy" (*terraform.NodeAbstractResource) needs provider["registry.terraform.io/hashicorp/aws"]
+2020/12/10 20:17:01 [TRACE] ProviderTransformer: exact match for provider["registry.terraform.io/hashicorp/aws"] serving aws_lambda_function.exabroker_scraping
+2020/12/10 20:17:01 [DEBUG] ProviderTransformer: "aws_lambda_function.exabroker_scraping" (*terraform.NodeAbstractResource) needs provider["registry.terraform.io/hashicorp/aws"]
+2020/12/10 20:17:01 [TRACE] ProviderTransformer: exact match for provider["registry.terraform.io/hashicorp/aws"] serving aws_subnet.subnet_1d
+2020/12/10 20:17:01 [DEBUG] ProviderTransformer: "aws_subnet.subnet_1d" (*terraform.NodeAbstractResource) needs provider["registry.terraform.io/hashicorp/aws"]
+2020/12/10 20:17:01 [TRACE] ProviderTransformer: exact match for provider["registry.terraform.io/hashicorp/aws"] serving aws_subnet.subnet_1c
+2020/12/10 20:17:01 [DEBUG] ProviderTransformer: "aws_subnet.subnet_1c" (*terraform.NodeAbstractResource) needs provider["registry.terraform.io/hashicorp/aws"]
+2020/12/10 20:17:01 [TRACE] ProviderTransformer: exact match for provider["registry.terraform.io/hashicorp/aws"] serving aws_rds_cluster_parameter_group.default
+2020/12/10 20:17:01 [DEBUG] ProviderTransformer: "aws_rds_cluster_parameter_group.default" (*terraform.NodeAbstractResource) needs provider["registry.terraform.io/hashicorp/aws"]
+2020/12/10 20:17:01 [TRACE] ProviderTransformer: exact match for provider["registry.terraform.io/hashicorp/aws"] serving data.aws_iam_policy_document.ExabrokerScrapingLambdaRoleAssumeRolePolicy
+2020/12/10 20:17:01 [DEBUG] ProviderTransformer: "data.aws_iam_policy_document.ExabrokerScrapingLambdaRoleAssumeRolePolicy" (*terraform.NodeAbstractResource) needs provider["registry.terraform.io/hashicorp/aws"]
+2020/12/10 20:17:01 [TRACE] ProviderTransformer: exact match for provider["registry.terraform.io/hashicorp/aws"] serving aws_ecr_repository.default
+2020/12/10 20:17:01 [DEBUG] ProviderTransformer: "aws_ecr_repository.default" (*terraform.NodeAbstractResource) needs provider["registry.terraform.io/hashicorp/aws"]
+2020/12/10 20:17:01 [TRACE] ProviderTransformer: exact match for provider["registry.terraform.io/hashicorp/aws"] serving aws_iam_role.exabroker_scraping
+2020/12/10 20:17:01 [DEBUG] ProviderTransformer: "aws_iam_role.exabroker_scraping" (*terraform.NodeAbstractResource) needs provider["registry.terraform.io/hashicorp/aws"]
+2020/12/10 20:17:01 [TRACE] (graphTransformerMulti) Completed graph transform *terraform.ProviderTransformer with new graph:
+  aws_db_subnet_group.default - *terraform.NodeAbstractResource
+    provider["registry.terraform.io/hashicorp/aws"] - *terraform.NodeApplyableProvider
+  aws_ecr_repository.default - *terraform.NodeAbstractResource
+    provider["registry.terraform.io/hashicorp/aws"] - *terraform.NodeApplyableProvider
+  aws_ecr_repository.exabroker_scraping - *terraform.NodeAbstractResource
+    provider["registry.terraform.io/hashicorp/aws"] - *terraform.NodeApplyableProvider
+  aws_ecs_cluster.default - *terraform.NodeAbstractResource
+    provider["registry.terraform.io/hashicorp/aws"] - *terraform.NodeApplyableProvider
+  aws_ecs_service.default - *terraform.NodeAbstractResource
+    provider["registry.terraform.io/hashicorp/aws"] - *terraform.NodeApplyableProvider
+  aws_ecs_task_definition.default - *terraform.NodeAbstractResource
+    provider["registry.terraform.io/hashicorp/aws"] - *terraform.NodeApplyableProvider
+  aws_iam_role.ECSTaskExecutionRole - *terraform.NodeAbstractResource
+    provider["registry.terraform.io/hashicorp/aws"] - *terraform.NodeApplyableProvider
+  aws_iam_role.exabroker_scraping - *terraform.NodeAbstractResource
+    provider["registry.terraform.io/hashicorp/aws"] - *terraform.NodeApplyableProvider
+  aws_iam_role_policy_attachment.ECSTaskExecutionRole - *terraform.NodeAbstractResource
+    provider["registry.terraform.io/hashicorp/aws"] - *terraform.NodeApplyableProvider
+  aws_lambda_function.exabroker_scraping - *terraform.NodeAbstractResource
+    provider["registry.terraform.io/hashicorp/aws"] - *terraform.NodeApplyableProvider
+  aws_lambda_function.exabroker_scraping (import id "arn:aws:lambda:ap-northeast-1:203303191911:function:exabroker-scraping") - *terraform.graphNodeImportState
+    provider["registry.terraform.io/hashicorp/aws"] - *terraform.NodeApplyableProvider
+  aws_lambda_permission.exabroker_scraping_event - *terraform.NodeAbstractResource
+    provider["registry.terraform.io/hashicorp/aws"] - *terraform.NodeApplyableProvider
+  aws_rds_cluster.default - *terraform.NodeAbstractResource
+    provider["registry.terraform.io/hashicorp/aws"] - *terraform.NodeApplyableProvider
+  aws_rds_cluster_parameter_group.default - *terraform.NodeAbstractResource
+    provider["registry.terraform.io/hashicorp/aws"] - *terraform.NodeApplyableProvider
+  aws_s3_bucket.exabroker_crawled - *terraform.NodeAbstractResource
+    provider["registry.terraform.io/hashicorp/aws"] - *terraform.NodeApplyableProvider
+  aws_s3_bucket_notification.exabroker_scraping_event - *terraform.NodeAbstractResource
+    provider["registry.terraform.io/hashicorp/aws"] - *terraform.NodeApplyableProvider
+  aws_security_group.incentknow_vpc - *terraform.NodeAbstractResource
+    provider["registry.terraform.io/hashicorp/aws"] - *terraform.NodeApplyableProvider
+  aws_subnet.subnet_1a - *terraform.NodeAbstractResource
+    provider["registry.terraform.io/hashicorp/aws"] - *terraform.NodeApplyableProvider
+  aws_subnet.subnet_1c - *terraform.NodeAbstractResource
+    provider["registry.terraform.io/hashicorp/aws"] - *terraform.NodeApplyableProvider
+  aws_subnet.subnet_1d - *terraform.NodeAbstractResource
+    provider["registry.terraform.io/hashicorp/aws"] - *terraform.NodeApplyableProvider
+  aws_vpc.incentknow_vpc - *terraform.NodeAbstractResource
+    provider["registry.terraform.io/hashicorp/aws"] - *terraform.NodeApplyableProvider
+  data.aws_iam_policy_document.ECSTaskExecutionRoleAssumeRolePolicy - *terraform.NodeAbstractResource
+    provider["registry.terraform.io/hashicorp/aws"] - *terraform.NodeApplyableProvider
+  data.aws_iam_policy_document.ExabrokerScrapingLambdaRoleAssumeRolePolicy - *terraform.NodeAbstractResource
+    provider["registry.terraform.io/hashicorp/aws"] - *terraform.NodeApplyableProvider
+  data.template_file.container_defininitions - *terraform.NodeAbstractResource
+    provider["registry.terraform.io/hashicorp/template"] - *terraform.NodeApplyableProvider
+  local.service_name (expand) - *terraform.nodeExpandLocal
+  provider["registry.terraform.io/hashicorp/aws"] - *terraform.NodeApplyableProvider
+  provider["registry.terraform.io/hashicorp/template"] - *terraform.NodeApplyableProvider
+  ------
+2020/12/10 20:17:01 [TRACE] (graphTransformerMulti) Executing graph transform *terraform.PruneProviderTransformer
+2020/12/10 20:17:01 [TRACE] (graphTransformerMulti) Completed graph transform *terraform.PruneProviderTransformer (no changes)
+2020/12/10 20:17:01 [TRACE] (graphTransformerMulti) Executing graph transform *terraform.ParentProviderTransformer
+2020/12/10 20:17:01 [TRACE] (graphTransformerMulti) Completed graph transform *terraform.ParentProviderTransformer (no changes)
+2020/12/10 20:17:01 [TRACE] Completed graph transform *terraform.graphTransformerMulti with new graph:
+  aws_db_subnet_group.default - *terraform.NodeAbstractResource
+    provider["registry.terraform.io/hashicorp/aws"] - *terraform.NodeApplyableProvider
+  aws_ecr_repository.default - *terraform.NodeAbstractResource
+    provider["registry.terraform.io/hashicorp/aws"] - *terraform.NodeApplyableProvider
+  aws_ecr_repository.exabroker_scraping - *terraform.NodeAbstractResource
+    provider["registry.terraform.io/hashicorp/aws"] - *terraform.NodeApplyableProvider
+  aws_ecs_cluster.default - *terraform.NodeAbstractResource
+    provider["registry.terraform.io/hashicorp/aws"] - *terraform.NodeApplyableProvider
+  aws_ecs_service.default - *terraform.NodeAbstractResource
+    provider["registry.terraform.io/hashicorp/aws"] - *terraform.NodeApplyableProvider
+  aws_ecs_task_definition.default - *terraform.NodeAbstractResource
+    provider["registry.terraform.io/hashicorp/aws"] - *terraform.NodeApplyableProvider
+  aws_iam_role.ECSTaskExecutionRole - *terraform.NodeAbstractResource
+    provider["registry.terraform.io/hashicorp/aws"] - *terraform.NodeApplyableProvider
+  aws_iam_role.exabroker_scraping - *terraform.NodeAbstractResource
+    provider["registry.terraform.io/hashicorp/aws"] - *terraform.NodeApplyableProvider
+  aws_iam_role_policy_attachment.ECSTaskExecutionRole - *terraform.NodeAbstractResource
+    provider["registry.terraform.io/hashicorp/aws"] - *terraform.NodeApplyableProvider
+  aws_lambda_function.exabroker_scraping - *terraform.NodeAbstractResource
+    provider["registry.terraform.io/hashicorp/aws"] - *terraform.NodeApplyableProvider
+  aws_lambda_function.exabroker_scraping (import id "arn:aws:lambda:ap-northeast-1:203303191911:function:exabroker-scraping") - *terraform.graphNodeImportState
+    provider["registry.terraform.io/hashicorp/aws"] - *terraform.NodeApplyableProvider
+  aws_lambda_permission.exabroker_scraping_event - *terraform.NodeAbstractResource
+    provider["registry.terraform.io/hashicorp/aws"] - *terraform.NodeApplyableProvider
+  aws_rds_cluster.default - *terraform.NodeAbstractResource
+    provider["registry.terraform.io/hashicorp/aws"] - *terraform.NodeApplyableProvider
+  aws_rds_cluster_parameter_group.default - *terraform.NodeAbstractResource
+    provider["registry.terraform.io/hashicorp/aws"] - *terraform.NodeApplyableProvider
+  aws_s3_bucket.exabroker_crawled - *terraform.NodeAbstractResource
+    provider["registry.terraform.io/hashicorp/aws"] - *terraform.NodeApplyableProvider
+  aws_s3_bucket_notification.exabroker_scraping_event - *terraform.NodeAbstractResource
+    provider["registry.terraform.io/hashicorp/aws"] - *terraform.NodeApplyableProvider
+  aws_security_group.incentknow_vpc - *terraform.NodeAbstractResource
+    provider["registry.terraform.io/hashicorp/aws"] - *terraform.NodeApplyableProvider
+  aws_subnet.subnet_1a - *terraform.NodeAbstractResource
+    provider["registry.terraform.io/hashicorp/aws"] - *terraform.NodeApplyableProvider
+  aws_subnet.subnet_1c - *terraform.NodeAbstractResource
+    provider["registry.terraform.io/hashicorp/aws"] - *terraform.NodeApplyableProvider
+  aws_subnet.subnet_1d - *terraform.NodeAbstractResource
+    provider["registry.terraform.io/hashicorp/aws"] - *terraform.NodeApplyableProvider
+  aws_vpc.incentknow_vpc - *terraform.NodeAbstractResource
+    provider["registry.terraform.io/hashicorp/aws"] - *terraform.NodeApplyableProvider
+  data.aws_iam_policy_document.ECSTaskExecutionRoleAssumeRolePolicy - *terraform.NodeAbstractResource
+    provider["registry.terraform.io/hashicorp/aws"] - *terraform.NodeApplyableProvider
+  data.aws_iam_policy_document.ExabrokerScrapingLambdaRoleAssumeRolePolicy - *terraform.NodeAbstractResource
+    provider["registry.terraform.io/hashicorp/aws"] - *terraform.NodeApplyableProvider
+  data.template_file.container_defininitions - *terraform.NodeAbstractResource
+    provider["registry.terraform.io/hashicorp/template"] - *terraform.NodeApplyableProvider
+  local.service_name (expand) - *terraform.nodeExpandLocal
+  provider["registry.terraform.io/hashicorp/aws"] - *terraform.NodeApplyableProvider
+  provider["registry.terraform.io/hashicorp/template"] - *terraform.NodeApplyableProvider
+  ------
+2020/12/10 20:17:01 [TRACE] Executing graph transform *terraform.AttachSchemaTransformer
+2020/12/10 20:17:01 [TRACE] AttachSchemaTransformer: attaching resource schema to aws_db_subnet_group.default
+2020/12/10 20:17:01 [TRACE] AttachSchemaTransformer: attaching resource schema to aws_rds_cluster_parameter_group.default
+2020/12/10 20:17:01 [TRACE] AttachSchemaTransformer: attaching resource schema to aws_lambda_permission.exabroker_scraping_event
+2020/12/10 20:17:01 [TRACE] AttachSchemaTransformer: attaching resource schema to aws_ecs_service.default
+2020/12/10 20:17:01 [TRACE] AttachSchemaTransformer: attaching resource schema to data.aws_iam_policy_document.ExabrokerScrapingLambdaRoleAssumeRolePolicy
+2020/12/10 20:17:01 [TRACE] AttachSchemaTransformer: attaching resource schema to aws_rds_cluster.default
+2020/12/10 20:17:01 [TRACE] AttachSchemaTransformer: attaching resource schema to aws_iam_role.ECSTaskExecutionRole
+2020/12/10 20:17:01 [TRACE] AttachSchemaTransformer: attaching resource schema to aws_vpc.incentknow_vpc
+2020/12/10 20:17:01 [TRACE] AttachSchemaTransformer: attaching resource schema to aws_ecs_cluster.default
+2020/12/10 20:17:01 [TRACE] AttachSchemaTransformer: attaching provider config schema to provider["registry.terraform.io/hashicorp/aws"]
+2020/12/10 20:17:01 [TRACE] AttachSchemaTransformer: attaching resource schema to aws_ecs_task_definition.default
+2020/12/10 20:17:01 [TRACE] AttachSchemaTransformer: attaching resource schema to aws_ecr_repository.exabroker_scraping
+2020/12/10 20:17:01 [TRACE] AttachSchemaTransformer: attaching resource schema to data.template_file.container_defininitions
+2020/12/10 20:17:01 [TRACE] AttachSchemaTransformer: attaching resource schema to aws_ecr_repository.default
+2020/12/10 20:17:01 [TRACE] AttachSchemaTransformer: attaching resource schema to aws_iam_role.exabroker_scraping
+2020/12/10 20:17:01 [TRACE] AttachSchemaTransformer: attaching resource schema to aws_security_group.incentknow_vpc
+2020/12/10 20:17:01 [TRACE] AttachSchemaTransformer: attaching resource schema to data.aws_iam_policy_document.ECSTaskExecutionRoleAssumeRolePolicy
+2020/12/10 20:17:01 [TRACE] AttachSchemaTransformer: attaching resource schema to aws_s3_bucket.exabroker_crawled
+2020/12/10 20:17:01 [TRACE] AttachSchemaTransformer: attaching resource schema to aws_s3_bucket_notification.exabroker_scraping_event
+2020/12/10 20:17:01 [TRACE] AttachSchemaTransformer: attaching resource schema to aws_iam_role_policy_attachment.ECSTaskExecutionRole
+2020/12/10 20:17:01 [TRACE] AttachSchemaTransformer: attaching resource schema to aws_lambda_function.exabroker_scraping
+2020/12/10 20:17:01 [TRACE] AttachSchemaTransformer: attaching resource schema to aws_subnet.subnet_1d
+2020/12/10 20:17:01 [TRACE] AttachSchemaTransformer: attaching provider config schema to provider["registry.terraform.io/hashicorp/template"]
+2020/12/10 20:17:01 [TRACE] AttachSchemaTransformer: attaching resource schema to aws_subnet.subnet_1a
+2020/12/10 20:17:01 [TRACE] AttachSchemaTransformer: attaching resource schema to aws_subnet.subnet_1c
+2020/12/10 20:17:01 [TRACE] Completed graph transform *terraform.AttachSchemaTransformer (no changes)
+2020/12/10 20:17:01 [TRACE] Executing graph transform *terraform.ModuleExpansionTransformer
+2020/12/10 20:17:01 [TRACE] Completed graph transform *terraform.ModuleExpansionTransformer (no changes)
+2020/12/10 20:17:01 [TRACE] Executing graph transform *terraform.ReferenceTransformer
+2020/12/10 20:17:01 [DEBUG] ReferenceTransformer: "aws_subnet.subnet_1a" references: [aws_vpc.incentknow_vpc]
+2020/12/10 20:17:01 [DEBUG] ReferenceTransformer: "aws_subnet.subnet_1c" references: [aws_vpc.incentknow_vpc]
+2020/12/10 20:17:01 [DEBUG] ReferenceTransformer: "aws_db_subnet_group.default" references: [aws_subnet.subnet_1a aws_subnet.subnet_1c aws_subnet.subnet_1d]
+2020/12/10 20:17:01 [DEBUG] ReferenceTransformer: "aws_rds_cluster_parameter_group.default" references: []
+2020/12/10 20:17:01 [DEBUG] ReferenceTransformer: "local.service_name (expand)" references: []
+2020/12/10 20:17:01 [DEBUG] ReferenceTransformer: "aws_lambda_permission.exabroker_scraping_event" references: [aws_lambda_function.exabroker_scraping aws_s3_bucket.exabroker_crawled]
+2020/12/10 20:17:01 [DEBUG] ReferenceTransformer: "aws_ecs_service.default" references: [aws_iam_role.ECSTaskExecutionRole local.service_name (expand) aws_ecs_cluster.default aws_ecs_task_definition.default aws_subnet.subnet_1c aws_subnet.subnet_1a aws_subnet.subnet_1d aws_security_group.incentknow_vpc]
+2020/12/10 20:17:01 [DEBUG] ReferenceTransformer: "aws_rds_cluster.default" references: [aws_rds_cluster_parameter_group.default aws_db_subnet_group.default aws_security_group.incentknow_vpc]
+2020/12/10 20:17:01 [DEBUG] ReferenceTransformer: "aws_iam_role.ECSTaskExecutionRole" references: [data.aws_iam_policy_document.ECSTaskExecutionRoleAssumeRolePolicy]
+2020/12/10 20:17:01 [DEBUG] ReferenceTransformer: "aws_vpc.incentknow_vpc" references: []
+2020/12/10 20:17:01 [DEBUG] ReferenceTransformer: "data.aws_iam_policy_document.ExabrokerScrapingLambdaRoleAssumeRolePolicy" references: []
+2020/12/10 20:17:01 [DEBUG] ReferenceTransformer: "aws_ecs_task_definition.default" references: [aws_iam_role.ECSTaskExecutionRole local.service_name (expand) data.template_file.container_defininitions aws_iam_role.ECSTaskExecutionRole]
+2020/12/10 20:17:01 [DEBUG] ReferenceTransformer: "aws_ecs_cluster.default" references: [local.service_name (expand)]
+2020/12/10 20:17:01 [DEBUG] ReferenceTransformer: "provider[\"registry.terraform.io/hashicorp/aws\"]" references: []
+2020/12/10 20:17:01 [DEBUG] ReferenceTransformer: "aws_ecr_repository.default" references: [local.service_name (expand)]
+2020/12/10 20:17:01 [DEBUG] ReferenceTransformer: "aws_ecr_repository.exabroker_scraping" references: []
+2020/12/10 20:17:01 [DEBUG] ReferenceTransformer: "data.template_file.container_defininitions" references: [local.service_name (expand) local.service_name (expand) aws_ecr_repository.default]
+2020/12/10 20:17:01 [DEBUG] ReferenceTransformer: "aws_s3_bucket.exabroker_crawled" references: []
+2020/12/10 20:17:01 [DEBUG] ReferenceTransformer: "aws_s3_bucket_notification.exabroker_scraping_event" references: [aws_s3_bucket.exabroker_crawled aws_lambda_function.exabroker_scraping]
+2020/12/10 20:17:01 [DEBUG] ReferenceTransformer: "aws_iam_role_policy_attachment.ECSTaskExecutionRole" references: [aws_iam_role.ECSTaskExecutionRole]
+2020/12/10 20:17:01 [DEBUG] ReferenceTransformer: "aws_iam_role.exabroker_scraping" references: [data.aws_iam_policy_document.ExabrokerScrapingLambdaRoleAssumeRolePolicy]
+2020/12/10 20:17:01 [DEBUG] ReferenceTransformer: "aws_security_group.incentknow_vpc" references: []
+2020/12/10 20:17:01 [DEBUG] ReferenceTransformer: "data.aws_iam_policy_document.ECSTaskExecutionRoleAssumeRolePolicy" references: []
+2020/12/10 20:17:01 [DEBUG] ReferenceTransformer: "aws_lambda_function.exabroker_scraping (import id \"arn:aws:lambda:ap-northeast-1:203303191911:function:exabroker-scraping\")" references: []
+2020/12/10 20:17:01 [DEBUG] ReferenceTransformer: "aws_lambda_function.exabroker_scraping" references: [aws_iam_role.exabroker_scraping aws_ecr_repository.exabroker_scraping aws_s3_bucket.exabroker_crawled]
+2020/12/10 20:17:01 [DEBUG] ReferenceTransformer: "aws_subnet.subnet_1d" references: [aws_vpc.incentknow_vpc]
+2020/12/10 20:17:01 [DEBUG] ReferenceTransformer: "provider[\"registry.terraform.io/hashicorp/template\"]" references: []
+2020/12/10 20:17:01 [TRACE] Completed graph transform *terraform.ReferenceTransformer with new graph:
+  aws_db_subnet_group.default - *terraform.NodeAbstractResource
+    aws_subnet.subnet_1a - *terraform.NodeAbstractResource
+    aws_subnet.subnet_1c - *terraform.NodeAbstractResource
+    aws_subnet.subnet_1d - *terraform.NodeAbstractResource
+    provider["registry.terraform.io/hashicorp/aws"] - *terraform.NodeApplyableProvider
+  aws_ecr_repository.default - *terraform.NodeAbstractResource
+    local.service_name (expand) - *terraform.nodeExpandLocal
+    provider["registry.terraform.io/hashicorp/aws"] - *terraform.NodeApplyableProvider
+  aws_ecr_repository.exabroker_scraping - *terraform.NodeAbstractResource
+    provider["registry.terraform.io/hashicorp/aws"] - *terraform.NodeApplyableProvider
+  aws_ecs_cluster.default - *terraform.NodeAbstractResource
+    local.service_name (expand) - *terraform.nodeExpandLocal
+    provider["registry.terraform.io/hashicorp/aws"] - *terraform.NodeApplyableProvider
+  aws_ecs_service.default - *terraform.NodeAbstractResource
+    aws_ecs_cluster.default - *terraform.NodeAbstractResource
+    aws_ecs_task_definition.default - *terraform.NodeAbstractResource
+    aws_iam_role.ECSTaskExecutionRole - *terraform.NodeAbstractResource
+    aws_security_group.incentknow_vpc - *terraform.NodeAbstractResource
+    aws_subnet.subnet_1a - *terraform.NodeAbstractResource
+    aws_subnet.subnet_1c - *terraform.NodeAbstractResource
+    aws_subnet.subnet_1d - *terraform.NodeAbstractResource
+    local.service_name (expand) - *terraform.nodeExpandLocal
+    provider["registry.terraform.io/hashicorp/aws"] - *terraform.NodeApplyableProvider
+  aws_ecs_task_definition.default - *terraform.NodeAbstractResource
+    aws_iam_role.ECSTaskExecutionRole - *terraform.NodeAbstractResource
+    data.template_file.container_defininitions - *terraform.NodeAbstractResource
+    local.service_name (expand) - *terraform.nodeExpandLocal
+    provider["registry.terraform.io/hashicorp/aws"] - *terraform.NodeApplyableProvider
+  aws_iam_role.ECSTaskExecutionRole - *terraform.NodeAbstractResource
+    data.aws_iam_policy_document.ECSTaskExecutionRoleAssumeRolePolicy - *terraform.NodeAbstractResource
+    provider["registry.terraform.io/hashicorp/aws"] - *terraform.NodeApplyableProvider
+  aws_iam_role.exabroker_scraping - *terraform.NodeAbstractResource
+    data.aws_iam_policy_document.ExabrokerScrapingLambdaRoleAssumeRolePolicy - *terraform.NodeAbstractResource
+    provider["registry.terraform.io/hashicorp/aws"] - *terraform.NodeApplyableProvider
+  aws_iam_role_policy_attachment.ECSTaskExecutionRole - *terraform.NodeAbstractResource
+    aws_iam_role.ECSTaskExecutionRole - *terraform.NodeAbstractResource
+    provider["registry.terraform.io/hashicorp/aws"] - *terraform.NodeApplyableProvider
+  aws_lambda_function.exabroker_scraping - *terraform.NodeAbstractResource
+    aws_ecr_repository.exabroker_scraping - *terraform.NodeAbstractResource
+    aws_iam_role.exabroker_scraping - *terraform.NodeAbstractResource
+    aws_s3_bucket.exabroker_crawled - *terraform.NodeAbstractResource
+    provider["registry.terraform.io/hashicorp/aws"] - *terraform.NodeApplyableProvider
+  aws_lambda_function.exabroker_scraping (import id "arn:aws:lambda:ap-northeast-1:203303191911:function:exabroker-scraping") - *terraform.graphNodeImportState
+    provider["registry.terraform.io/hashicorp/aws"] - *terraform.NodeApplyableProvider
+  aws_lambda_permission.exabroker_scraping_event - *terraform.NodeAbstractResource
+    aws_lambda_function.exabroker_scraping - *terraform.NodeAbstractResource
+    aws_s3_bucket.exabroker_crawled - *terraform.NodeAbstractResource
+    provider["registry.terraform.io/hashicorp/aws"] - *terraform.NodeApplyableProvider
+  aws_rds_cluster.default - *terraform.NodeAbstractResource
+    aws_db_subnet_group.default - *terraform.NodeAbstractResource
+    aws_rds_cluster_parameter_group.default - *terraform.NodeAbstractResource
+    aws_security_group.incentknow_vpc - *terraform.NodeAbstractResource
+    provider["registry.terraform.io/hashicorp/aws"] - *terraform.NodeApplyableProvider
+  aws_rds_cluster_parameter_group.default - *terraform.NodeAbstractResource
+    provider["registry.terraform.io/hashicorp/aws"] - *terraform.NodeApplyableProvider
+  aws_s3_bucket.exabroker_crawled - *terraform.NodeAbstractResource
+    provider["registry.terraform.io/hashicorp/aws"] - *terraform.NodeApplyableProvider
+  aws_s3_bucket_notification.exabroker_scraping_event - *terraform.NodeAbstractResource
+    aws_lambda_function.exabroker_scraping - *terraform.NodeAbstractResource
+    aws_s3_bucket.exabroker_crawled - *terraform.NodeAbstractResource
+    provider["registry.terraform.io/hashicorp/aws"] - *terraform.NodeApplyableProvider
+  aws_security_group.incentknow_vpc - *terraform.NodeAbstractResource
+    provider["registry.terraform.io/hashicorp/aws"] - *terraform.NodeApplyableProvider
+  aws_subnet.subnet_1a - *terraform.NodeAbstractResource
+    aws_vpc.incentknow_vpc - *terraform.NodeAbstractResource
+    provider["registry.terraform.io/hashicorp/aws"] - *terraform.NodeApplyableProvider
+  aws_subnet.subnet_1c - *terraform.NodeAbstractResource
+    aws_vpc.incentknow_vpc - *terraform.NodeAbstractResource
+    provider["registry.terraform.io/hashicorp/aws"] - *terraform.NodeApplyableProvider
+  aws_subnet.subnet_1d - *terraform.NodeAbstractResource
+    aws_vpc.incentknow_vpc - *terraform.NodeAbstractResource
+    provider["registry.terraform.io/hashicorp/aws"] - *terraform.NodeApplyableProvider
+  aws_vpc.incentknow_vpc - *terraform.NodeAbstractResource
+    provider["registry.terraform.io/hashicorp/aws"] - *terraform.NodeApplyableProvider
+  data.aws_iam_policy_document.ECSTaskExecutionRoleAssumeRolePolicy - *terraform.NodeAbstractResource
+    provider["registry.terraform.io/hashicorp/aws"] - *terraform.NodeApplyableProvider
+  data.aws_iam_policy_document.ExabrokerScrapingLambdaRoleAssumeRolePolicy - *terraform.NodeAbstractResource
+    provider["registry.terraform.io/hashicorp/aws"] - *terraform.NodeApplyableProvider
+  data.template_file.container_defininitions - *terraform.NodeAbstractResource
+    aws_ecr_repository.default - *terraform.NodeAbstractResource
+    local.service_name (expand) - *terraform.nodeExpandLocal
+    provider["registry.terraform.io/hashicorp/template"] - *terraform.NodeApplyableProvider
+  local.service_name (expand) - *terraform.nodeExpandLocal
+  provider["registry.terraform.io/hashicorp/aws"] - *terraform.NodeApplyableProvider
+  provider["registry.terraform.io/hashicorp/template"] - *terraform.NodeApplyableProvider
+  ------
+2020/12/10 20:17:01 [TRACE] Executing graph transform *terraform.attachDataResourceDependenciesTransformer
+2020/12/10 20:17:01 [TRACE] attachDataDependenciesTransformer: data.aws_iam_policy_document.ExabrokerScrapingLambdaRoleAssumeRolePolicy depends on []
+2020/12/10 20:17:01 [TRACE] attachDataDependenciesTransformer: data.template_file.container_defininitions depends on [aws_ecr_repository.default]
+2020/12/10 20:17:01 [TRACE] attachDataDependenciesTransformer: data.aws_iam_policy_document.ECSTaskExecutionRoleAssumeRolePolicy depends on []
+2020/12/10 20:17:01 [TRACE] Completed graph transform *terraform.attachDataResourceDependenciesTransformer (no changes)
+2020/12/10 20:17:01 [TRACE] Executing graph transform *terraform.CloseProviderTransformer
+2020/12/10 20:17:01 [TRACE] Completed graph transform *terraform.CloseProviderTransformer with new graph:
+  aws_db_subnet_group.default - *terraform.NodeAbstractResource
+    aws_subnet.subnet_1a - *terraform.NodeAbstractResource
+    aws_subnet.subnet_1c - *terraform.NodeAbstractResource
+    aws_subnet.subnet_1d - *terraform.NodeAbstractResource
+    provider["registry.terraform.io/hashicorp/aws"] - *terraform.NodeApplyableProvider
+  aws_ecr_repository.default - *terraform.NodeAbstractResource
+    local.service_name (expand) - *terraform.nodeExpandLocal
+    provider["registry.terraform.io/hashicorp/aws"] - *terraform.NodeApplyableProvider
+  aws_ecr_repository.exabroker_scraping - *terraform.NodeAbstractResource
+    provider["registry.terraform.io/hashicorp/aws"] - *terraform.NodeApplyableProvider
+  aws_ecs_cluster.default - *terraform.NodeAbstractResource
+    local.service_name (expand) - *terraform.nodeExpandLocal
+    provider["registry.terraform.io/hashicorp/aws"] - *terraform.NodeApplyableProvider
+  aws_ecs_service.default - *terraform.NodeAbstractResource
+    aws_ecs_cluster.default - *terraform.NodeAbstractResource
+    aws_ecs_task_definition.default - *terraform.NodeAbstractResource
+    aws_iam_role.ECSTaskExecutionRole - *terraform.NodeAbstractResource
+    aws_security_group.incentknow_vpc - *terraform.NodeAbstractResource
+    aws_subnet.subnet_1a - *terraform.NodeAbstractResource
+    aws_subnet.subnet_1c - *terraform.NodeAbstractResource
+    aws_subnet.subnet_1d - *terraform.NodeAbstractResource
+    local.service_name (expand) - *terraform.nodeExpandLocal
+    provider["registry.terraform.io/hashicorp/aws"] - *terraform.NodeApplyableProvider
+  aws_ecs_task_definition.default - *terraform.NodeAbstractResource
+    aws_iam_role.ECSTaskExecutionRole - *terraform.NodeAbstractResource
+    data.template_file.container_defininitions - *terraform.NodeAbstractResource
+    local.service_name (expand) - *terraform.nodeExpandLocal
+    provider["registry.terraform.io/hashicorp/aws"] - *terraform.NodeApplyableProvider
+  aws_iam_role.ECSTaskExecutionRole - *terraform.NodeAbstractResource
+    data.aws_iam_policy_document.ECSTaskExecutionRoleAssumeRolePolicy - *terraform.NodeAbstractResource
+    provider["registry.terraform.io/hashicorp/aws"] - *terraform.NodeApplyableProvider
+  aws_iam_role.exabroker_scraping - *terraform.NodeAbstractResource
+    data.aws_iam_policy_document.ExabrokerScrapingLambdaRoleAssumeRolePolicy - *terraform.NodeAbstractResource
+    provider["registry.terraform.io/hashicorp/aws"] - *terraform.NodeApplyableProvider
+  aws_iam_role_policy_attachment.ECSTaskExecutionRole - *terraform.NodeAbstractResource
+    aws_iam_role.ECSTaskExecutionRole - *terraform.NodeAbstractResource
+    provider["registry.terraform.io/hashicorp/aws"] - *terraform.NodeApplyableProvider
+  aws_lambda_function.exabroker_scraping - *terraform.NodeAbstractResource
+    aws_ecr_repository.exabroker_scraping - *terraform.NodeAbstractResource
+    aws_iam_role.exabroker_scraping - *terraform.NodeAbstractResource
+    aws_s3_bucket.exabroker_crawled - *terraform.NodeAbstractResource
+    provider["registry.terraform.io/hashicorp/aws"] - *terraform.NodeApplyableProvider
+  aws_lambda_function.exabroker_scraping (import id "arn:aws:lambda:ap-northeast-1:203303191911:function:exabroker-scraping") - *terraform.graphNodeImportState
+    provider["registry.terraform.io/hashicorp/aws"] - *terraform.NodeApplyableProvider
+  aws_lambda_permission.exabroker_scraping_event - *terraform.NodeAbstractResource
+    aws_lambda_function.exabroker_scraping - *terraform.NodeAbstractResource
+    aws_s3_bucket.exabroker_crawled - *terraform.NodeAbstractResource
+    provider["registry.terraform.io/hashicorp/aws"] - *terraform.NodeApplyableProvider
+  aws_rds_cluster.default - *terraform.NodeAbstractResource
+    aws_db_subnet_group.default - *terraform.NodeAbstractResource
+    aws_rds_cluster_parameter_group.default - *terraform.NodeAbstractResource
+    aws_security_group.incentknow_vpc - *terraform.NodeAbstractResource
+    provider["registry.terraform.io/hashicorp/aws"] - *terraform.NodeApplyableProvider
+  aws_rds_cluster_parameter_group.default - *terraform.NodeAbstractResource
+    provider["registry.terraform.io/hashicorp/aws"] - *terraform.NodeApplyableProvider
+  aws_s3_bucket.exabroker_crawled - *terraform.NodeAbstractResource
+    provider["registry.terraform.io/hashicorp/aws"] - *terraform.NodeApplyableProvider
+  aws_s3_bucket_notification.exabroker_scraping_event - *terraform.NodeAbstractResource
+    aws_lambda_function.exabroker_scraping - *terraform.NodeAbstractResource
+    aws_s3_bucket.exabroker_crawled - *terraform.NodeAbstractResource
+    provider["registry.terraform.io/hashicorp/aws"] - *terraform.NodeApplyableProvider
+  aws_security_group.incentknow_vpc - *terraform.NodeAbstractResource
+    provider["registry.terraform.io/hashicorp/aws"] - *terraform.NodeApplyableProvider
+  aws_subnet.subnet_1a - *terraform.NodeAbstractResource
+    aws_vpc.incentknow_vpc - *terraform.NodeAbstractResource
+    provider["registry.terraform.io/hashicorp/aws"] - *terraform.NodeApplyableProvider
+  aws_subnet.subnet_1c - *terraform.NodeAbstractResource
+    aws_vpc.incentknow_vpc - *terraform.NodeAbstractResource
+    provider["registry.terraform.io/hashicorp/aws"] - *terraform.NodeApplyableProvider
+  aws_subnet.subnet_1d - *terraform.NodeAbstractResource
+    aws_vpc.incentknow_vpc - *terraform.NodeAbstractResource
+    provider["registry.terraform.io/hashicorp/aws"] - *terraform.NodeApplyableProvider
+  aws_vpc.incentknow_vpc - *terraform.NodeAbstractResource
+    provider["registry.terraform.io/hashicorp/aws"] - *terraform.NodeApplyableProvider
+  data.aws_iam_policy_document.ECSTaskExecutionRoleAssumeRolePolicy - *terraform.NodeAbstractResource
+    provider["registry.terraform.io/hashicorp/aws"] - *terraform.NodeApplyableProvider
+  data.aws_iam_policy_document.ExabrokerScrapingLambdaRoleAssumeRolePolicy - *terraform.NodeAbstractResource
+    provider["registry.terraform.io/hashicorp/aws"] - *terraform.NodeApplyableProvider
+  data.template_file.container_defininitions - *terraform.NodeAbstractResource
+    aws_ecr_repository.default - *terraform.NodeAbstractResource
+    local.service_name (expand) - *terraform.nodeExpandLocal
+    provider["registry.terraform.io/hashicorp/template"] - *terraform.NodeApplyableProvider
+  local.service_name (expand) - *terraform.nodeExpandLocal
+  provider["registry.terraform.io/hashicorp/aws"] - *terraform.NodeApplyableProvider
+  provider["registry.terraform.io/hashicorp/aws"] (close) - *terraform.graphNodeCloseProvider
+    aws_db_subnet_group.default - *terraform.NodeAbstractResource
+    aws_ecr_repository.default - *terraform.NodeAbstractResource
+    aws_ecr_repository.exabroker_scraping - *terraform.NodeAbstractResource
+    aws_ecs_cluster.default - *terraform.NodeAbstractResource
+    aws_ecs_service.default - *terraform.NodeAbstractResource
+    aws_ecs_task_definition.default - *terraform.NodeAbstractResource
+    aws_iam_role.ECSTaskExecutionRole - *terraform.NodeAbstractResource
+    aws_iam_role.exabroker_scraping - *terraform.NodeAbstractResource
+    aws_iam_role_policy_attachment.ECSTaskExecutionRole - *terraform.NodeAbstractResource
+    aws_lambda_function.exabroker_scraping - *terraform.NodeAbstractResource
+    aws_lambda_function.exabroker_scraping (import id "arn:aws:lambda:ap-northeast-1:203303191911:function:exabroker-scraping") - *terraform.graphNodeImportState
+    aws_lambda_permission.exabroker_scraping_event - *terraform.NodeAbstractResource
+    aws_rds_cluster.default - *terraform.NodeAbstractResource
+    aws_rds_cluster_parameter_group.default - *terraform.NodeAbstractResource
+    aws_s3_bucket.exabroker_crawled - *terraform.NodeAbstractResource
+    aws_s3_bucket_notification.exabroker_scraping_event - *terraform.NodeAbstractResource
+    aws_security_group.incentknow_vpc - *terraform.NodeAbstractResource
+    aws_subnet.subnet_1a - *terraform.NodeAbstractResource
+    aws_subnet.subnet_1c - *terraform.NodeAbstractResource
+    aws_subnet.subnet_1d - *terraform.NodeAbstractResource
+    aws_vpc.incentknow_vpc - *terraform.NodeAbstractResource
+    data.aws_iam_policy_document.ECSTaskExecutionRoleAssumeRolePolicy - *terraform.NodeAbstractResource
+    data.aws_iam_policy_document.ExabrokerScrapingLambdaRoleAssumeRolePolicy - *terraform.NodeAbstractResource
+    provider["registry.terraform.io/hashicorp/aws"] - *terraform.NodeApplyableProvider
+  provider["registry.terraform.io/hashicorp/template"] - *terraform.NodeApplyableProvider
+  provider["registry.terraform.io/hashicorp/template"] (close) - *terraform.graphNodeCloseProvider
+    data.template_file.container_defininitions - *terraform.NodeAbstractResource
+    provider["registry.terraform.io/hashicorp/template"] - *terraform.NodeApplyableProvider
+  ------
+2020/12/10 20:17:01 [TRACE] Executing graph transform *terraform.CloseRootModuleTransformer
+2020/12/10 20:17:01 [TRACE] Completed graph transform *terraform.CloseRootModuleTransformer with new graph:
+  aws_db_subnet_group.default - *terraform.NodeAbstractResource
+    aws_subnet.subnet_1a - *terraform.NodeAbstractResource
+    aws_subnet.subnet_1c - *terraform.NodeAbstractResource
+    aws_subnet.subnet_1d - *terraform.NodeAbstractResource
+    provider["registry.terraform.io/hashicorp/aws"] - *terraform.NodeApplyableProvider
+  aws_ecr_repository.default - *terraform.NodeAbstractResource
+    local.service_name (expand) - *terraform.nodeExpandLocal
+    provider["registry.terraform.io/hashicorp/aws"] - *terraform.NodeApplyableProvider
+  aws_ecr_repository.exabroker_scraping - *terraform.NodeAbstractResource
+    provider["registry.terraform.io/hashicorp/aws"] - *terraform.NodeApplyableProvider
+  aws_ecs_cluster.default - *terraform.NodeAbstractResource
+    local.service_name (expand) - *terraform.nodeExpandLocal
+    provider["registry.terraform.io/hashicorp/aws"] - *terraform.NodeApplyableProvider
+  aws_ecs_service.default - *terraform.NodeAbstractResource
+    aws_ecs_cluster.default - *terraform.NodeAbstractResource
+    aws_ecs_task_definition.default - *terraform.NodeAbstractResource
+    aws_iam_role.ECSTaskExecutionRole - *terraform.NodeAbstractResource
+    aws_security_group.incentknow_vpc - *terraform.NodeAbstractResource
+    aws_subnet.subnet_1a - *terraform.NodeAbstractResource
+    aws_subnet.subnet_1c - *terraform.NodeAbstractResource
+    aws_subnet.subnet_1d - *terraform.NodeAbstractResource
+    local.service_name (expand) - *terraform.nodeExpandLocal
+    provider["registry.terraform.io/hashicorp/aws"] - *terraform.NodeApplyableProvider
+  aws_ecs_task_definition.default - *terraform.NodeAbstractResource
+    aws_iam_role.ECSTaskExecutionRole - *terraform.NodeAbstractResource
+    data.template_file.container_defininitions - *terraform.NodeAbstractResource
+    local.service_name (expand) - *terraform.nodeExpandLocal
+    provider["registry.terraform.io/hashicorp/aws"] - *terraform.NodeApplyableProvider
+  aws_iam_role.ECSTaskExecutionRole - *terraform.NodeAbstractResource
+    data.aws_iam_policy_document.ECSTaskExecutionRoleAssumeRolePolicy - *terraform.NodeAbstractResource
+    provider["registry.terraform.io/hashicorp/aws"] - *terraform.NodeApplyableProvider
+  aws_iam_role.exabroker_scraping - *terraform.NodeAbstractResource
+    data.aws_iam_policy_document.ExabrokerScrapingLambdaRoleAssumeRolePolicy - *terraform.NodeAbstractResource
+    provider["registry.terraform.io/hashicorp/aws"] - *terraform.NodeApplyableProvider
+  aws_iam_role_policy_attachment.ECSTaskExecutionRole - *terraform.NodeAbstractResource
+    aws_iam_role.ECSTaskExecutionRole - *terraform.NodeAbstractResource
+    provider["registry.terraform.io/hashicorp/aws"] - *terraform.NodeApplyableProvider
+  aws_lambda_function.exabroker_scraping - *terraform.NodeAbstractResource
+    aws_ecr_repository.exabroker_scraping - *terraform.NodeAbstractResource
+    aws_iam_role.exabroker_scraping - *terraform.NodeAbstractResource
+    aws_s3_bucket.exabroker_crawled - *terraform.NodeAbstractResource
+    provider["registry.terraform.io/hashicorp/aws"] - *terraform.NodeApplyableProvider
+  aws_lambda_function.exabroker_scraping (import id "arn:aws:lambda:ap-northeast-1:203303191911:function:exabroker-scraping") - *terraform.graphNodeImportState
+    provider["registry.terraform.io/hashicorp/aws"] - *terraform.NodeApplyableProvider
+  aws_lambda_permission.exabroker_scraping_event - *terraform.NodeAbstractResource
+    aws_lambda_function.exabroker_scraping - *terraform.NodeAbstractResource
+    aws_s3_bucket.exabroker_crawled - *terraform.NodeAbstractResource
+    provider["registry.terraform.io/hashicorp/aws"] - *terraform.NodeApplyableProvider
+  aws_rds_cluster.default - *terraform.NodeAbstractResource
+    aws_db_subnet_group.default - *terraform.NodeAbstractResource
+    aws_rds_cluster_parameter_group.default - *terraform.NodeAbstractResource
+    aws_security_group.incentknow_vpc - *terraform.NodeAbstractResource
+    provider["registry.terraform.io/hashicorp/aws"] - *terraform.NodeApplyableProvider
+  aws_rds_cluster_parameter_group.default - *terraform.NodeAbstractResource
+    provider["registry.terraform.io/hashicorp/aws"] - *terraform.NodeApplyableProvider
+  aws_s3_bucket.exabroker_crawled - *terraform.NodeAbstractResource
+    provider["registry.terraform.io/hashicorp/aws"] - *terraform.NodeApplyableProvider
+  aws_s3_bucket_notification.exabroker_scraping_event - *terraform.NodeAbstractResource
+    aws_lambda_function.exabroker_scraping - *terraform.NodeAbstractResource
+    aws_s3_bucket.exabroker_crawled - *terraform.NodeAbstractResource
+    provider["registry.terraform.io/hashicorp/aws"] - *terraform.NodeApplyableProvider
+  aws_security_group.incentknow_vpc - *terraform.NodeAbstractResource
+    provider["registry.terraform.io/hashicorp/aws"] - *terraform.NodeApplyableProvider
+  aws_subnet.subnet_1a - *terraform.NodeAbstractResource
+    aws_vpc.incentknow_vpc - *terraform.NodeAbstractResource
+    provider["registry.terraform.io/hashicorp/aws"] - *terraform.NodeApplyableProvider
+  aws_subnet.subnet_1c - *terraform.NodeAbstractResource
+    aws_vpc.incentknow_vpc - *terraform.NodeAbstractResource
+    provider["registry.terraform.io/hashicorp/aws"] - *terraform.NodeApplyableProvider
+  aws_subnet.subnet_1d - *terraform.NodeAbstractResource
+    aws_vpc.incentknow_vpc - *terraform.NodeAbstractResource
+    provider["registry.terraform.io/hashicorp/aws"] - *terraform.NodeApplyableProvider
+  aws_vpc.incentknow_vpc - *terraform.NodeAbstractResource
+    provider["registry.terraform.io/hashicorp/aws"] - *terraform.NodeApplyableProvider
+  data.aws_iam_policy_document.ECSTaskExecutionRoleAssumeRolePolicy - *terraform.NodeAbstractResource
+    provider["registry.terraform.io/hashicorp/aws"] - *terraform.NodeApplyableProvider
+  data.aws_iam_policy_document.ExabrokerScrapingLambdaRoleAssumeRolePolicy - *terraform.NodeAbstractResource
+    provider["registry.terraform.io/hashicorp/aws"] - *terraform.NodeApplyableProvider
+  data.template_file.container_defininitions - *terraform.NodeAbstractResource
+    aws_ecr_repository.default - *terraform.NodeAbstractResource
+    local.service_name (expand) - *terraform.nodeExpandLocal
+    provider["registry.terraform.io/hashicorp/template"] - *terraform.NodeApplyableProvider
+  local.service_name (expand) - *terraform.nodeExpandLocal
+  provider["registry.terraform.io/hashicorp/aws"] - *terraform.NodeApplyableProvider
+  provider["registry.terraform.io/hashicorp/aws"] (close) - *terraform.graphNodeCloseProvider
+    aws_db_subnet_group.default - *terraform.NodeAbstractResource
+    aws_ecr_repository.default - *terraform.NodeAbstractResource
+    aws_ecr_repository.exabroker_scraping - *terraform.NodeAbstractResource
+    aws_ecs_cluster.default - *terraform.NodeAbstractResource
+    aws_ecs_service.default - *terraform.NodeAbstractResource
+    aws_ecs_task_definition.default - *terraform.NodeAbstractResource
+    aws_iam_role.ECSTaskExecutionRole - *terraform.NodeAbstractResource
+    aws_iam_role.exabroker_scraping - *terraform.NodeAbstractResource
+    aws_iam_role_policy_attachment.ECSTaskExecutionRole - *terraform.NodeAbstractResource
+    aws_lambda_function.exabroker_scraping - *terraform.NodeAbstractResource
+    aws_lambda_function.exabroker_scraping (import id "arn:aws:lambda:ap-northeast-1:203303191911:function:exabroker-scraping") - *terraform.graphNodeImportState
+    aws_lambda_permission.exabroker_scraping_event - *terraform.NodeAbstractResource
+    aws_rds_cluster.default - *terraform.NodeAbstractResource
+    aws_rds_cluster_parameter_group.default - *terraform.NodeAbstractResource
+    aws_s3_bucket.exabroker_crawled - *terraform.NodeAbstractResource
+    aws_s3_bucket_notification.exabroker_scraping_event - *terraform.NodeAbstractResource
+    aws_security_group.incentknow_vpc - *terraform.NodeAbstractResource
+    aws_subnet.subnet_1a - *terraform.NodeAbstractResource
+    aws_subnet.subnet_1c - *terraform.NodeAbstractResource
+    aws_subnet.subnet_1d - *terraform.NodeAbstractResource
+    aws_vpc.incentknow_vpc - *terraform.NodeAbstractResource
+    data.aws_iam_policy_document.ECSTaskExecutionRoleAssumeRolePolicy - *terraform.NodeAbstractResource
+    data.aws_iam_policy_document.ExabrokerScrapingLambdaRoleAssumeRolePolicy - *terraform.NodeAbstractResource
+    provider["registry.terraform.io/hashicorp/aws"] - *terraform.NodeApplyableProvider
+  provider["registry.terraform.io/hashicorp/template"] - *terraform.NodeApplyableProvider
+  provider["registry.terraform.io/hashicorp/template"] (close) - *terraform.graphNodeCloseProvider
+    data.template_file.container_defininitions - *terraform.NodeAbstractResource
+    provider["registry.terraform.io/hashicorp/template"] - *terraform.NodeApplyableProvider
+  root - *terraform.nodeCloseModule
+    provider["registry.terraform.io/hashicorp/aws"] (close) - *terraform.graphNodeCloseProvider
+    provider["registry.terraform.io/hashicorp/template"] (close) - *terraform.graphNodeCloseProvider
+  ------
+2020/12/10 20:17:01 [TRACE] Executing graph transform *terraform.TransitiveReductionTransformer
+2020/12/10 20:17:01 [TRACE] Completed graph transform *terraform.TransitiveReductionTransformer with new graph:
+  aws_db_subnet_group.default - *terraform.NodeAbstractResource
+    aws_subnet.subnet_1a - *terraform.NodeAbstractResource
+    aws_subnet.subnet_1c - *terraform.NodeAbstractResource
+    aws_subnet.subnet_1d - *terraform.NodeAbstractResource
+  aws_ecr_repository.default - *terraform.NodeAbstractResource
+    local.service_name (expand) - *terraform.nodeExpandLocal
+    provider["registry.terraform.io/hashicorp/aws"] - *terraform.NodeApplyableProvider
+  aws_ecr_repository.exabroker_scraping - *terraform.NodeAbstractResource
+    provider["registry.terraform.io/hashicorp/aws"] - *terraform.NodeApplyableProvider
+  aws_ecs_cluster.default - *terraform.NodeAbstractResource
+    local.service_name (expand) - *terraform.nodeExpandLocal
+    provider["registry.terraform.io/hashicorp/aws"] - *terraform.NodeApplyableProvider
+  aws_ecs_service.default - *terraform.NodeAbstractResource
+    aws_ecs_cluster.default - *terraform.NodeAbstractResource
+    aws_ecs_task_definition.default - *terraform.NodeAbstractResource
+    aws_security_group.incentknow_vpc - *terraform.NodeAbstractResource
+    aws_subnet.subnet_1a - *terraform.NodeAbstractResource
+    aws_subnet.subnet_1c - *terraform.NodeAbstractResource
+    aws_subnet.subnet_1d - *terraform.NodeAbstractResource
+  aws_ecs_task_definition.default - *terraform.NodeAbstractResource
+    aws_iam_role.ECSTaskExecutionRole - *terraform.NodeAbstractResource
+    data.template_file.container_defininitions - *terraform.NodeAbstractResource
+  aws_iam_role.ECSTaskExecutionRole - *terraform.NodeAbstractResource
+    data.aws_iam_policy_document.ECSTaskExecutionRoleAssumeRolePolicy - *terraform.NodeAbstractResource
+  aws_iam_role.exabroker_scraping - *terraform.NodeAbstractResource
+    data.aws_iam_policy_document.ExabrokerScrapingLambdaRoleAssumeRolePolicy - *terraform.NodeAbstractResource
+  aws_iam_role_policy_attachment.ECSTaskExecutionRole - *terraform.NodeAbstractResource
+    aws_iam_role.ECSTaskExecutionRole - *terraform.NodeAbstractResource
+  aws_lambda_function.exabroker_scraping - *terraform.NodeAbstractResource
+    aws_ecr_repository.exabroker_scraping - *terraform.NodeAbstractResource
+    aws_iam_role.exabroker_scraping - *terraform.NodeAbstractResource
+    aws_s3_bucket.exabroker_crawled - *terraform.NodeAbstractResource
+  aws_lambda_function.exabroker_scraping (import id "arn:aws:lambda:ap-northeast-1:203303191911:function:exabroker-scraping") - *terraform.graphNodeImportState
+    provider["registry.terraform.io/hashicorp/aws"] - *terraform.NodeApplyableProvider
+  aws_lambda_permission.exabroker_scraping_event - *terraform.NodeAbstractResource
+    aws_lambda_function.exabroker_scraping - *terraform.NodeAbstractResource
+  aws_rds_cluster.default - *terraform.NodeAbstractResource
+    aws_db_subnet_group.default - *terraform.NodeAbstractResource
+    aws_rds_cluster_parameter_group.default - *terraform.NodeAbstractResource
+    aws_security_group.incentknow_vpc - *terraform.NodeAbstractResource
+  aws_rds_cluster_parameter_group.default - *terraform.NodeAbstractResource
+    provider["registry.terraform.io/hashicorp/aws"] - *terraform.NodeApplyableProvider
+  aws_s3_bucket.exabroker_crawled - *terraform.NodeAbstractResource
+    provider["registry.terraform.io/hashicorp/aws"] - *terraform.NodeApplyableProvider
+  aws_s3_bucket_notification.exabroker_scraping_event - *terraform.NodeAbstractResource
+    aws_lambda_function.exabroker_scraping - *terraform.NodeAbstractResource
+  aws_security_group.incentknow_vpc - *terraform.NodeAbstractResource
+    provider["registry.terraform.io/hashicorp/aws"] - *terraform.NodeApplyableProvider
+  aws_subnet.subnet_1a - *terraform.NodeAbstractResource
+    aws_vpc.incentknow_vpc - *terraform.NodeAbstractResource
+  aws_subnet.subnet_1c - *terraform.NodeAbstractResource
+    aws_vpc.incentknow_vpc - *terraform.NodeAbstractResource
+  aws_subnet.subnet_1d - *terraform.NodeAbstractResource
+    aws_vpc.incentknow_vpc - *terraform.NodeAbstractResource
+  aws_vpc.incentknow_vpc - *terraform.NodeAbstractResource
+    provider["registry.terraform.io/hashicorp/aws"] - *terraform.NodeApplyableProvider
+  data.aws_iam_policy_document.ECSTaskExecutionRoleAssumeRolePolicy - *terraform.NodeAbstractResource
+    provider["registry.terraform.io/hashicorp/aws"] - *terraform.NodeApplyableProvider
+  data.aws_iam_policy_document.ExabrokerScrapingLambdaRoleAssumeRolePolicy - *terraform.NodeAbstractResource
+    provider["registry.terraform.io/hashicorp/aws"] - *terraform.NodeApplyableProvider
+  data.template_file.container_defininitions - *terraform.NodeAbstractResource
+    aws_ecr_repository.default - *terraform.NodeAbstractResource
+    provider["registry.terraform.io/hashicorp/template"] - *terraform.NodeApplyableProvider
+  local.service_name (expand) - *terraform.nodeExpandLocal
+  provider["registry.terraform.io/hashicorp/aws"] - *terraform.NodeApplyableProvider
+  provider["registry.terraform.io/hashicorp/aws"] (close) - *terraform.graphNodeCloseProvider
+    aws_ecs_service.default - *terraform.NodeAbstractResource
+    aws_iam_role_policy_attachment.ECSTaskExecutionRole - *terraform.NodeAbstractResource
+    aws_lambda_function.exabroker_scraping (import id "arn:aws:lambda:ap-northeast-1:203303191911:function:exabroker-scraping") - *terraform.graphNodeImportState
+    aws_lambda_permission.exabroker_scraping_event - *terraform.NodeAbstractResource
+    aws_rds_cluster.default - *terraform.NodeAbstractResource
+    aws_s3_bucket_notification.exabroker_scraping_event - *terraform.NodeAbstractResource
+  provider["registry.terraform.io/hashicorp/template"] - *terraform.NodeApplyableProvider
+  provider["registry.terraform.io/hashicorp/template"] (close) - *terraform.graphNodeCloseProvider
+    data.template_file.container_defininitions - *terraform.NodeAbstractResource
+  root - *terraform.nodeCloseModule
+    provider["registry.terraform.io/hashicorp/aws"] (close) - *terraform.graphNodeCloseProvider
+    provider["registry.terraform.io/hashicorp/template"] (close) - *terraform.graphNodeCloseProvider
+  ------
+2020/12/10 20:17:01 [DEBUG] Starting graph walk: walkImport
+2020/12/10 20:17:01 [TRACE] dag/walk: visiting "provider[\"registry.terraform.io/hashicorp/template\"]"
+2020/12/10 20:17:01 [TRACE] dag/walk: visiting "local.service_name (expand)"
+2020/12/10 20:17:01 [TRACE] vertex "local.service_name (expand)": starting visit (*terraform.nodeExpandLocal)
+2020/12/10 20:17:01 [TRACE] vertex "provider[\"registry.terraform.io/hashicorp/template\"]": starting visit (*terraform.NodeApplyableProvider)
+2020/12/10 20:17:01 [TRACE] vertex "local.service_name (expand)": expanding dynamic subgraph
+2020/12/10 20:17:01 [TRACE] dag/walk: visiting "provider[\"registry.terraform.io/hashicorp/aws\"]"
+2020/12/10 20:17:01 [TRACE] Expanding local: adding local.service_name as *terraform.NodeLocal
+2020/12/10 20:17:01 [TRACE] vertex "provider[\"registry.terraform.io/hashicorp/aws\"]": starting visit (*terraform.NodeApplyableProvider)
+2020/12/10 20:17:01 [TRACE] vertex "local.service_name (expand)": entering dynamic subgraph
+2020/12/10 20:17:01 [TRACE] dag/walk: visiting "local.service_name"
+2020/12/10 20:17:01 [TRACE] vertex "local.service_name": starting visit (*terraform.NodeLocal)
+2020/12/10 20:17:01 [TRACE] vertex "local.service_name": visit complete
+2020/12/10 20:17:01 [TRACE] vertex "local.service_name (expand)": dynamic subgraph completed successfully
+2020/12/10 20:17:01 [TRACE] vertex "local.service_name (expand)": visit complete
+2020-12-10T20:17:01.084+0900 [INFO]  plugin: configuring client automatic mTLS
+2020-12-10T20:17:01.119+0900 [DEBUG] plugin: starting plugin: path=.terraform/providers/registry.terraform.io/hashicorp/template/2.2.0/darwin_amd64/terraform-provider-template_v2.2.0_x4 args=[.terraform/providers/registry.terraform.io/hashicorp/template/2.2.0/darwin_amd64/terraform-provider-template_v2.2.0_x4]
+2020-12-10T20:17:01.131+0900 [DEBUG] plugin: plugin started: path=.terraform/providers/registry.terraform.io/hashicorp/template/2.2.0/darwin_amd64/terraform-provider-template_v2.2.0_x4 pid=62055
+2020-12-10T20:17:01.132+0900 [DEBUG] plugin: waiting for RPC address: path=.terraform/providers/registry.terraform.io/hashicorp/template/2.2.0/darwin_amd64/terraform-provider-template_v2.2.0_x4
+2020-12-10T20:17:01.141+0900 [INFO]  plugin.terraform-provider-template_v2.2.0_x4: configuring server automatic mTLS: timestamp=2020-12-10T20:17:01.141+0900
+2020-12-10T20:17:01.183+0900 [DEBUG] plugin.terraform-provider-template_v2.2.0_x4: plugin address: address=/var/folders/9c/djglm4j1545fvsf2t5sjj93r0000gn/T/plugin484497330 network=unix timestamp=2020-12-10T20:17:01.183+0900
+2020-12-10T20:17:01.183+0900 [DEBUG] plugin: using plugin: version=5
+2020/12/10 20:17:01 [TRACE] BuiltinEvalContext: Initialized "provider[\"registry.terraform.io/hashicorp/template\"]" provider for provider["registry.terraform.io/hashicorp/template"]
+2020-12-10T20:17:01.257+0900 [TRACE] plugin.stdio: waiting for stdio data
+2020/12/10 20:17:01 [TRACE] buildProviderConfig for provider["registry.terraform.io/hashicorp/template"]: no configuration at all
+2020/12/10 20:17:01 [TRACE] GRPCProvider: GetSchema
+2020-12-10T20:17:01.257+0900 [INFO]  plugin: configuring client automatic mTLS
+2020-12-10T20:17:01.257+0900 [WARN]  plugin.stdio: received EOF, stopping recv loop: err="rpc error: code = Unimplemented desc = unknown service plugin.GRPCStdio"
+2020/12/10 20:17:01 [TRACE] No provider meta schema returned
+2020-12-10T20:17:01.293+0900 [DEBUG] plugin: starting plugin: path=.terraform/providers/registry.terraform.io/hashicorp/aws/3.20.0/darwin_amd64/terraform-provider-aws_v3.20.0_x5 args=[.terraform/providers/registry.terraform.io/hashicorp/aws/3.20.0/darwin_amd64/terraform-provider-aws_v3.20.0_x5]
+2020-12-10T20:17:01.321+0900 [DEBUG] plugin: plugin started: path=.terraform/providers/registry.terraform.io/hashicorp/aws/3.20.0/darwin_amd64/terraform-provider-aws_v3.20.0_x5 pid=62056
+2020-12-10T20:17:01.321+0900 [DEBUG] plugin: waiting for RPC address: path=.terraform/providers/registry.terraform.io/hashicorp/aws/3.20.0/darwin_amd64/terraform-provider-aws_v3.20.0_x5
+2020-12-10T20:17:01.365+0900 [INFO]  plugin.terraform-provider-aws_v3.20.0_x5: configuring server automatic mTLS: timestamp=2020-12-10T20:17:01.365+0900
+2020-12-10T20:17:01.403+0900 [DEBUG] plugin.terraform-provider-aws_v3.20.0_x5: plugin address: address=/var/folders/9c/djglm4j1545fvsf2t5sjj93r0000gn/T/plugin223298767 network=unix timestamp=2020-12-10T20:17:01.403+0900
+2020-12-10T20:17:01.403+0900 [DEBUG] plugin: using plugin: version=5
+2020-12-10T20:17:01.472+0900 [TRACE] plugin.stdio: waiting for stdio data
+2020/12/10 20:17:01 [TRACE] BuiltinEvalContext: Initialized "provider[\"registry.terraform.io/hashicorp/aws\"]" provider for provider["registry.terraform.io/hashicorp/aws"]
+2020/12/10 20:17:01 [TRACE] buildProviderConfig for provider["registry.terraform.io/hashicorp/aws"]: using explicit config only
+2020/12/10 20:17:01 [TRACE] GRPCProvider: GetSchema
+2020/12/10 20:17:01 [TRACE] GRPCProvider: Configure
+2020/12/10 20:17:01 [TRACE] vertex "provider[\"registry.terraform.io/hashicorp/template\"]": visit complete
+2020/12/10 20:17:01 [TRACE] GRPCProvider: Configure
+2020-12-10T20:17:01.580+0900 [DEBUG] plugin.terraform-provider-aws_v3.20.0_x5: 2020/12/10 20:17:01 [INFO] AWS Auth provider used: "SharedCredentialsProvider"
+2020-12-10T20:17:01.581+0900 [DEBUG] plugin.terraform-provider-aws_v3.20.0_x5: 2020/12/10 20:17:01 [DEBUG] Trying to get account information via sts:GetCallerIdentity
+2020/12/10 20:17:06 [TRACE] dag/walk: vertex "aws_rds_cluster_parameter_group.default" is waiting for "provider[\"registry.terraform.io/hashicorp/aws\"]"
+2020/12/10 20:17:06 [TRACE] dag/walk: vertex "data.template_file.container_defininitions" is waiting for "aws_ecr_repository.default"
+2020/12/10 20:17:06 [TRACE] dag/walk: vertex "aws_s3_bucket.exabroker_crawled" is waiting for "provider[\"registry.terraform.io/hashicorp/aws\"]"
+2020/12/10 20:17:06 [TRACE] dag/walk: vertex "aws_s3_bucket_notification.exabroker_scraping_event" is waiting for "aws_lambda_function.exabroker_scraping"
+2020/12/10 20:17:06 [TRACE] dag/walk: vertex "aws_lambda_permission.exabroker_scraping_event" is waiting for "aws_lambda_function.exabroker_scraping"
+2020/12/10 20:17:06 [TRACE] dag/walk: vertex "aws_ecs_cluster.default" is waiting for "provider[\"registry.terraform.io/hashicorp/aws\"]"
+2020/12/10 20:17:06 [TRACE] dag/walk: vertex "data.aws_iam_policy_document.ExabrokerScrapingLambdaRoleAssumeRolePolicy" is waiting for "provider[\"registry.terraform.io/hashicorp/aws\"]"
+2020/12/10 20:17:06 [TRACE] dag/walk: vertex "aws_vpc.incentknow_vpc" is waiting for "provider[\"registry.terraform.io/hashicorp/aws\"]"
+2020/12/10 20:17:06 [TRACE] dag/walk: vertex "aws_ecs_task_definition.default" is waiting for "aws_iam_role.ECSTaskExecutionRole"
+2020/12/10 20:17:06 [TRACE] dag/walk: vertex "aws_subnet.subnet_1d" is waiting for "aws_vpc.incentknow_vpc"
+2020/12/10 20:17:06 [TRACE] dag/walk: vertex "root" is waiting for "provider[\"registry.terraform.io/hashicorp/template\"] (close)"
+2020/12/10 20:17:06 [TRACE] dag/walk: vertex "aws_subnet.subnet_1c" is waiting for "aws_vpc.incentknow_vpc"
+2020/12/10 20:17:06 [TRACE] dag/walk: vertex "aws_ecs_service.default" is waiting for "aws_security_group.incentknow_vpc"
+2020/12/10 20:17:06 [TRACE] dag/walk: vertex "aws_ecr_repository.exabroker_scraping" is waiting for "provider[\"registry.terraform.io/hashicorp/aws\"]"
+2020/12/10 20:17:06 [TRACE] dag/walk: vertex "aws_iam_role_policy_attachment.ECSTaskExecutionRole" is waiting for "aws_iam_role.ECSTaskExecutionRole"
+2020/12/10 20:17:06 [TRACE] dag/walk: vertex "aws_rds_cluster.default" is waiting for "aws_security_group.incentknow_vpc"
+2020/12/10 20:17:06 [TRACE] dag/walk: vertex "aws_lambda_function.exabroker_scraping (import id \"arn:aws:lambda:ap-northeast-1:203303191911:function:exabroker-scraping\")" is waiting for "provider[\"registry.terraform.io/hashicorp/aws\"]"
+2020/12/10 20:17:06 [TRACE] dag/walk: vertex "aws_db_subnet_group.default" is waiting for "aws_subnet.subnet_1a"
+2020/12/10 20:17:06 [TRACE] dag/walk: vertex "aws_lambda_function.exabroker_scraping" is waiting for "aws_iam_role.exabroker_scraping"
+2020/12/10 20:17:06 [TRACE] dag/walk: vertex "aws_iam_role.ECSTaskExecutionRole" is waiting for "data.aws_iam_policy_document.ECSTaskExecutionRoleAssumeRolePolicy"
+2020/12/10 20:17:06 [TRACE] dag/walk: vertex "aws_subnet.subnet_1a" is waiting for "aws_vpc.incentknow_vpc"
+2020/12/10 20:17:06 [TRACE] dag/walk: vertex "aws_security_group.incentknow_vpc" is waiting for "provider[\"registry.terraform.io/hashicorp/aws\"]"
+2020/12/10 20:17:06 [TRACE] dag/walk: vertex "data.aws_iam_policy_document.ECSTaskExecutionRoleAssumeRolePolicy" is waiting for "provider[\"registry.terraform.io/hashicorp/aws\"]"
+2020/12/10 20:17:06 [TRACE] dag/walk: vertex "provider[\"registry.terraform.io/hashicorp/aws\"] (close)" is waiting for "aws_lambda_function.exabroker_scraping (import id \"arn:aws:lambda:ap-northeast-1:203303191911:function:exabroker-scraping\")"
+2020/12/10 20:17:06 [TRACE] dag/walk: vertex "aws_iam_role.exabroker_scraping" is waiting for "data.aws_iam_policy_document.ExabrokerScrapingLambdaRoleAssumeRolePolicy"
+2020/12/10 20:17:06 [TRACE] dag/walk: vertex "provider[\"registry.terraform.io/hashicorp/template\"] (close)" is waiting for "data.template_file.container_defininitions"
+2020/12/10 20:17:06 [TRACE] dag/walk: vertex "aws_ecr_repository.default" is waiting for "provider[\"registry.terraform.io/hashicorp/aws\"]"
+2020-12-10T20:17:07.815+0900 [DEBUG] plugin.terraform-provider-aws_v3.20.0_x5: 2020/12/10 20:17:07 [DEBUG] Trying to get account information via sts:GetCallerIdentity
+2020/12/10 20:17:08 [TRACE] vertex "provider[\"registry.terraform.io/hashicorp/aws\"]": visit complete
+2020/12/10 20:17:08 [TRACE] dag/walk: visiting "aws_rds_cluster_parameter_group.default"
+2020/12/10 20:17:08 [TRACE] vertex "aws_rds_cluster_parameter_group.default": starting visit (*terraform.NodeAbstractResource)
+2020/12/10 20:17:08 [TRACE] vertex "aws_rds_cluster_parameter_group.default": visit complete
+2020/12/10 20:17:08 [TRACE] dag/walk: visiting "aws_ecr_repository.default"
+2020/12/10 20:17:08 [TRACE] vertex "aws_ecr_repository.default": starting visit (*terraform.NodeAbstractResource)
+2020/12/10 20:17:08 [TRACE] vertex "aws_ecr_repository.default": visit complete
+2020/12/10 20:17:08 [TRACE] dag/walk: visiting "data.template_file.container_defininitions"
+2020/12/10 20:17:08 [TRACE] vertex "data.template_file.container_defininitions": starting visit (*terraform.NodeAbstractResource)
+2020/12/10 20:17:08 [TRACE] vertex "data.template_file.container_defininitions": visit complete
+2020/12/10 20:17:08 [TRACE] dag/walk: visiting "provider[\"registry.terraform.io/hashicorp/template\"] (close)"
+2020/12/10 20:17:08 [TRACE] dag/walk: visiting "aws_ecr_repository.exabroker_scraping"
+2020/12/10 20:17:08 [TRACE] vertex "aws_ecr_repository.exabroker_scraping": starting visit (*terraform.NodeAbstractResource)
+2020/12/10 20:17:08 [TRACE] vertex "aws_ecr_repository.exabroker_scraping": visit complete
+2020/12/10 20:17:08 [TRACE] vertex "provider[\"registry.terraform.io/hashicorp/template\"] (close)": starting visit (*terraform.graphNodeCloseProvider)
+2020/12/10 20:17:08 [TRACE] dag/walk: visiting "aws_vpc.incentknow_vpc"
+2020/12/10 20:17:08 [TRACE] vertex "aws_vpc.incentknow_vpc": starting visit (*terraform.NodeAbstractResource)
+2020/12/10 20:17:08 [TRACE] GRPCProvider: Close
+2020/12/10 20:17:08 [TRACE] dag/walk: visiting "data.aws_iam_policy_document.ExabrokerScrapingLambdaRoleAssumeRolePolicy"
+2020/12/10 20:17:08 [TRACE] vertex "data.aws_iam_policy_document.ExabrokerScrapingLambdaRoleAssumeRolePolicy": starting visit (*terraform.NodeAbstractResource)
+2020/12/10 20:17:08 [TRACE] vertex "data.aws_iam_policy_document.ExabrokerScrapingLambdaRoleAssumeRolePolicy": visit complete
+2020/12/10 20:17:08 [TRACE] dag/walk: visiting "aws_iam_role.exabroker_scraping"
+2020/12/10 20:17:08 [TRACE] vertex "aws_iam_role.exabroker_scraping": starting visit (*terraform.NodeAbstractResource)
+2020/12/10 20:17:08 [TRACE] vertex "aws_iam_role.exabroker_scraping": visit complete
+2020/12/10 20:17:08 [TRACE] dag/walk: visiting "aws_ecs_cluster.default"
+2020/12/10 20:17:08 [TRACE] vertex "aws_ecs_cluster.default": starting visit (*terraform.NodeAbstractResource)
+2020/12/10 20:17:08 [TRACE] vertex "aws_ecs_cluster.default": visit complete
+2020/12/10 20:17:08 [TRACE] dag/walk: visiting "aws_s3_bucket.exabroker_crawled"
+2020/12/10 20:17:08 [TRACE] vertex "aws_s3_bucket.exabroker_crawled": starting visit (*terraform.NodeAbstractResource)
+2020/12/10 20:17:08 [TRACE] vertex "aws_s3_bucket.exabroker_crawled": visit complete
+2020/12/10 20:17:08 [TRACE] dag/walk: visiting "aws_lambda_function.exabroker_scraping"
+2020/12/10 20:17:08 [TRACE] vertex "aws_lambda_function.exabroker_scraping": starting visit (*terraform.NodeAbstractResource)
+2020/12/10 20:17:08 [TRACE] vertex "aws_lambda_function.exabroker_scraping": visit complete
+2020/12/10 20:17:08 [TRACE] dag/walk: visiting "aws_s3_bucket_notification.exabroker_scraping_event"
+2020/12/10 20:17:08 [TRACE] vertex "aws_s3_bucket_notification.exabroker_scraping_event": starting visit (*terraform.NodeAbstractResource)
+2020/12/10 20:17:08 [TRACE] vertex "aws_s3_bucket_notification.exabroker_scraping_event": visit complete
+2020/12/10 20:17:08 [TRACE] dag/walk: visiting "aws_lambda_permission.exabroker_scraping_event"
+2020/12/10 20:17:08 [TRACE] vertex "aws_lambda_permission.exabroker_scraping_event": starting visit (*terraform.NodeAbstractResource)
+2020/12/10 20:17:08 [TRACE] vertex "aws_lambda_permission.exabroker_scraping_event": visit complete
+2020/12/10 20:17:08 [TRACE] dag/walk: visiting "data.aws_iam_policy_document.ECSTaskExecutionRoleAssumeRolePolicy"
+2020/12/10 20:17:08 [TRACE] vertex "data.aws_iam_policy_document.ECSTaskExecutionRoleAssumeRolePolicy": starting visit (*terraform.NodeAbstractResource)
+2020/12/10 20:17:08 [TRACE] vertex "data.aws_iam_policy_document.ECSTaskExecutionRoleAssumeRolePolicy": visit complete
+2020/12/10 20:17:08 [TRACE] dag/walk: visiting "aws_security_group.incentknow_vpc"
+2020/12/10 20:17:08 [TRACE] dag/walk: visiting "aws_iam_role.ECSTaskExecutionRole"
+2020/12/10 20:17:08 [TRACE] vertex "aws_security_group.incentknow_vpc": starting visit (*terraform.NodeAbstractResource)
+2020/12/10 20:17:08 [TRACE] vertex "aws_iam_role.ECSTaskExecutionRole": starting visit (*terraform.NodeAbstractResource)
+2020/12/10 20:17:08 [TRACE] vertex "aws_security_group.incentknow_vpc": visit complete
+2020/12/10 20:17:08 [TRACE] vertex "aws_iam_role.ECSTaskExecutionRole": visit complete
+2020/12/10 20:17:08 [TRACE] dag/walk: visiting "aws_ecs_task_definition.default"
+2020/12/10 20:17:08 [TRACE] vertex "aws_ecs_task_definition.default": starting visit (*terraform.NodeAbstractResource)
+2020/12/10 20:17:08 [TRACE] vertex "aws_ecs_task_definition.default": visit complete
+2020/12/10 20:17:08 [TRACE] dag/walk: visiting "aws_lambda_function.exabroker_scraping (import id \"arn:aws:lambda:ap-northeast-1:203303191911:function:exabroker-scraping\")"
+2020/12/10 20:17:08 [TRACE] dag/walk: visiting "aws_iam_role_policy_attachment.ECSTaskExecutionRole"
+2020/12/10 20:17:08 [TRACE] vertex "aws_iam_role_policy_attachment.ECSTaskExecutionRole": starting visit (*terraform.NodeAbstractResource)
+2020/12/10 20:17:08 [TRACE] vertex "aws_iam_role_policy_attachment.ECSTaskExecutionRole": visit complete
+2020/12/10 20:17:08 [TRACE] vertex "aws_lambda_function.exabroker_scraping (import id \"arn:aws:lambda:ap-northeast-1:203303191911:function:exabroker-scraping\")": starting visit (*terraform.graphNodeImportState)
+2020/12/10 20:17:08 [TRACE] vertex "aws_vpc.incentknow_vpc": visit complete
+2020/12/10 20:17:08 [TRACE] dag/walk: visiting "aws_subnet.subnet_1d"
+2020/12/10 20:17:08 [TRACE] vertex "aws_subnet.subnet_1d": starting visit (*terraform.NodeAbstractResource)
+2020/12/10 20:17:08 [TRACE] vertex "aws_subnet.subnet_1d": visit complete
+2020/12/10 20:17:08 [TRACE] dag/walk: visiting "aws_subnet.subnet_1a"
+2020/12/10 20:17:08 [TRACE] vertex "aws_subnet.subnet_1a": starting visit (*terraform.NodeAbstractResource)
+2020/12/10 20:17:08 [TRACE] vertex "aws_subnet.subnet_1a": visit complete
+2020/12/10 20:17:08 [TRACE] dag/walk: visiting "aws_subnet.subnet_1c"
+2020/12/10 20:17:08 [TRACE] vertex "aws_subnet.subnet_1c": starting visit (*terraform.NodeAbstractResource)
+2020/12/10 20:17:08 [TRACE] vertex "aws_subnet.subnet_1c": visit complete
+2020/12/10 20:17:08 [TRACE] dag/walk: visiting "aws_db_subnet_group.default"
+2020/12/10 20:17:08 [TRACE] vertex "aws_db_subnet_group.default": starting visit (*terraform.NodeAbstractResource)
+2020/12/10 20:17:08 [TRACE] vertex "aws_db_subnet_group.default": visit complete
+2020/12/10 20:17:08 [TRACE] dag/walk: visiting "aws_rds_cluster.default"
+2020/12/10 20:17:08 [TRACE] vertex "aws_rds_cluster.default": starting visit (*terraform.NodeAbstractResource)
+2020/12/10 20:17:08 [TRACE] vertex "aws_rds_cluster.default": visit complete
+2020/12/10 20:17:08 [TRACE] dag/walk: visiting "aws_ecs_service.default"
+2020/12/10 20:17:08 [TRACE] vertex "aws_ecs_service.default": starting visit (*terraform.NodeAbstractResource)
+2020/12/10 20:17:08 [TRACE] vertex "aws_ecs_service.default": visit complete
+2020-12-10T20:17:08.897+0900 [DEBUG] plugin: plugin process exited: path=.terraform/providers/registry.terraform.io/hashicorp/template/2.2.0/darwin_amd64/terraform-provider-template_v2.2.0_x4 pid=62055
+2020-12-10T20:17:08.897+0900 [DEBUG] plugin: plugin exited
+2020/12/10 20:17:08 [TRACE] vertex "provider[\"registry.terraform.io/hashicorp/template\"] (close)": visit complete
+2020/12/10 20:17:08 [TRACE] GRPCProvider: ImportResourceState
+2020/12/10 20:17:08 [TRACE] graphNodeImportState: import aws_lambda_function.exabroker_scraping "arn:aws:lambda:ap-northeast-1:203303191911:function:exabroker-scraping" produced instance object of type aws_lambda_function
+2020/12/10 20:17:08 [TRACE] vertex "aws_lambda_function.exabroker_scraping (import id \"arn:aws:lambda:ap-northeast-1:203303191911:function:exabroker-scraping\")": expanding dynamic subgraph
+2020/12/10 20:17:08 [TRACE] vertex "aws_lambda_function.exabroker_scraping (import id \"arn:aws:lambda:ap-northeast-1:203303191911:function:exabroker-scraping\")": entering dynamic subgraph
+2020/12/10 20:17:08 [TRACE] dag/walk: visiting "import aws_lambda_function.exabroker_scraping result"
+2020/12/10 20:17:08 [TRACE] vertex "import aws_lambda_function.exabroker_scraping result": starting visit (*terraform.graphNodeImportStateSub)
+2020/12/10 20:17:08 [TRACE] GRPCProvider: ReadResource
+2020-12-10T20:17:08.903+0900 [DEBUG] plugin.terraform-provider-aws_v3.20.0_x5: 2020/12/10 20:17:08 [DEBUG] Fetching Lambda Function: arn:aws:lambda:ap-northeast-1:203303191911:function:exabroker-scraping
+2020-12-10T20:17:09.160+0900 [DEBUG] plugin.terraform-provider-aws_v3.20.0_x5: 2020/12/10 20:17:09 [INFO] Setting Lambda arn:aws:lambda:ap-northeast-1:203303191911:function:exabroker-scraping file system configs []map[string]interface {}{} from API
+2020-12-10T20:17:09.160+0900 [DEBUG] plugin.terraform-provider-aws_v3.20.0_x5: 2020/12/10 20:17:09 [INFO] Setting Lambda arn:aws:lambda:ap-northeast-1:203303191911:function:exabroker-scraping package type (*string)(0xc0013ea9c0) from API
+2020-12-10T20:17:09.163+0900 [DEBUG] plugin.terraform-provider-aws_v3.20.0_x5: panic: runtime error: invalid memory address or nil pointer dereference
+2020-12-10T20:17:09.163+0900 [DEBUG] plugin.terraform-provider-aws_v3.20.0_x5: [signal SIGSEGV: segmentation violation code=0x1 addr=0x0 pc=0x50a9727]
+2020-12-10T20:17:09.163+0900 [DEBUG] plugin.terraform-provider-aws_v3.20.0_x5: 
+2020-12-10T20:17:09.163+0900 [DEBUG] plugin.terraform-provider-aws_v3.20.0_x5: goroutine 42 [running]:
+2020-12-10T20:17:09.163+0900 [DEBUG] plugin.terraform-provider-aws_v3.20.0_x5: github.com/terraform-providers/terraform-provider-aws/aws.flattenLambdaImageConfig(...)
+2020-12-10T20:17:09.163+0900 [DEBUG] plugin.terraform-provider-aws_v3.20.0_x5: 	/opt/teamcity-agent/work/5d79fe75d4460a2f/src/github.com/hashicorp/terraform-provider-aws/aws/resource_aws_lambda_function.go:1309
+2020-12-10T20:17:09.163+0900 [DEBUG] plugin.terraform-provider-aws_v3.20.0_x5: github.com/terraform-providers/terraform-provider-aws/aws.resourceAwsLambdaFunctionRead(0xc000391e80, 0x62ac120, 0xc001201600, 0xb3e3920, 0x7085370)
+2020-12-10T20:17:09.163+0900 [DEBUG] plugin.terraform-provider-aws_v3.20.0_x5: 	/opt/teamcity-agent/work/5d79fe75d4460a2f/src/github.com/hashicorp/terraform-provider-aws/aws/resource_aws_lambda_function.go:724 +0x2e77
+2020-12-10T20:17:09.163+0900 [DEBUG] plugin.terraform-provider-aws_v3.20.0_x5: github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema.(*Resource).read(0xc0007429a0, 0x7b42640, 0xc0018be040, 0xc000391e80, 0x62ac120, 0xc001201600, 0x0, 0x0, 0x0)
+2020-12-10T20:17:09.163+0900 [DEBUG] plugin.terraform-provider-aws_v3.20.0_x5: 	/opt/teamcity-agent/work/5d79fe75d4460a2f/pkg/mod/github.com/hashicorp/terraform-plugin-sdk/v2@v2.3.0/helper/schema/resource.go:280 +0x88
+2020-12-10T20:17:09.163+0900 [DEBUG] plugin.terraform-provider-aws_v3.20.0_x5: github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema.(*Resource).RefreshWithoutUpgrade(0xc0007429a0, 0x7b42640, 0xc0018be040, 0xc000557650, 0x62ac120, 0xc001201600, 0xc00000ec30, 0x0, 0x0, 0x0)
+2020-12-10T20:17:09.163+0900 [DEBUG] plugin.terraform-provider-aws_v3.20.0_x5: 	/opt/teamcity-agent/work/5d79fe75d4460a2f/pkg/mod/github.com/hashicorp/terraform-plugin-sdk/v2@v2.3.0/helper/schema/resource.go:554 +0x1c2
+2020-12-10T20:17:09.163+0900 [DEBUG] plugin.terraform-provider-aws_v3.20.0_x5: github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema.(*GRPCProviderServer).ReadResource(0xc000c7cb80, 0x7b42640, 0xc0018be040, 0xc0018be0c0, 0xc0018be040, 0x6acd7c0, 0x6d5da40)
+2020-12-10T20:17:09.163+0900 [DEBUG] plugin.terraform-provider-aws_v3.20.0_x5: 	/opt/teamcity-agent/work/5d79fe75d4460a2f/pkg/mod/github.com/hashicorp/terraform-plugin-sdk/v2@v2.3.0/helper/schema/grpc_provider.go:571 +0x42f
+2020-12-10T20:17:09.163+0900 [DEBUG] plugin.terraform-provider-aws_v3.20.0_x5: github.com/hashicorp/terraform-plugin-go/tfprotov5/server.(*server).ReadResource(0xc001883ca0, 0x7b42640, 0xc0018be040, 0xc000e07560, 0xc001883ca0, 0xc0013aaba0, 0xc0003e6ba0)
+2020-12-10T20:17:09.163+0900 [DEBUG] plugin.terraform-provider-aws_v3.20.0_x5: 	/opt/teamcity-agent/work/5d79fe75d4460a2f/pkg/mod/github.com/hashicorp/terraform-plugin-go@v0.1.0/tfprotov5/server/server.go:297 +0x101
+2020-12-10T20:17:09.163+0900 [DEBUG] plugin.terraform-provider-aws_v3.20.0_x5: github.com/hashicorp/terraform-plugin-go/tfprotov5/internal/tfplugin5._Provider_ReadResource_Handler(0x6d5da40, 0xc001883ca0, 0x7b42700, 0xc0013aaba0, 0xc000e07500, 0x0, 0x7b42700, 0xc0013aaba0, 0xc00005cc00, 0x2f9)
+2020-12-10T20:17:09.163+0900 [DEBUG] plugin.terraform-provider-aws_v3.20.0_x5: 	/opt/teamcity-agent/work/5d79fe75d4460a2f/pkg/mod/github.com/hashicorp/terraform-plugin-go@v0.1.0/tfprotov5/internal/tfplugin5/tfplugin5_grpc.pb.go:344 +0x217
+2020-12-10T20:17:09.163+0900 [DEBUG] plugin.terraform-provider-aws_v3.20.0_x5: google.golang.org/grpc.(*Server).processUnaryRPC(0xc0000fd340, 0x7b677a0, 0xc0007a6480, 0xc00116a200, 0xc000ea84e0, 0xb3a8070, 0x0, 0x0, 0x0)
+2020-12-10T20:17:09.163+0900 [DEBUG] plugin.terraform-provider-aws_v3.20.0_x5: 	/opt/teamcity-agent/work/5d79fe75d4460a2f/pkg/mod/google.golang.org/grpc@v1.32.0/server.go:1194 +0x50a
+2020-12-10T20:17:09.163+0900 [DEBUG] plugin.terraform-provider-aws_v3.20.0_x5: google.golang.org/grpc.(*Server).handleStream(0xc0000fd340, 0x7b677a0, 0xc0007a6480, 0xc00116a200, 0x0)
+2020-12-10T20:17:09.163+0900 [DEBUG] plugin.terraform-provider-aws_v3.20.0_x5: 	/opt/teamcity-agent/work/5d79fe75d4460a2f/pkg/mod/google.golang.org/grpc@v1.32.0/server.go:1517 +0xcfd
+2020-12-10T20:17:09.163+0900 [DEBUG] plugin.terraform-provider-aws_v3.20.0_x5: google.golang.org/grpc.(*Server).serveStreams.func1.2(0xc000e2cf60, 0xc0000fd340, 0x7b677a0, 0xc0007a6480, 0xc00116a200)
+2020-12-10T20:17:09.163+0900 [DEBUG] plugin.terraform-provider-aws_v3.20.0_x5: 	/opt/teamcity-agent/work/5d79fe75d4460a2f/pkg/mod/google.golang.org/grpc@v1.32.0/server.go:859 +0xa1
+2020-12-10T20:17:09.163+0900 [DEBUG] plugin.terraform-provider-aws_v3.20.0_x5: created by google.golang.org/grpc.(*Server).serveStreams.func1
+2020-12-10T20:17:09.163+0900 [DEBUG] plugin.terraform-provider-aws_v3.20.0_x5: 	/opt/teamcity-agent/work/5d79fe75d4460a2f/pkg/mod/google.golang.org/grpc@v1.32.0/server.go:857 +0x204
+2020/12/10 20:17:09 [TRACE] vertex "import aws_lambda_function.exabroker_scraping result": visit complete
+2020-12-10T20:17:09.171+0900 [WARN]  plugin.stdio: received EOF, stopping recv loop: err="rpc error: code = Unavailable desc = transport is closing"
+2020/12/10 20:17:09 [TRACE] vertex "aws_lambda_function.exabroker_scraping (import id \"arn:aws:lambda:ap-northeast-1:203303191911:function:exabroker-scraping\")": dynamic subgraph encountered errors
+2020/12/10 20:17:09 [TRACE] vertex "aws_lambda_function.exabroker_scraping (import id \"arn:aws:lambda:ap-northeast-1:203303191911:function:exabroker-scraping\")": visit complete
+2020/12/10 20:17:09 [TRACE] dag/walk: upstream of "provider[\"registry.terraform.io/hashicorp/aws\"] (close)" errored, so skipping
+2020/12/10 20:17:09 [TRACE] dag/walk: upstream of "root" errored, so skipping
+2020/12/10 20:17:09 [TRACE] statemgr.Filesystem: removing lock metadata file terraform.tfstate.d/pro/.terraform.tfstate.lock.info
+2020-12-10T20:17:09.171+0900 [DEBUG] plugin: plugin process exited: path=.terraform/providers/registry.terraform.io/hashicorp/aws/3.20.0/darwin_amd64/terraform-provider-aws_v3.20.0_x5 pid=62056 error="exit status 2"
+2020/12/10 20:17:09 [TRACE] statemgr.Filesystem: unlocking terraform.tfstate.d/pro/terraform.tfstate using fcntl flock
+2020-12-10T20:17:09.172+0900 [DEBUG] plugin: plugin exited

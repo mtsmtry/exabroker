@@ -1,0 +1,3 @@
+tsc
+export ENV_SETTINGS=local
+node dist/main.js
