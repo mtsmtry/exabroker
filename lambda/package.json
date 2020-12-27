@@ -2,14 +2,11 @@
   "name": "exabroker-lambda",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "dist/Index.js",
   "dependencies": {
     "@types/aws-lambda": "^8.10.66"
   },
-  "devDependencies": {},
-  "scripts": {
-    "build": "tsc"
-  },
+  "scripts": {},
   "author": "",
   "license": "ISC"
 }

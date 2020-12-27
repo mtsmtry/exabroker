@@ -1,7 +1,19 @@
+npm run pack --prefix ../lib
+cp -f ../lib/typeorm-0.2.29.tgz .
+cp -f ../lib/exabroker-lib-1.0.0.tgz .
+tsc
+
 export tag=0.1
 export localRep=exabroker:$tag
-export remoteRep=203303191911.dkr.ecr.ap-northeast-1.amazonaws.com/exabroker-app-repository:$tag
+export remoteReg=203303191911.dkr.ecr.ap-northeast-1.amazonaws.com
+export remoteRep=$remoteReg/exabroker-app:$tag
 docker build --tag $localRep .
 docker tag $localRep $remoteRep
+
+aws ecr get-login-password | docker login --username AWS --password-stdin $remoteRep
+
 docker push $remoteRep
 aws ecs update-service --cluster exabroker-cluster --service exabroker-service | head
+
+export taskId=`aws ecs list-tasks --desired-status RUNNING --cluster exabroker-cluster | grep arn | sed 's/[ "]//g'`
+aws ecs stop-task --cluster exabroker-cluster --task $taskId --reason "Restarting task due to new ECR image deployment" | head

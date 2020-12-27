@@ -1,3 +1,5 @@
+import * as crypto from 'crypto';
+
 export function notNull<T>(item: T | null | undefined): item is T {
     return item != null;
 }
@@ -44,4 +46,18 @@ export function mapByString<T>(array: T[], getKey: (obj: T) => string | null): {
 
 export type Dto<T> = { 
     [K in keyof T]: T[K];
+}
+
+export function sleep(msec: number) {
+    return new Promise(resolve => setTimeout(resolve, msec));
+}
+
+export function randomString(N: number) {
+    const S = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+    return Array.from(crypto.randomFillSync(new Uint8Array(N))).map((n) => S[n % S.length]).join('');
+}
+
+export function toTimestamp(date: Date) {
+    const milliseconds = date.getTime();
+    return Math.floor(milliseconds / 1000);
 }

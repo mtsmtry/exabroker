@@ -1,7 +1,7 @@
-import { Document } from "../html/Html";
+import { Document } from "../web/WebClient";
 import { AmazonRepository } from "../repositories/AmazonRepository";
 import { scrapeAmazonItemDetail } from "./AmazonItemDetailScraper";
-import { scrapeAmazonBrowseNode } from "./AmazonBrowseNodeScraper";
+import { scrapeBrowseNode } from "./BrowseNodeScraper";
 import * as aws from "aws-sdk";
 
 export class AmazonScraper {
@@ -10,9 +10,8 @@ export class AmazonScraper {
 
     async scrapeS3Object(bucketName: string, objectKey: string) {
         const object = await this.s3.getObject({ Bucket: bucketName, Key: objectKey }).promise();
-        if (typeof object.Body == "string") {
-            await this.scrape(object.Body, objectKey);
-        }
+        const body = object.Body as Buffer;
+        return await this.scrape(body.toString(), objectKey);
     }
 
     private async scrape(html: string, key: string) {
@@ -23,15 +22,15 @@ export class AmazonScraper {
             case "browseNodes":
                 const [nodeId, pageText] = name.split("-");
                 const page = parseInt(pageText);
-                const items = await scrapeAmazonBrowseNode(doc, nodeId, page);
+                const items = await scrapeBrowseNode(doc, nodeId, page);
                 await this.repository.upsertAmazonItems(items);
-                break;
+                return items;
             case "items":
                 const detail = await scrapeAmazonItemDetail(doc, name);
                 if (detail) {
                     await this.repository.upsertAmazonItemDetail(detail);
                 }
-                break;
+                return detail;
         }
     }
 }

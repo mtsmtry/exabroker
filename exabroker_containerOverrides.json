@@ -1,0 +1,8 @@
+{
+  "containerOverrides": [
+    {
+      "name": "${CONTAINER_NAME}",
+      "command": ["npm", "start"]
+    }
+  ]
+}

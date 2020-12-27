@@ -2,22 +2,46 @@
   "name": "exabroker-lib",
   "version": "1.0.0",
   "description": "Exaborkcer common functions between lambda and fargate.",
-  "scripts": {
-    "build": "tsc"
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mtsmtry/exabroker.git",
+    "directory": "lib"
   },
-  "main": "./dist/Index.js",
-  "types": "./dist/Index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "pack": "tsc && npm pack",
+    "test": "tsc && node dist/test/Index.js",
+    "tyahoo": "tsc && node dist/test/YahooTest.js",
+    "migrate": "tsc && node dist/test/Migration.js"
+  },
+  "files": [
+    "dist",
+    "ormconfig.json"
+  ],
+  "main": "./dist/src/Index.js",
+  "types": "./dist/src/Index.d.ts",
   "author": "",
   "license": "ISC",
   "dependencies": {
     "@types/aws-lambda": "^8.10.66",
+    "@types/ip": "^1.1.0",
     "@types/libxmljs": "^0.18.6",
     "@types/node-fetch": "^2.5.7",
+    "@types/selenium-webdriver": "^4.0.10",
+    "@types/superagent": "^4.1.10",
+    "@types/text-encoding": "0.0.35",
+    "@types/xml-js": "^1.0.0",
     "aws-sdk": "^2.808.0",
+    "ip": "^1.1.5",
     "libxmljs": "^0.19.7",
     "node-fetch": "^2.6.1",
+    "proxy-agent": "^4.0.0",
     "reflect-metadata": "^0.1.13",
-    "typeorm": "file:../typeorm",
-    "typeorm-aurora-data-api-driver": "^1.4.0"
+    "selenium-webdriver": "^4.0.0-alpha.8",
+    "superagent": "^6.1.0",
+    "text-encoding": "^0.7.0",
+    "typeorm": "file:typeorm-0.2.29.tgz",
+    "typeorm-aurora-data-api-driver": "^1.4.0",
+    "xml-js": "^1.6.11"
   }
 }

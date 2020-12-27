@@ -1,6 +1,12 @@
 import { BaseEntity, Column, Entity, PrimaryColumn } from "typeorm";
 import { UpdatedAt } from "./Utils";
 
+export enum CrawlingStatus {
+    PENDING = "pending",
+    RUNNING = "running",
+    COMPLETED = "completed" 
+}
+
 @Entity()
 export class BrowseNode {
     @PrimaryColumn("char", { length: 10 })
@@ -15,8 +21,14 @@ export class BrowseNode {
     @Column()
     latestPage: number;
 
-    @Column()
-    completed: boolean;
+    @Column({
+        type: "enum",
+        enum: CrawlingStatus
+    })
+    status: CrawlingStatus;
+
+    @Column("int", { nullable: true })
+    process: number | null;
 
     @UpdatedAt()
     updatedAt: Date;

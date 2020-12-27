@@ -8,3 +8,4 @@ typeorm/
 typeorm-src/
 .DS_Store
 .terraform/
+*.tgz

@@ -1,7 +1,7 @@
-npm run build
-
-mkdir -p tmp/typeorm/
-cp -r ../typeorm/build/package/ tmp/typeorm/
+npm run pack --prefix ../lib
+cp -f ../lib/typeorm-0.2.29.tgz .
+cp -f ../lib/exabroker-lib-1.0.0.tgz .
+tsc
 
 export tag=0.1
 export localRep=exabroker-scraping:$tag
@@ -9,7 +9,6 @@ export remoteRep=203303191911.dkr.ecr.ap-northeast-1.amazonaws.com/exabroker-scr
 export lambdaName=exabroker-scraping
 
 docker build --tag $localRep .
-rm -r tmp
 
 docker tag $localRep $remoteRep
 docker push $remoteRep

@@ -1,6 +1,6 @@
 {
    "type": "aurora-data-api",
-   "database": "crawler",
+   "database": "exabroker",
 
    "region": "ap-northeast-1",
    "resourceArn": "arn:aws:rds:ap-northeast-1:203303191911:cluster:incentknow-aurora",
@@ -8,15 +8,15 @@
 
    "logging": [],
 
-   "synchronize": true, 
+   "synchronize": false, 
    "entities": [
-      "dist/database/entities/**/*.js"
+      "dist/src/entities/**/*.js"
    ],
    "migrations": [
-      "dist/migration/**/*.js"
+      "dist/src/migration/**/*.js"
    ],
    "subscribers": [
-      "dist/subscriber/**/*.js"
+      "dist/src/subscriber/**/*.js"
    ],
    "cli": {
       "entitiesDir": "src/entity",

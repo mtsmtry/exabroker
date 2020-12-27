@@ -12,6 +12,22 @@ resource "aws_vpc" "incentknow_vpc" {
   }
 }
 
+resource "aws_route_table" "default" {
+  vpc_id = aws_vpc.incentknow_vpc.id
+
+  route {
+    cidr_block = "0.0.0.0/0"
+    gateway_id = aws_internet_gateway.default.id
+  }
+}
+
+resource "aws_internet_gateway" "default" {
+  vpc_id = aws_vpc.incentknow_vpc.id
+  tags = {
+    "Name" = "incentknow-internet-gateway"
+  }
+}
+
 resource "aws_subnet" "subnet_1c" {
   assign_ipv6_address_on_creation = "false"
   cidr_block                      = "172.31.0.0/20"

@@ -5,8 +5,7 @@ type Dict = { [x: string]: string };
 
 @Entity()
 export class AmazonItemDetail {
-
-    @PrimaryColumn("char", { length: 13 })
+    @PrimaryColumn("char", { length: 10 })
     asin: string;
 
     @Column("int", { nullable: true })

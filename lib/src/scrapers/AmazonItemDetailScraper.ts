@@ -1,6 +1,6 @@
 import { DeepPartial } from "typeorm";
 import { AmazonItem } from "../entities/AmazonItem";
-import { Document, Element } from "../html/Html";
+import { Document, Element } from "../web/WebClient";
 import { Dto, notNull } from "../Utils";
 import { AmazonItemDetail } from "../entities/AmazonItemDetail";
 import { parseFloatOrNull } from "./Utils";
