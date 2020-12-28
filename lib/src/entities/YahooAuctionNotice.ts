@@ -4,6 +4,7 @@ import { CreatedAt } from "./Utils";
 
 @Entity()
 export class YahooAuctionNotice {
+    
     @PrimaryColumn()
     code: string;
 

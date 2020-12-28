@@ -23,7 +23,7 @@ export class WebClient {
         return Object.keys(this.cookies).map(x => `${x}=${this.cookies[x]}`).join(";");
     }
     
-    async get(url: string, params: object = {}, type: "text" | "binary" = "binary") {
+    async get(url: string, params: object = {}, type: "text" | "binary" = "text") {
         console.log(`    webclient:get ${url}`);
         const req = request.get(url).set("Cookie", this.getCookies()).query(params);
         if (type == "binary") {
@@ -33,7 +33,7 @@ export class WebClient {
         return new Document(res);
     }
 
-    async post(url: string, formData?: object, type: "text" | "binary" = "binary") {
+    async post(url: string, formData?: object, type: "text" | "binary" = "text") {
         console.log(`    webclient:post ${url}`);
         let error: string | null = null;
         let req = request.post(url).set("Cookie", this.getCookies()).ok(_ => true)

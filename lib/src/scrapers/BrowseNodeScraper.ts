@@ -26,7 +26,8 @@ export async function scrapeBrowseNode(doc: Document, nodeId: string, page: numb
             stockCount: null,
             rating: null,
             fromNodeId: nodeId,
-            fromNodePage: page
+            fromNodePage: page,
+            isCrawledDetail: false
         };
         result.rating = parseFloatOrNull(item.text.match(/5つ星のうち\s*([0-9/.]+)/)?.[1]);
         result.reviewCount = parseIntOrNull(item.get(".//a[contains(@href, 'customerReviews')]")?.text);

@@ -4,24 +4,29 @@ import { scrapeBrowseNode, scrapeBrowseNodeItemCount } from "../scrapers/BrowseN
 import * as aws from "aws-sdk";
 import * as ProxyAgent from "proxy-agent";
 import fetch from "node-fetch";
+import { Response } from "node-fetch";
+
 import { Proxy, ProxyBonanzaClient } from "../api/ProxyBonanza";
 
 export class Crawler {
     constructor(protected logs: LogRepository, private s3: aws.S3) {
     }
 
-    protected async storeWebContent(kind: CrawlingLogKind, url: string, key: string, proxy: Proxy): Promise<[string | null, number]> {
+    protected async storeWebContent(kind: CrawlingLogKind, url: string, key: string, proxy?: Proxy): Promise<[string | null, number]> {
         let downloadLatency: number | null = null;
         let uploadLatency: number | null = null;
         let error: string | null = null;
         let body: string | null = null;
         try {
-            const agent = new ProxyAgent(`http://${proxy.login}:${proxy.password}@${proxy.ip}:${proxy.portHttp}`);
-
+            let response: Response;
             const fetchStart = Date.now();
-            const headers = { "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.88 Safari/537.36",
-                "Cookie": "session-id=358-4357935-0744144; skin=noskin; ubid-acbjp=357-9222803-8284310; session-token=wLI5PuHAO+4cqHkuxCUVK8LYbXqVItwMuIz9nKz17PR45hRm2P10b4d7Fv9NauAGYn3oCItOpwDRuhzKJkA+GwTN4+cf74NvMdjB+ijPWsj5N6KYCwKZjzC0AGPTQlkFwpUAOGJ6OUAbwxd7Sx+ZXjGXXUVtSW1OD/QwOI9tqCA2/Irc9R+0xHEZ3ykiv5dx+Go3rp2ogd7OeSF8TSdt8XUHP5W9rqEYAt46zHIaUnVo2r5Sm6PyUmxQZeCnT1Tz; csm-hit=tb:s-SA39RD0DGRZMKT95M08Y|1609069268747&t:1609069268964&adb:adblk_no; session-id-time=2082787201l; i18n-prefs=JPY" };
-            const response = await fetch(url, { agent, timeout: 10 * 1000, headers });
+            if (proxy) {
+                const agent = new ProxyAgent(`http://${proxy.login}:${proxy.password}@${proxy.ip}:${proxy.portHttp}`);
+                response = await fetch(url, { agent });
+
+            } else {
+                response = await fetch("http://api.scraperapi.com?api_key=68d6de532946616aae283bc9fd0ea7a2&url=" + url);
+            }
             downloadLatency = Date.now() - fetchStart;
 
             body = await response.text();

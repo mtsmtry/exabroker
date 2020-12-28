@@ -114,10 +114,18 @@ export class AmazonRepository {
     async getCrawlingASINs(count: number): Promise<string[]> {
         const items = await this.amazonItems.createQueryBuilder("item")
             .leftJoin(AmazonItemDetail, "details", "item.asin = details.asin")
-            .where("details IS NULL")
+            .where("details.title IS NULL AND item.isCrawledDetail = 0")
             .orderBy("item.reviewCount", "DESC")
             .limit(count)
             .getMany();
         return items.map(x => x.asin);
+    }
+
+    async deleteItem(asin: string) {
+        await this.amazonItems.delete(asin);
+    }
+
+    async crawledItemDetail(asin: string) {
+        await this.amazonItems.update(asin, { isCrawledDetail: true })
     }
 }

@@ -21,10 +21,7 @@ export class BrowseNode {
     @Column()
     latestPage: number;
 
-    @Column({
-        type: "enum",
-        enum: CrawlingStatus
-    })
+    @Column("enum", { enum: CrawlingStatus })
     status: CrawlingStatus;
 
     @Column("int", { nullable: true })

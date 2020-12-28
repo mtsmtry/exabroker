@@ -48,6 +48,8 @@ resource "aws_iam_role" "exabroker_scraping" {
   assume_role_policy = data.aws_iam_policy_document.ExabrokerScrapingLambdaRoleAssumeRolePolicy.json
 }
 
+// Repository
+
 resource "aws_ecr_repository" "exabroker_scraping" {
   name                 = "exabroker-scraping"
   image_tag_mutability = "MUTABLE"

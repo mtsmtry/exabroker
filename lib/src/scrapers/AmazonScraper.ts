@@ -28,6 +28,7 @@ export class AmazonScraper {
             case "items":
                 const detail = await scrapeAmazonItemDetail(doc, name);
                 if (detail) {
+                    console.log(detail);
                     await this.repository.upsertAmazonItemDetail(detail);
                 }
                 return detail;

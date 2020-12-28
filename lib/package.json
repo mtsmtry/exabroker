@@ -30,7 +30,6 @@
     "@types/selenium-webdriver": "^4.0.10",
     "@types/superagent": "^4.1.10",
     "@types/text-encoding": "0.0.35",
-    "@types/xml-js": "^1.0.0",
     "aws-sdk": "^2.808.0",
     "ip": "^1.1.5",
     "libxmljs": "^0.19.7",
@@ -41,7 +40,6 @@
     "superagent": "^6.1.0",
     "text-encoding": "^0.7.0",
     "typeorm": "file:typeorm-0.2.29.tgz",
-    "typeorm-aurora-data-api-driver": "^1.4.0",
-    "xml-js": "^1.6.11"
+    "typeorm-aurora-data-api-driver": "^1.4.0"
   }
 }

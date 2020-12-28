@@ -1,6 +1,7 @@
-import { Column, Entity, PrimaryColumn } from "typeorm";
+import { Column, Entity, JoinColumn, ManyToOne, OneToOne, PrimaryColumn } from "typeorm";
 import { YahooAuctionAccountStatus } from "../api/drivers/YahooAuctionDriver";
 import { CreatedAt } from "./Utils";
+import { YahooAccountSetting } from "./YahooAccountSetting";
 
 @Entity()
 export class YahooAccount {
@@ -35,4 +36,16 @@ export class YahooAccount {
 
     @Column("datetime", { nullable: true })
     statusUpdatedAt: Date | null;
+
+    @ManyToOne(type => YahooAccountSetting, { onDelete: "RESTRICT" })
+    @JoinColumn({ name: "lastSettingId" })
+    lastSetting: YahooAccountSetting | null;
+    @Column("int", { nullable: true })
+    lastSettingId: number | null;
+
+    @ManyToOne(type => YahooAccountSetting, { onDelete: "RESTRICT" })
+    @JoinColumn({ name: "desiredSettingId" })
+    desiredSetting: YahooAccountSetting | null;
+    @Column("int", { nullable: true })
+    desiredSettingId: number | null;
 }

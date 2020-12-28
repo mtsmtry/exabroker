@@ -48,9 +48,14 @@ export class AmazonCrawler extends Crawler {
         return null;
     }
 
-    private async crawlAmazonItemDetail(asin: string, proxy: Proxy) {
+    private async crawlAmazonItemDetail(asin: string, proxy?: Proxy) {
         const url = `https://www.amazon.co.jp/dp/${asin}`;
-        const [_, logId] = await this.storeWebContent(CrawlingLogKind.AMAZON_ITEM, url, `items/${asin}`, proxy);
+        const [body, _] = await this.storeWebContent(CrawlingLogKind.AMAZON_ITEM, url, `items/${asin}`, proxy);
+        if (body?.startsWith('"type":"Buffer","data":[60,104,116,109,108')) {
+            await this.repository.deleteItem(asin);
+        } else if(body && body.length > 10000) {
+            await this.repository.crawledItemDetail(asin);
+        }
     }
 
     async initCrawling() {
@@ -88,16 +93,10 @@ export class AmazonCrawler extends Crawler {
         }
     }
 
-    async crawlItemDetails2() {
-        const proxy: Proxy = {
-            ip: "gate.smartproxy.com",
-            login: "sp599caca7",
-            password: "rr0712",
-            portHttp: 7000,
-            detail: null
-        };
+    async crawlItemDetails() {
+        const N = 10;
         while(true) {
-            const asins = await this.repository.getCrawlingASINs(10);
+            const asins = await this.repository.getCrawlingASINs(N);
             if (asins.length == 0) {
                 console.log("All completed!");
                 return;
@@ -105,59 +104,12 @@ export class AmazonCrawler extends Crawler {
             console.log("getCrawlingASINs:" + asins.length);
             let completeCount = 0;
             const promises = asins.map(async (asin) => {
-                await this.crawlAmazonItemDetail(asin, proxy);
+                await this.crawlAmazonItemDetail(asin);
                 completeCount++;
                 console.log(`${completeCount}/${asins.length}: completed`);
             });
             await Promise.all(promises);
             console.log("Promise.all finished!");
-        }
-    }
-
-    async crawlItemDetails5() {
-        const proxies = await this.proxyClient.getProxies();
-        while(true) {
-            const asins = await this.repository.getCrawlingASINs(proxies.length);
-            if (asins.length == 0) {
-                console.log("All completed!");
-                return;
-            }
-            console.log("getCrawlingASINs:" + asins.length);
-            let completeCount = 0;
-            const promises = asins.map(async (asin, i) => {
-                const proxy = proxies[i];
-                await this.crawlAmazonItemDetail(asin, proxy);
-                completeCount++;
-                console.log(`${completeCount}/${asins.length}: completed`);
-            });
-            await Promise.all(promises);
-            console.log("Promise.all finished!");
-        }
-    }
-
-    async crawlItemDetails() {
-        const N = 10;
-        const proxies = await this.proxyClient.getProxies();
-        const proxySets = splitArray(proxies, N);
-        while(true) {
-            for(let i = 0; i < proxySets.length; i++) {
-                const proxySet = proxySets[i];
-                const asins = await this.repository.getCrawlingASINs(proxySet.length);
-                if (asins.length == 0) {
-                    console.log("All completed!");
-                    return;
-                }
-                console.log("getCrawlingASINs:" + asins.length);
-                let completeCount = 0;
-                const promises = asins.map(async (asin, j) => {
-                    const proxy = proxySet[j];
-                    await this.crawlAmazonItemDetail(asin, proxy);
-                    completeCount++;
-                    console.log(`${completeCount}/${asins.length}: completed`);
-                });
-                await Promise.all(promises);
-                console.log("Promise.all finished!");
-            }
         }
     }
 

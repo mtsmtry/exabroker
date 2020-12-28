@@ -1,23 +1,55 @@
 import { EntityManager, Repository } from "typeorm";
 import { YahooAuctionAccountStatus } from "../api/drivers/YahooAuctionDriver";
 import { YahooAccount } from "../entities/YahooAccount";
-import { YahooAuction } from "../entities/YahooAuction";
+import { YahooAccountSetting } from "../entities/YahooAccountSetting";
+import { YahooAuctionBid, BidStatus } from "../entities/YahooAuctionBid";
+import { YahooAuctionExhibit } from "../entities/YahooAuctionExhibit";
 import { YahooAuctionNotice } from "../entities/YahooAuctionNotice";
 import { Dto } from "../Utils";
 
+export interface AccountSettingInfo {
+    nameSei: string;
+    nameMei: string;
+    nameSeiKana: string;
+    nameMeiKana: string;
+    phone: string;
+    zip: string;
+    prefecture: string;
+    city: string;
+    address1: string;
+    address2: string;
+    ccNumber: string;
+    ccExpMonth: number;
+    ccExpYear: number;
+    ccCVV: number;
+}
+
 export class YahooRepository {
     accounts: Repository<YahooAccount>;
-    auctions: Repository<YahooAuction>;
+    exhibits: Repository<YahooAuctionExhibit>;
     notices: Repository<YahooAuctionNotice>;
+    bids: Repository<YahooAuctionBid>;
+    settings: Repository<YahooAccountSetting>;
 
     constructor(mng: EntityManager) {
         this.accounts = mng.getRepository(YahooAccount);
-        this.auctions = mng.getRepository(YahooAuction);
+        this.exhibits = mng.getRepository(YahooAuctionExhibit);
         this.notices = mng.getRepository(YahooAuctionNotice);
+        this.bids = mng.getRepository(YahooAuctionBid);
+        this.settings = mng.getRepository(YahooAccountSetting);
     }
 
     async getAccount(username: string) {
-        return await this.accounts.findOne(username);
+        return await this.accounts.createQueryBuilder("x")
+            .leftJoinAndSelect("x.lastSetting", "lastSetting")
+            .leftJoinAndSelect("x.desiredSetting", "desiredSetting")
+            .where({ username })
+            .getOne();
+    }
+
+    async getAccountUsernames() {
+        const accounts = await this.accounts.find();
+        return accounts.map(x => x.username);
     }
 
     async createAccount(username: string, password: string) {
@@ -26,6 +58,20 @@ export class YahooRepository {
             username, password
         });
         await this.accounts.save(account);
+    }
+
+    async setAccountLastSetting(username: string, settingId: number) {
+        await this.accounts.update(username, { lastSettingId: settingId });
+    }
+
+    async setAccountDesiredSetting(username: string, settingId: number) {
+        await this.accounts.update(username, { desiredSettingId: settingId });
+    }
+
+    async createAccountSetting(info: AccountSettingInfo) {
+        let setting = this.settings.create(info);
+        setting = await this.settings.save(setting);
+        return setting.id;
     }
 
     async saveCookies(username: string, cookies: { [name: string]: string }) {
@@ -43,12 +89,12 @@ export class YahooRepository {
     }
 
     async createAuction(dto: { aid: string, username: string, title: string, price: number, endDate: Date, category: number }) {
-        const auction = this.auctions.create(dto);
-        await this.auctions.save(auction);
+        const auction = this.exhibits.create(dto);
+        await this.exhibits.save(auction);
     }
 
     async deleteAuction(aid: string) {
-        await this.auctions.delete(aid);
+        await this.exhibits.delete(aid);
     } 
 
     async saveNotices(username: string, dto: { aid: string, code: string, message: string, date: Date, type: string }[]) {
@@ -60,5 +106,18 @@ export class YahooRepository {
             .orUpdate({ overwrite: columns })
             .values(notices)
             .execute();
+    }
+
+    async createAuctionBid(dto: { aid: string, username: string, sellerId: string, title: string, price: number }) {
+        const bid = this.bids.create({ ...dto, status: BidStatus.Pending });
+        return await this.bids.save(bid);
+    }
+
+    async updateAuctionBidStatis(aid: string, status: BidStatus) {
+        await this.bids.update(aid, { status });
+    }
+
+    async getAuctionBid(aid: string) {
+        return await this.bids.findOne(aid);
     }
 }

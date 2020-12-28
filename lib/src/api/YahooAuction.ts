@@ -2,6 +2,8 @@ import { YahooRepository } from "../repositories/YahooRepository";
 import { Prefecture, ShipSchedule, YahooAuctionAccountStatus, YahooAuctionDriver, AuctionExhibition, WalletSingup, PostYahooUserInfo } from "./drivers/YahooAuctionDriver";
 import { toTimestamp } from "../Utils";
 import { YahooAccount } from "../entities/YahooAccount";
+import { BidStatus } from "../entities/YahooAuctionBid";
+import { equalsUserInfo, equalsWalletInfo } from "../entities/YahooAccountSetting";
 
 export interface AuctionData {
     images: string[],
@@ -13,23 +15,6 @@ export interface AuctionData {
     shipSchedule: ShipSchedule;
     shipName: string;
     prefecture: Prefecture;
-}
-
-export interface AccountInfo {
-    nameSei: string;
-    nameMei: string;
-    nameSeiKana: string;
-    nameMeiKana: string;
-    phone: string;
-    zip: string;
-    prefecture: string;
-    city: string;
-    address1: string;
-    address2: string;
-    ccNumber: string;
-    ccExpMonth: number;
-    ccExpYear: number;
-    ccCVV: number;
 }
 
 export class YahooAuctionClient {
@@ -56,6 +41,13 @@ export class YahooAuctionClient {
         return this._status;
     }
 
+    private get setting() {
+        if (!this.account.lastSetting) {
+            throw "Not logined";
+        }
+        return this.account.lastSetting;
+    }
+
     async login(username: string) {
         console.log(`yahoo:login ${username}`);
         this._account = await this.rep.getAccount(username) || null;
@@ -72,8 +64,17 @@ export class YahooAuctionClient {
         }
 
         // Check login and save the status of the account
-        this._status = await this.driver.getAccountStatus(username);
-        await this.rep.saveStatus(username, this._status);
+        try {
+            this._status = await this.driver.getAccountStatus(username);
+            await this.rep.saveStatus(username, this._status);
+            
+        // Relogin
+        } catch(ex) {
+            const cookies = await this.driver.login(username, this._account.password);
+            await this.rep.saveCookies(username, cookies);
+            this._status = await this.driver.getAccountStatus(username);
+            await this.rep.saveStatus(username, this._status);
+        }
     }
 
     async exhibitAuction(data: AuctionData) {
@@ -155,40 +156,84 @@ export class YahooAuctionClient {
         return res.notices;
     }
 
-    async setupAccount(info: AccountInfo) {
-        const user: PostYahooUserInfo = {
-            select: "non_premium",
-            last_name: info.nameSei,
-            first_name: info.nameMei,
-            zip: info.zip,
-            state: Prefecture[info.prefecture],
-            city: info.city,
-            address1: info.address1,
-            address2: info.address2,
-            phone: info.phone
-        };
-        await this.driver.setUserInfo(user);
+    async setupAccount() {
+        console.log(`yahoo:setupAccount`);
 
-        const wallet: WalletSingup = {
-            pay_type: "CC",
-            conttype: "regpay",
-            acttype: "regist",
-            namel: info.nameSei,
-            namef: info.nameMei,
-            kanal: info.nameSeiKana,
-            kanaf: info.nameMeiKana,
-            zip: info.zip,
-            pref: info.prefecture,
-            city: info.city,
-            addr1: info.address1,
-            addr2: info.address2,
-            ph: info.phone,
-            credit_bank_check: "on",
-            ccnum: info.ccNumber,
-            ccexpMo: info.ccExpMonth,
-            ccexpYr: info.ccExpYear,
-            cvv: info.ccCVV
+        if (!this.account.desiredSetting) {
+            return;
         }
-        //await this.driver.signupWallet(wallet, this.account.password);
+        const info = this.account.desiredSetting;
+
+        if (!this.account.lastSetting || !equalsUserInfo(this.account.desiredSetting, this.account.lastSetting)) {
+            const user: PostYahooUserInfo = {
+                select: "non_premium",
+                last_name: info.nameSei,
+                first_name: info.nameMei,
+                zip: info.zip,
+                state: Prefecture[info.prefecture],
+                city: info.city,
+                address1: info.address1,
+                address2: info.address2,
+                phone: info.phone
+            };
+            await this.driver.setUserInfo(user);
+        }
+
+        if (!this.account.lastSetting || !equalsWalletInfo(this.account.desiredSetting, this.account.lastSetting)) {
+            const wallet: WalletSingup = {
+                pay_type: "CC",
+                conttype: "regpay",
+                acttype: "regist",
+                namel: info.nameSei,
+                namef: info.nameMei,
+                kanal: info.nameSeiKana,
+                kanaf: info.nameMeiKana,
+                zip: info.zip,
+                pref: info.prefecture,
+                city: info.city,
+                addr1: info.address1,
+                addr2: info.address2,
+                ph: info.phone,
+                credit_bank_check: "on",
+                ccnum: info.ccNumber,
+                ccexpMo: info.ccExpMonth,
+                ccexpYr: info.ccExpYear,
+                cvv: info.ccCVV
+            }
+            let form = await this.driver.getWalletSignupFormData(this.account.password);
+            if (!form) {
+                await this.driver.deleteWallet();
+                form = await this.driver.getWalletSignupFormData(this.account.password);
+                if (!form) {
+                    throw "Form is null";
+                }
+            }
+            await this.driver.signupWallet(wallet, form);
+        }
+
+        await this.rep.setAccountLastSetting(this.account.username, info.id);
+    }
+
+    async buyAuction(aid: string, price: number) {
+        let bid = await this.rep.getAuctionBid(aid);
+        if (!bid) {
+            const auction = await this.driver.getAuction(aid);
+            bid = await this.rep.createAuctionBid({ username: this.account.username, price, ...auction });
+        }
+
+        switch (bid.status) {
+            case BidStatus.Pending:
+                await this.driver.buyAuction(aid, price);
+                await this.rep.updateAuctionBidStatis(aid, BidStatus.Accepted);
+            case BidStatus.Accepted:
+                await this.driver.startAuction(aid, bid.sellerId, this.account.username);
+                await this.rep.updateAuctionBidStatis(aid, BidStatus.Started);
+            case BidStatus.Started:
+                await this.driver.payAuction(aid, this.setting.ccCVV, 0);
+                await this.rep.updateAuctionBidStatis(aid, BidStatus.Paid);
+            case BidStatus.Paid:
+                await this.driver.payAuction(aid, this.setting.ccCVV, 0);
+                await this.rep.updateAuctionBidStatis(aid, BidStatus.Paid);
+        }
     }
 }

@@ -1,6 +1,6 @@
 import { createDatabaseConnection } from "../src/Factory";
-import { AuctionData, YahooAuctionClient, AccountInfo } from "../src/api/YahooAuction";
-import { YahooRepository } from "../src/repositories/YahooRepository";
+import { AuctionData, YahooAuctionClient } from "../src/api/YahooAuction";
+import { AccountSettingInfo, YahooRepository } from "../src/repositories/YahooRepository";
 import { AuctionSort, Prefecture, ShipSchedule } from "../src/api/drivers/YahooAuctionDriver";
 import { randomString } from "../src/Utils";
 
@@ -11,7 +11,7 @@ async function main() {
     await yahoo.login("hbbqy62195");
 
 
-    const info: AccountInfo = {
+    const info: AccountSettingInfo = {
         nameSei: "松本",
         nameMei: "太郎",
         nameSeiKana: "マツモト",
@@ -27,6 +27,10 @@ async function main() {
         ccExpYear: 2025,
         ccCVV: 997
     }
+    // const settingId = await yahooRep.createAccountSetting(info);
+    const ids = await yahooRep.getAccountUsernames();
+    await Promise.all(ids.map(id => yahooRep.setAccountDesiredSetting(id, 1)));
+
    // await yahoo.setupAccount(info);
    // await yahoo.driver.deleteWallet();
 
@@ -35,7 +39,7 @@ async function main() {
     //await yahoo.driver.buyAuction("o448259146", 1);
     //const detail = await yahoo.driver.getAuction("o448259146");
    // await yahoo.driver.startAuction("o448259146", detail.sellerId, yahoo.account.username);
-    await yahoo.driver.payAuction("j702408661", "997", 0);
+  //  await yahoo.driver.payAuction("j702408661", "997", 0);
     return;
     await yahoo.driver.startAuction("l644489484", "ggfjx64291", "smzys96536");
 

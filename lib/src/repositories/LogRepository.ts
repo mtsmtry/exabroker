@@ -19,7 +19,7 @@ export class LogRepository {
         this.hostIp = ip.address();
     }
 
-    async addCrawlingLog(kind: CrawlingLogKind, url: string, proxy: Proxy, textCount: number | null, downloadLatency: number| null, uploadLatency: number| null, error: string | null) {
+    async addCrawlingLog(kind: CrawlingLogKind, url: string, proxy: Proxy | undefined, textCount: number | null, downloadLatency: number| null, uploadLatency: number| null, error: string | null) {
         const log = this.logs.create({
             kind, 
             url, 
@@ -27,9 +27,9 @@ export class LogRepository {
             downloadLatency, 
             uploadLatency, 
             hostIp: this.hostIp,
-            proxyIp: proxy.ip, 
-            proxyRegion: proxy.detail?.proxyserver.georegion.name || "",
-            proxyCountry: proxy.detail?.proxyserver.georegion.country.name || "",
+            proxyIp: proxy?.ip || "", 
+            proxyRegion: proxy?.detail?.proxyserver.georegion.name || "",
+            proxyCountry: proxy?.detail?.proxyserver.georegion.country.name || "",
             result: error ? CrawlingResult.FAILED : CrawlingResult.COMPLETED,
             error
         });

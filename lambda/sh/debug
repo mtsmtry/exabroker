@@ -1,2 +1,2 @@
 npm run build --prefix ../lib
-ts-node src/App
+ts-node src/Index

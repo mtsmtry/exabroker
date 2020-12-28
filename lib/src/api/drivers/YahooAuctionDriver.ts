@@ -200,6 +200,14 @@ export interface AuctionDetail {
     sellerId: string;
 }
 
+export enum FeedbackRaring {
+    VeryGood = "veryGood",
+    Good = "good",
+    Normal = "normal",
+    Bad = "bad",
+    VeryBad = "veryBad"
+}
+
 export function vaildYahooUserInfo(post: PostYahooUserInfo, get: GetYahooUserInfo) {
     return post.last_name == get.nameSei 
         && post.first_name == get.nameMei
@@ -347,6 +355,7 @@ export class YahooAuctionDriver {
     async getAccountStatus(username: string): Promise<YahooAuctionAccountStatus> {
         console.log(`  driver:getAccountStatus ${username}`);
         const doc = await this.client.get("https://auctions.yahoo.co.jp/user/jp/show/mystatus");
+        doc.save();
         const tag = doc.getNeeded("//*[@id='acMdStatus']");
         const rating = tag.get(`.//a[@href='https://auctions.yahoo.co.jp/jp/show/rating?userID=${username}']`);
         const balance = tag.get(`.//a[@href='https://receive.wallet.yahoo.co.jp/list']`);
@@ -482,6 +491,7 @@ export class YahooAuctionDriver {
     }
 
     async searchAution(keyword: string, sort: AuctionSort): Promise<SearchedAuction[]> {
+        console.log(`  driver:searchAution ${keyword} ${sort}`); 
         const [s1, o1] = sort.split(",");
         const params = { p: keyword, mode: 2, n: 100, s1, o1 };
         const doc = await this.client.get("https://auctions.yahoo.co.jp/search/search", params);
@@ -502,6 +512,7 @@ export class YahooAuctionDriver {
     }
 
     async buyAuction(aid: string, price: number) {
+        console.log(`  driver:buyAuction ${aid} ${price}`); 
         const bid = { Quantity: 1, buynow: 1, Bid: price };
 
         // Get form data
@@ -523,6 +534,7 @@ export class YahooAuctionDriver {
     }
 
     async getAuction(aid: string): Promise<AuctionDetail> {
+        console.log(`  driver:getAuction ${aid}`); 
         const doc = await this.client.get(`https://page.auctions.yahoo.co.jp/jp/auction/${aid}`);
         return toNotNull({
             aid,
@@ -532,6 +544,8 @@ export class YahooAuctionDriver {
     }
 
     async startAuction(aid: string, sellerId: string, myId: string) {
+        console.log(`  driver:startAuction ${aid}`); 
+
         // Get start url
         const params = { aid, syid: sellerId, bid: myId };
         let doc = await this.client.get("https://contact.auctions.yahoo.co.jp/buyer/top", params);
@@ -557,7 +571,9 @@ export class YahooAuctionDriver {
         }
     }
 
-    async payAuction(aid: string, cvv: string, transPrice: number) {
+    async payAuction(aid: string, cvv: number, transPrice: number) {
+        console.log(`  driver:payAuction ${aid}`); 
+
         function loadDoc(doc: Document, begin: RegExp) {
             return new Document(new TextDecoder("euc-jp")
                 .decode(doc.buffer)
@@ -591,27 +607,34 @@ export class YahooAuctionDriver {
     }
 
     async informReceiving(aid: string) {
-        
+        console.log(`  driver:informReceiving ${aid}`);
     }
 
-    async signupWallet(wallet: WalletSingup, password: string) {
+    async getWalletSignupFormData(password: string): Promise<object | null> {
+        console.log(`  driver:getWalletSignupFormData`); 
+
         // Get crumb
         await this.relogin("https://edit.wallet.yahoo.co.jp/config/wallet_signup", password);
         let doc = await this.client.get("https://edit.wallet.yahoo.co.jp/config/wallet_signup");
         
         // Check
         if (doc.get("//div[@id='yjMain']")?.text.includes("すでに登録済みです")) {
-            throw "Already signedup";
+            return null;
         }
         const form = this.getFormHiddenInputData(doc, "//form[@name='theform']");
+        return form;
+    }
+
+    async signupWallet(wallet: WalletSingup, formData: object) {
+        console.log(`  driver:signupWallet`); 
 
         // Signup
         const data = { 
-            ...form, 
+            ...formData, 
             ...wallet,
             edit: "登録" // Necessary!!
         };
-        doc = await this.client.post("https://edit.wallet.yahoo.co.jp/config/wallet_signup", data);
+        const doc = await this.client.post("https://edit.wallet.yahoo.co.jp/config/wallet_signup", data);
 
         // Check
         const msg = doc.get("//div[@id='msg']")?.text;
@@ -621,6 +644,8 @@ export class YahooAuctionDriver {
     }
 
     async deleteWallet() {
+        console.log(`  driver:deleteWallet`); 
+
         // Get crumb
         let doc = await this.client.get("https://edit.wallet.yahoo.co.jp/config/wallet_delete");
         const form = this.getFormHiddenInputData(doc, "//form[@name='theform']");
@@ -632,6 +657,22 @@ export class YahooAuctionDriver {
         // Check
         const msg = doc.get("//div[@id='msg']")?.text;
         if (!msg || !msg.includes("削除が完了しました")) {
+            throw new DriverException(DriverExceptionType.OnCheck, doc);
+        }
+    }
+
+    async leaveFeedback(aid: string, targetId: string, rating: FeedbackRaring = FeedbackRaring.VeryGood, message: string = "ありがとうございました。とても良い取引ができました。また機会がありましたら、よろしくお願いいたします。") {
+        // Get form data
+        const params = { aID: aid, t: targetId };
+        let doc = await this.client.get("https://auctions.yahoo.co.jp/jp/show/leavefeedback", params);
+        const form = this.getFormHiddenInputData(doc, "//form[method='post']");
+
+        // Submit
+        const data = { ...form, rating, previewComment: message }
+        doc = await this.client.post("https://auctions.yahoo.co.jp/jp/submit/leavefeedback", data);
+
+        // Check
+        if (!doc.text.includes("を送信しました")) {
             throw new DriverException(DriverExceptionType.OnCheck, doc);
         }
     }

@@ -37,4 +37,7 @@ export class AmazonItem {
 
     @UpdatedAt()
     updatedAt: Date;
+
+    @Column({ default: false })
+    isCrawledDetail: boolean;
 }
