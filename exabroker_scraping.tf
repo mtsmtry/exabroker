@@ -27,7 +27,7 @@ resource "aws_lambda_permission" "exabroker_scraping_event" {
   source_arn    = aws_s3_bucket.exabroker_crawled.arn
 }
 
-// Lambda
+// Role
 
 data "aws_iam_policy_document" "ExabrokerScrapingLambdaRoleAssumeRolePolicy" {
   statement {

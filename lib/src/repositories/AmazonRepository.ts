@@ -1,7 +1,8 @@
-import { EntityManager, Not, Repository } from "typeorm";
+import { DeepPartial, EntityManager, Not, Repository } from "typeorm";
 import { AmazonItem } from "../entities/AmazonItem";
 import { AmazonItemDetail } from "../entities/AmazonItemDetail";
 import { BrowseNode, CrawlingStatus } from "../entities/BrowseNode";
+import { YahooAuctionExhibit } from "../entities/YahooAuctionExhibit";
 
 function random(min: number, max: number) {
     return Math.floor( Math.random() * (max + 1 - min) ) + min;
@@ -47,7 +48,7 @@ export class AmazonRepository {
             .execute();
     }
 
-    async upsertAmazonItemDetail(detail: AmazonItemDetail) {
+    async upsertAmazonItemDetail(detail: DeepPartial<AmazonItemDetail>) {
         const columns = this.amazonItemDetails.metadata.columns.map(x => x.propertyName);
         await this.amazonItemDetails
             .createQueryBuilder()
@@ -127,5 +128,30 @@ export class AmazonRepository {
 
     async crawledItemDetail(asin: string) {
         await this.amazonItems.update(asin, { isCrawledDetail: true })
+    }
+
+    async getExhibitableASINs(count: number) {
+        const items = await this.amazonItemDetails.createQueryBuilder("detail")
+            .select(["item.asin"])
+            .innerJoin(AmazonItem, "item", "detail.asin = item.asin")
+            .leftJoin(YahooAuctionExhibit, "exhibit", "detail.asin = exhibit.asin")
+            .where("item.deliverBy IS NOT NULL AND exhibit.aid IS NULL AND detail.title NOT LIKE '%Amazon%' AND detail.title NOT LIKE '%輸入%'")
+            .orderBy("detail.reviewCount", "DESC")
+            .limit(count)
+            .getRawMany();
+        return items.map(x => x.item_asin as string);
+    }
+
+    async getItemDetail(asin: string) {
+        const detail = await this.amazonItemDetails.findOne(asin);
+        if (!detail) {
+            return undefined;
+        }
+        const item = await this.amazonItems.findOne(asin);
+        if (!item) {
+            return undefined;
+        }
+        detail.item = item;
+        return detail;
     }
 }

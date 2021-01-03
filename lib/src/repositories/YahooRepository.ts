@@ -88,12 +88,12 @@ export class YahooRepository {
         });
     }
 
-    async createAuction(dto: { aid: string, username: string, title: string, price: number, endDate: Date, category: number }) {
+    async createAuctionExhibit(dto: { aid: string, username: string, title: string, price: number, endDate: Date, category: number }) {
         const auction = this.exhibits.create(dto);
         await this.exhibits.save(auction);
     }
 
-    async deleteAuction(aid: string) {
+    async deleteAuctionExhibit(aid: string) {
         await this.exhibits.delete(aid);
     } 
 

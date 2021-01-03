@@ -27,6 +27,7 @@ export async function createDatabaseConnection(options: object={}) {
             await conn.manager.getRepository(YahooAccount).findOne("test");
             return conn;
         } catch(ex) {
+            console.log(ex);
             const error = ex.toString() as string;
             if (!error.includes("Communications link failure")) {
                 throw ex;

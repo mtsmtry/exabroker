@@ -32,7 +32,7 @@ function table_to_dict_th_td(table: Element | null) {
     }, {});
 }
 
-export async function scrapeAmazonItemDetail(doc: Document, asin: string): Promise<Dto<AmazonItemDetail> | null> {    
+export async function scrapeAmazonItemDetail(doc: Document, asin: string): Promise<DeepPartial<AmazonItemDetail> | null> {    
     const buybox = table_to_dict_td_td(doc.get("//*[@id='tabular-buybox']//table"));
     const merchant_buybox = { seller: buybox?.["販売元"], shipper: buybox?.["出荷元"] };
     const merchantInfo = doc.getById("merchant-info")?.text.match("この商品は、(.+)が販売し、(.+)が発送します");

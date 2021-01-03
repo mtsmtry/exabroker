@@ -5,18 +5,6 @@ import { YahooAccount } from "../entities/YahooAccount";
 import { BidStatus } from "../entities/YahooAuctionBid";
 import { equalsUserInfo, equalsWalletInfo } from "../entities/YahooAccountSetting";
 
-export interface AuctionData {
-    images: string[],
-    title: string;
-    price: number;
-    description: string;
-    days: number;
-    closingHours: number;
-    shipSchedule: ShipSchedule;
-    shipName: string;
-    prefecture: Prefecture;
-}
-
 export class YahooAuctionClient {
     driver: YahooAuctionDriver;
     private _account: YahooAccount | null;
@@ -92,7 +80,7 @@ export class YahooAuctionClient {
         const category = (await this.driver.getCategory(data.title))[0].id;
 
         // Upload images
-        const uploadResult = await this.driver.uploadImages(data.images);
+        const uploadResult = data.images.length > 0 ? await this.driver.uploadImages(data.images) : null;
 
         // Submit auction
         const auction: AuctionExhibition = {
@@ -131,7 +119,7 @@ export class YahooAuctionClient {
             nonpremium: this.status.isPremium ? 1 : 0, 
             category: category
         }
-        const res = await this.driver.submitAuction(auction, uploadResult.images);
+        const res = await this.driver.submitAuction(auction, uploadResult?.images || []);
 
         // Save
         await this.rep.createAuction({ aid: res.aid, username: this.account.username, title: data.title, price: data.price, endDate: res.endDate, category: category });

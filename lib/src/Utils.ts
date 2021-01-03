@@ -61,3 +61,15 @@ export function toTimestamp(date: Date) {
     const milliseconds = date.getTime();
     return Math.floor(milliseconds / 1000);
 }
+
+export function toNotNull<T>(src: T): { [P in keyof T]: Exclude<T[P], null | undefined> } {
+    return Object.keys(src).reduce((m, x) => {
+        const value = src[x];
+        if (value === null || value === undefined) {
+            throw `${x} is null or undefined`;
+        } else {
+            m[x] = value;
+        }
+        return m;
+    }, {}) as any;
+}

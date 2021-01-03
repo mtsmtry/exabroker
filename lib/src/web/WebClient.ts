@@ -178,7 +178,7 @@ export class Element {
 
     extractDigits() {
         const match = this.text.match("[0-9,]+");
-        const result = match ? parseInt(match[0].replace(",", "")) : null;
+        const result = match ? parseInt(match[0].replace(/,/g, "")) : null;
         return result;
     }
 

@@ -5,7 +5,6 @@ import * as aws from "aws-sdk";
 import * as ProxyAgent from "proxy-agent";
 import fetch from "node-fetch";
 import { Response } from "node-fetch";
-
 import { Proxy, ProxyBonanzaClient } from "../api/ProxyBonanza";
 
 export class Crawler {
@@ -17,15 +16,15 @@ export class Crawler {
         let uploadLatency: number | null = null;
         let error: string | null = null;
         let body: string | null = null;
+        const timeout = 10 * 1000;
         try {
             let response: Response;
             const fetchStart = Date.now();
             if (proxy) {
                 const agent = new ProxyAgent(`http://${proxy.login}:${proxy.password}@${proxy.ip}:${proxy.portHttp}`);
-                response = await fetch(url, { agent });
-
+                response = await fetch(url, { agent, timeout });
             } else {
-                response = await fetch("http://api.scraperapi.com?api_key=68d6de532946616aae283bc9fd0ea7a2&url=" + url);
+                response = await fetch("http://api.scraperapi.com?api_key=68d6de532946616aae283bc9fd0ea7a2&url=" + url, { timeout });
             }
             downloadLatency = Date.now() - fetchStart;
 

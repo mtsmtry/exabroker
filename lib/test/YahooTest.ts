@@ -1,7 +1,6 @@
 import { createDatabaseConnection } from "../src/Factory";
-import { AuctionData, YahooAuctionClient } from "../src/api/YahooAuction";
+import { YahooAuctionClient } from "../src/api/YahooAuction";
 import { AccountSettingInfo, YahooRepository } from "../src/repositories/YahooRepository";
-import { AuctionSort, Prefecture, ShipSchedule } from "../src/api/drivers/YahooAuctionDriver";
 import { randomString } from "../src/Utils";
 
 async function main() {
@@ -29,7 +28,7 @@ async function main() {
     }
     // const settingId = await yahooRep.createAccountSetting(info);
     const ids = await yahooRep.getAccountUsernames();
-    await Promise.all(ids.map(id => yahooRep.setAccountDesiredSetting(id, 1)));
+   // await Promise.all(ids.map(id => yahooRep.setAccountDesiredSetting(id, 1)));
 
    // await yahoo.setupAccount(info);
    // await yahoo.driver.deleteWallet();

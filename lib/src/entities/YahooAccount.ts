@@ -1,5 +1,4 @@
 import { Column, Entity, JoinColumn, ManyToOne, OneToOne, PrimaryColumn } from "typeorm";
-import { YahooAuctionAccountStatus } from "../api/drivers/YahooAuctionDriver";
 import { CreatedAt } from "./Utils";
 import { YahooAccountSetting } from "./YahooAccountSetting";
 

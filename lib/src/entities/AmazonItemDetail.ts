@@ -1,4 +1,5 @@
 import { BaseEntity, Column, CreateDateColumn, Entity, Index, JoinColumn, ManyToOne, PrimaryColumn, PrimaryGeneratedColumn, Unique, UpdateDateColumn } from "typeorm";
+import { AmazonItem } from "./AmazonItem";
 import { CreatedAt, UpdatedAt } from "./Utils";
 
 type Dict = { [x: string]: string };
@@ -7,6 +8,8 @@ type Dict = { [x: string]: string };
 export class AmazonItemDetail {
     @PrimaryColumn("char", { length: 10 })
     asin: string;
+    @JoinColumn({ name: "asin" })
+    item: AmazonItem;
 
     @Column("int", { nullable: true })
     price_block: number | null;
@@ -23,6 +26,9 @@ export class AmazonItemDetail {
     @Column("simple-json", { nullable: true })
     features_detailBullets: Dict | null;
 
+    @Column({ type: "simple-json", nullable: true, asExpression: "coalesce(features_detailBullets, features_productOverview)", generatedType: "VIRTUAL" })
+    features: Dict | null; 
+
     @Column("simple-json")
     featureBullets: string[];
 
@@ -38,12 +44,15 @@ export class AmazonItemDetail {
     @Column("text", { nullable: true })
     shortDescription: string | null;
 
+    @Index()
     @Column("int", { nullable: true })
     reviewCount: number | null;
 
+    @Index()
     @Column("int", { nullable: true })
     askCount: number | null;
 
+    @Index()
     @Column("float", { nullable: true })
     rating: number | null;
 
@@ -61,6 +70,14 @@ export class AmazonItemDetail {
 
     @Column("varchar", { nullable: true })
     shipper_info: string | null;
+
+    @Index()
+    @Column({ type: "varchar", nullable: true, asExpression: "coalesce(seller_buybox, seller_info)", generatedType: "VIRTUAL" })
+    seller: string | null;
+
+    @Index()
+    @Column({ type: "varchar", nullable: true, asExpression: "coalesce(shipper_buybox, shipper_info)", generatedType: "VIRTUAL" })
+    shipper: string | null;
 
     @UpdatedAt()
     updatedAt: Date;

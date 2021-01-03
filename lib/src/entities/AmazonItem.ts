@@ -1,4 +1,4 @@
-import { BaseEntity, Column, Entity, Index, JoinColumn, JoinTable, OneToOne, PrimaryColumn } from "typeorm";
+import { BaseEntity, Column, Entity, In, Index, JoinColumn, JoinTable, OneToOne, PrimaryColumn } from "typeorm";
 import { AmazonItemDetail } from "./AmazonItemDetail";
 import { UpdatedAt } from "./Utils";
 
@@ -14,6 +14,7 @@ export class AmazonItem {
     @Column("int")
     price: number;
 
+    @Index()
     @Column("date", { nullable: true })
     deliverBy: Date | null;
 
@@ -29,6 +30,7 @@ export class AmazonItem {
     @Column("int", { nullable: true })
     stockCount: number | null;
 
+    @Index()
     @Column("char", { length: 10 })
     fromNodeId: string;
 
