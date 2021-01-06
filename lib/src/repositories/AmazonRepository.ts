@@ -37,9 +37,13 @@ export class AmazonRepository {
         console.log(`completed:items=${items.length}`);
         items.forEach(item => {
             item.title = item.title.slice(0, 255);
+            item.updatedAt = new Date();
         });
 
-        const columns = this.amazonItems.metadata.columns.map(x => x.propertyName);
+        const columns = this.amazonItems.metadata.columns
+            .map(x => x.propertyName)
+            .filter(x => x != "isCrawledDetail");
+            
         await this.amazonItems
             .createQueryBuilder()
             .insert()
@@ -135,7 +139,11 @@ export class AmazonRepository {
             .select(["item.asin"])
             .innerJoin(AmazonItem, "item", "detail.asin = item.asin")
             .leftJoin(YahooAuctionExhibit, "exhibit", "detail.asin = exhibit.asin")
-            .where("item.deliverBy IS NOT NULL AND exhibit.aid IS NULL AND detail.title NOT LIKE '%Amazon%' AND detail.title NOT LIKE '%輸入%'")
+            .where(`item.updatedAt > DATE_SUB(CURRENT_DATE, INTERVAL 1 DAY) 
+                AND item.deliverDay IS NOT NULL
+                AND exhibit.aid IS NULL 
+                AND detail.title NOT LIKE '%Amazon%'
+                AND detail.title NOT LIKE '%輸入%'`)
             .orderBy("detail.reviewCount", "DESC")
             .limit(count)
             .getRawMany();

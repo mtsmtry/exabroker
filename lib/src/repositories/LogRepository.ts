@@ -1,5 +1,5 @@
 import { EntityManager, Repository } from "typeorm";
-import { Proxy } from "../api/ProxyBonanza";
+import { Proxy } from "../executions/ProxyBonanza";
 import { AmazonItem } from "../entities/AmazonItem";
 import { AmazonItemDetail } from "../entities/AmazonItemDetail";
 import { BrowseNode, CrawlingStatus } from "../entities/BrowseNode";

@@ -6,6 +6,7 @@ COPY package.json .
 COPY exabroker-lib-1.0.0.tgz .
 COPY typeorm-0.2.29.tgz .
 COPY aws-config.json .
+COPY chromedriverLinux chromedriver
 RUN npm install
 RUN npm install exabroker-lib-1.0.0.tgz
 

@@ -9,3 +9,5 @@ typeorm-src/
 .DS_Store
 .terraform/
 *.tgz
+chromedriver
+chromedriverLinux

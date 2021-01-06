@@ -5,7 +5,7 @@ import * as aws from "aws-sdk";
 import * as ProxyAgent from "proxy-agent";
 import fetch from "node-fetch";
 import { Response } from "node-fetch";
-import { Proxy, ProxyBonanzaClient } from "../api/ProxyBonanza";
+import { Proxy, ProxyBonanzaClient } from "../executions/ProxyBonanza";
 
 export class Crawler {
     constructor(protected logs: LogRepository, private s3: aws.S3) {

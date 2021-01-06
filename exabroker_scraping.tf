@@ -42,6 +42,11 @@ data "aws_iam_policy_document" "ExabrokerScrapingLambdaRoleAssumeRolePolicy" {
   }
 }
 
+resource "aws_iam_role_policy_attachment" "ExabrokerScrapingLambdaRole" {
+  role       = aws_iam_role.exabroker_scraping.name
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+}
+
 resource "aws_iam_role" "exabroker_scraping" {
   name               = "ExabrokerScrapingLambdaRole"
   path               = "/"

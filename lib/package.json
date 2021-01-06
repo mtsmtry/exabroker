@@ -12,7 +12,9 @@
     "pack": "tsc && npm pack",
     "test": "tsc && node dist/test/Index.js",
     "tyahoo": "tsc && node dist/test/YahooTest.js",
+    "tscrape": "tsc && node dist/test/Scrape.js",
     "texhibit": "tsc && node dist/test/Exhibit.js",
+    "tasin": "tsc && node dist/test/GetASINs.js",
     "migrate": "tsc && node dist/test/Migration.js"
   },
   "files": [

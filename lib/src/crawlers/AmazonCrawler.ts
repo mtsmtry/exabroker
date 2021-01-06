@@ -4,7 +4,7 @@ import * as aws from "aws-sdk";
 import * as ProxyAgent from "proxy-agent";
 import fetch from "node-fetch";
 import { Document } from "../web/WebClient";
-import { Proxy, ProxyBonanzaClient } from "../api/ProxyBonanza";
+import { Proxy, ProxyBonanzaClient } from "../executions/ProxyBonanza";
 import { Crawler } from "./Crawler";
 import { CrawlingLogKind, LogRepository } from "../repositories/LogRepository";
 import { CrawlingResult } from "../entities/CrawlingLog";
@@ -31,13 +31,14 @@ export class AmazonCrawler extends Crawler {
     }
 
     private async crawlBrowseNode(nodeId: string, page: number, proxy: Proxy) {
-        const url = `https://www.amazon.co.jp/b/?node=${nodeId}&page=${page}`;
+        //const url = `https://www.amazon.co.jp/b/?node=${nodeId}&page=${page}`;
+        const url = `https://www.amazon.co.jp/s?rh=n%3A${nodeId}&page=${page}`;
         const [html, logId] = await this.storeWebContent(CrawlingLogKind.BROWSE_NODE, url, `browseNodes/${nodeId}-${page}`, proxy);
         if (html) { 
             try {
                 const start = Date.now();
                 const doc = new Document(html);
-                const items = await scrapeBrowseNodeItemCount(doc);
+                const items = await scrapeBrowseNodeItemCount(doc, page);
                 await this.logs.setAddtionalData(logId, items, Date.now() - start);
                 return items > 0;
             } catch(ex) {
@@ -68,10 +69,13 @@ export class AmazonCrawler extends Crawler {
             const nodes = await this.repository.getCrawlingBrowseNodes(100);
             console.log("getCrawlingBrowseNodes:" + nodes.length);
             if (nodes.length == 0) {
+                console.log("All completed!");
                 if (await this.repository.checkAllCompleted()) {
-                    console.log("All completed!");
                     await this.repository.resetAllBrowseNodeCrawling();
                     console.log("Reset crawling!");
+                } else {
+                    await this.repository.cancelAllRunningBrowseNodeCrawling();
+                    console.log("Cancel all running crawling!");
                 }
             } else {
                 let completeCount = 0;
@@ -114,6 +118,7 @@ export class AmazonCrawler extends Crawler {
     }
 
     async crawl() {
-        await this.crawlItemDetails();
+        await this.crawlBrowseNodes();
+        //await this.crawlItemDetails();
     }
 }

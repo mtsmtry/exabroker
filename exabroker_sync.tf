@@ -4,11 +4,11 @@ locals {
 }
 
 // Event
-
+/*
 resource "aws_cloudwatch_event_rule" "sync" {
     name                = "exabroker_sync"
     description         = "Fires every ten minutes"
-    schedule_expression = "cron(*/5 * * * ? *)"
+    schedule_expression = "cron(* * * * ? *)"
 }
 
 resource "aws_cloudwatch_event_target" "sync" {
@@ -24,6 +24,8 @@ resource "aws_lambda_permission" "sync" {
     principal     = "events.amazonaws.com"
     source_arn    = aws_cloudwatch_event_rule.sync.arn
 }
+
+*/
 
 // Role
 

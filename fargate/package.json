@@ -4,7 +4,7 @@
   "description": "",
   "main": "dist/App.js",
   "scripts": {
-    "start": "node dist/App.js"
+    "start": "node --expose-gc dist/App.js"
   },
   "author": "",
   "license": "ISC",

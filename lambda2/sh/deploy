@@ -1,6 +1,7 @@
 npm run pack --prefix ../lib
 cp -f ../lib/typeorm-0.2.29.tgz .
 cp -f ../lib/exabroker-lib-1.0.0.tgz .
+cp ../lib/chromedriverLinux .
 tsc
 
 export tag=0.1

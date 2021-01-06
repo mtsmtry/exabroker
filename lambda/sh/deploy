@@ -1,12 +1,13 @@
 npm run pack --prefix ../lib
 cp -f ../lib/typeorm-0.2.29.tgz .
 cp -f ../lib/exabroker-lib-1.0.0.tgz .
+cp ../lib/chromedriverLinux .
 tsc
 
 export tag=0.1
-export localRep=exabroker-sync:$tag
-export remoteRep=203303191911.dkr.ecr.ap-northeast-1.amazonaws.com/exabroker-sync:$tag
-export lambdaName=exabroker-sync
+export localRep=exabroker-scraping:$tag
+export remoteRep=203303191911.dkr.ecr.ap-northeast-1.amazonaws.com/exabroker-scraping:$tag
+export lambdaName=exabroker-scraping
 
 docker build --tag $localRep .
 

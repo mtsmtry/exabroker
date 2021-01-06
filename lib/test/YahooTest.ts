@@ -1,8 +1,7 @@
 import { createDatabaseConnection } from "../src/Factory";
-import { YahooAuctionClient } from "../src/api/YahooAuction";
 import { AccountSettingInfo, YahooRepository } from "../src/repositories/YahooRepository";
 import { randomString } from "../src/Utils";
-
+/*
 async function main() {
     const conn = await createDatabaseConnection();
     const yahooRep = new YahooRepository(conn.manager);
@@ -74,4 +73,4 @@ async function main() {
     await yahoo.cancelAuction(aid);
 }
 
-main();
+main();*/

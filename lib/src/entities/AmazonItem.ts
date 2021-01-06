@@ -20,6 +20,13 @@ export class AmazonItem {
 
     @Index()
     @Column("int", { nullable: true })
+    deliverDay: number | null;
+
+    @Column({ default: false })
+    isPrime: boolean;
+
+    @Index()
+    @Column("int", { nullable: true })
     reviewCount: number | null;
 
     @Index()

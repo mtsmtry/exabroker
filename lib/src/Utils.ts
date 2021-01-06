@@ -1,4 +1,5 @@
 import * as crypto from 'crypto';
+import * as path from 'path';
 
 export function notNull<T>(item: T | null | undefined): item is T {
     return item != null;
@@ -72,4 +73,17 @@ export function toNotNull<T>(src: T): { [P in keyof T]: Exclude<T[P], null | und
         }
         return m;
     }, {}) as any;
+}
+
+export function getCurrentFilename() {
+    const stack = new Error().stack as string;
+    return path.basename(stack.split('at ')[2].trim()).split(':')[0];
+}
+
+export function parseFloatOrNull(str: string | undefined | null) {
+    return str ? parseFloat(str) : null;
+}
+
+export function parseIntOrNull(str: string | undefined | null) {
+    return str ? parseInt(str) : null;
 }

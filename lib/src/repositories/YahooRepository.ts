@@ -1,5 +1,5 @@
 import { EntityManager, Repository } from "typeorm";
-import { YahooAuctionAccountStatus } from "../api/drivers/YahooAuctionDriver";
+import { YahooAuctionAccountStatus } from "../executions/yahoo/YahooDriver";
 import { YahooAccount } from "../entities/YahooAccount";
 import { YahooAccountSetting } from "../entities/YahooAccountSetting";
 import { YahooAuctionBid, BidStatus } from "../entities/YahooAuctionBid";

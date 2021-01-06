@@ -1,2 +1,3 @@
+npm link exabroker-lib
 npm run build --prefix ../lib
 ts-node src/App
