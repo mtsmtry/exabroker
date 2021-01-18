@@ -1,5 +1,5 @@
 import { WebExecution } from "../../../system/execution/WebExecution";
-import { parseFloatOrNull } from "../../../scrapers/Utils";
+import { parseFloatOrNull } from "../../../Utils";
 import { getCurrentFilename, toNotNull } from "../../../Utils";
 
 export interface SearchedAuction {

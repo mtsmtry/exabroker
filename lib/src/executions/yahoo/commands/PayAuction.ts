@@ -1,6 +1,6 @@
 import { Cookie, WebExecution } from "../../../system/execution/WebExecution";
 import { getCurrentFilename } from "../../../Utils";
-import { Document } from "../../../web/WebClient";
+import { Document } from "../../../system/Document";
 import { getFormHiddenInputData, getFormInputAndSelectData } from "./Utilts";
 
 function loadDoc(doc: Document, begin: RegExp) {

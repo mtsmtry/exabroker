@@ -1,6 +1,6 @@
 import { WebTransaction } from "../../../system/execution/WebExecution";
 import { notNull } from "../../../Utils";
-import { Document } from "../../../web/WebClient";
+import { Document } from "../../../system/Document";
 import * as path from "path";
 
 export function getFormHiddenInputData(doc: Document, xpath: string): object {

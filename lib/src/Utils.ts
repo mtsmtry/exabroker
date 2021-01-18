@@ -63,7 +63,10 @@ export function toTimestamp(date: Date) {
     return Math.floor(milliseconds / 1000);
 }
 
-export function toNotNull<T>(src: T): { [P in keyof T]: Exclude<T[P], null | undefined> } {
+export type ObjectNotNullable<T> = { [P in keyof T]: Exclude<T[P], null | undefined> };
+export type ObjectUndefinedToNull<T> = { [P in keyof T]: undefined extends T[P] ? Exclude<T[P], undefined> | null : Exclude<T[P], undefined> };
+
+export function toNotNull<T>(src: T): ObjectNotNullable<T> {
     return Object.keys(src).reduce((m, x) => {
         const value = src[x];
         if (value === null || value === undefined) {
@@ -77,7 +80,8 @@ export function toNotNull<T>(src: T): { [P in keyof T]: Exclude<T[P], null | und
 
 export function getCurrentFilename() {
     const stack = new Error().stack as string;
-    return path.basename(stack.split('at ')[2].trim()).split(':')[0];
+    const filename = path.basename(stack.split('at ')[2].trim()).split(':')[0];
+    return filename.split(".")[0];
 }
 
 export function parseFloatOrNull(str: string | undefined | null) {
@@ -86,4 +90,34 @@ export function parseFloatOrNull(str: string | undefined | null) {
 
 export function parseIntOrNull(str: string | undefined | null) {
     return str ? parseInt(str) : null;
+}
+
+// Names of properties in T with types that include undefined
+type OptionalPropertyNames<T> =
+  { [K in keyof T]: undefined extends T[K] ? K : never }[keyof T];
+
+// Common properties from L and R with undefined in R[K] replaced by type in L[K]
+type SpreadProperties<L, R, K extends keyof L & keyof R> =
+  { [P in K]: L[P] | Exclude<R[P], undefined> };
+
+type Id<T> = {[K in keyof T]: T[K]} // see note at bottom*
+
+// Type of { ...L, ...R }
+export type Spread<L, R> = Id<
+  // Properties in L that don't exist in R
+  & Pick<L, Exclude<keyof L, keyof R>>
+  // Properties in R with types that exclude undefined
+  & Pick<R, Exclude<keyof R, OptionalPropertyNames<R>>>
+  // Properties in R, with types that include undefined, that don't exist in L
+  & Pick<R, Exclude<OptionalPropertyNames<R>, keyof L>>
+  // Properties in R, with types that include undefined, that exist in L
+  & SpreadProperties<L, R, OptionalPropertyNames<R> & keyof L>
+  >;
+
+export function random(min: number, max: number) {
+    return Math.floor( Math.random() * (max + 1 - min) ) + min;
+}
+
+export function randomPositiveInteger() {
+    return random(0, 100000000);
 }

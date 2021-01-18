@@ -22,7 +22,7 @@ export class AmazonItem {
     @Column("int", { nullable: true })
     deliverDay: number | null;
 
-    @Column({ default: false })
+    @Column()
     isPrime: boolean;
 
     @Index()
@@ -45,8 +45,8 @@ export class AmazonItem {
     fromNodePage: number;
 
     @UpdatedAt()
-    updatedAt: Date;
+    updatedAt?: Date;
 
     @Column({ default: false })
-    isCrawledDetail: boolean;
+    isCrawledDetail?: boolean;
 }

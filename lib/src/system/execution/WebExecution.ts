@@ -1,8 +1,7 @@
 import * as path from "path";
 import * as superagent from "superagent";
-import { Document } from "../../web/WebClient";
-import { ExecutionAtom, ExecutionAtomResult, Execution, execution } from "./Execution";
-import { TransactionExecution } from "./ExecutionComposition";
+import { Document } from "../Document";
+import { ExecutionAtom, ExecutionAtomResult, Execution, TransactionExecution, LogType } from "./Execution";
 
 export type Cookie = { [name: string]: string };
 
@@ -21,6 +20,7 @@ export interface PostRequestData {
     cookie?: Cookie;
     binary?: Buffer;
     useBinary?: boolean;
+    fields?: { [key: string]: string },
     attachments?: {
         field: string,
         buffer: Buffer,
@@ -51,7 +51,7 @@ async function requestGet(data: GetRequestData) {
 }
 
 async function requestPost(data: PostRequestData) {
-    const req = superagent.get(data.url);
+    const req = superagent.post(data.url);
     if (data.form) {
         req.type("form").send(data.form);
     }
@@ -60,6 +60,11 @@ async function requestPost(data: PostRequestData) {
     }
     if (data.cookie) {
         req.set("Cookie", writeCookie(data.cookie));
+    }
+    if (data.fields) {
+        Object.keys(data.fields).forEach(key => {
+            req.field(key, (data.fields as any)[key]);
+        });
     }
     if (data.attachments) {
         data.attachments.forEach(att => {
@@ -91,33 +96,37 @@ export class WebExecution<T> extends ExecutionAtom<T> {
         data: GetRequestData | PostRequestData, submit: (doc: Document) => T) {
         async function run(): Promise<ExecutionAtomResult<T>> {
             let response: superagent.Response;
-            let request: object = {};
-            if (method == "GET") {
-                const data2 = data as GetRequestData;
-                response = await requestGet(data2);
-                request = { params: data2.params, headers: data2.params };
-            } else {
-                const data2 = data as PostRequestData;
-                response = await requestPost(data2);
-                request = { params: data2.form, headers: data2.headers };
-            }
+            let exception: any = undefined;
+            let result: any = undefined;
+            let document: string | undefined = undefined;
+            try {
+                if (method == "GET") {
+                    response = await requestGet(data as GetRequestData);
+                } else {
+                    response = await requestPost(data as PostRequestData);
+                }
 
-            const doc = new Document(response);
-            const result = submit(doc);
+                document = response.text;
+                const doc = new Document(response);
+                result = submit(doc);
+            } catch (ex) {
+                exception = ex;
+            }
 
             return {
                 result,
+                exception,
                 executionData: {
                     web: {
                         method,
                         url: data.url,
-                        document: doc.text,
-                        request
+                        document,
+                        request: data
                     }
                 }
             }
         }
-        super(layer, name, run());
+        super(layer, name, run);
     }
 
     static get<T>(data: GetRequestData, submit: (doc: Document) => T, layer: string = "Inner", name: string = "WebGet") {
@@ -138,6 +147,7 @@ export class WebTransaction<T1, T2> extends TransactionExecution<T1, T2> {
 
     constructor(layer: string, name: string, value: T1) {
         super(layer, name, value);
+        this.childrenLogType = LogType.ON_FAILURE_ONLY;
     }
 
     setCookie(cookie: ((val: T2) => Cookie) | null) {
@@ -160,16 +170,18 @@ export class WebTransaction<T1, T2> extends TransactionExecution<T1, T2> {
     private thenRequest<T3>(name: string, method: "GET" | "POST", make: (val: T2) => GetRequestData | PostRequestData, submit: (doc: Document, val: T2) => T3) {
         const cookie = this.cookie;
         if (cookie) {
-            make = (val: any) => ({
+            const make2 = (val: any) => ({
                 ...make(val),
                 cookie: val.cookie || cookie(val)
             }) as any;
-            submit = (doc: Document, val: any) => ({
+            const submit2 = (doc: Document, val: any) => ({
                 ...submit(doc, val),
                 cookie: val.cookie || cookie(val)
             }) as any;
+            return this.then(val => new WebExecution("WebTransaction", name, method, make2(val), doc => submit2(doc, val))) as WebTransaction<T1, T3>;
+        } else {
+            return this.then(val => new WebExecution("WebTransaction", name, method, make(val), doc => submit(doc, val))) as WebTransaction<T1, T3>;
         }
-        return this.then(val => new WebExecution("WebTransaction", name, method, make(val), doc => submit(doc, val))) as WebTransaction<T1, T3>;
     }
 
     resolve<T3>(submit: (val: T2) => { valid: boolean | undefined, result: T3 }) {
@@ -180,6 +192,6 @@ export class WebTransaction<T1, T2> extends TransactionExecution<T1, T2> {
             }
             return { result: result.result };
         }
-        return this.then(val => execution("Local", "Resolve", run(val)));
+        return this.then(val => Execution.atom("Local", "Resolve", () => run(val)));
     }
 }

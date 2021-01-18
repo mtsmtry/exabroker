@@ -1,6 +1,5 @@
-import { WebDriver } from "../../web/WebDriver";
-import { execution, ExecutionAtom } from "./Execution";
-import { TransactionExecution } from "./ExecutionComposition";
+import { WebDriver } from "../WebDriver";
+import { Execution, TransactionExecution } from "./Execution";
 import { Cookie } from "./WebExecution";
 
 const LAYER = "BrowserExecution";
@@ -16,7 +15,7 @@ export class BrowserExecution<T> extends TransactionExecution<T, T> {
                 result: val
             };
         }
-        this.then(val => execution("BrowserExecution", "Initialize", promise(val)));
+        this.then(val => Execution.atom("BrowserExecution", "Initialize", () => promise(val)));
     }
 
     navigate(make: (val: T) => { url: string }) {
@@ -28,7 +27,7 @@ export class BrowserExecution<T> extends TransactionExecution<T, T> {
                 executionData: { web: { url: url } }
             };
         }
-        return this.then(val => execution(LAYER, "Navigate", promise(val))) as BrowserExecution<T>;
+        return this.then(val => Execution.atom(LAYER, "Navigate", () => promise(val))) as BrowserExecution<T>;
     }
 
     click(make: (val: T) => { xpath: string }) {
@@ -40,7 +39,7 @@ export class BrowserExecution<T> extends TransactionExecution<T, T> {
                 result: val
             };
         }
-        return this.then(val => execution(LAYER, "Click", promise(val))) as BrowserExecution<T>;
+        return this.then(val => Execution.atom(LAYER, "Click", () => promise(val))) as BrowserExecution<T>;
     }
 
     sendKeys(make: (val: T) => { xpath: string, keys: string }) {
@@ -52,7 +51,7 @@ export class BrowserExecution<T> extends TransactionExecution<T, T> {
                 result: val
             };
         }
-        return this.then(val => execution(LAYER, "SendKeys", promise(val))) as BrowserExecution<T>;
+        return this.then(val => Execution.atom(LAYER, "SendKeys", () => promise(val))) as BrowserExecution<T>;
     }
 
     returnCookie() {
@@ -63,7 +62,7 @@ export class BrowserExecution<T> extends TransactionExecution<T, T> {
                 result: cookie
             };
         }
-        return this.then(val => execution(LAYER, "GetCookie", promise(val))) as TransactionExecution<T, Cookie>;
+        return this.then(val => Execution.atom(LAYER, "GetCookie", () => promise(val))) as TransactionExecution<T, Cookie>;
     }
 }
 

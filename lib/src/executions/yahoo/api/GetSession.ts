@@ -10,7 +10,7 @@ export class YahooSession {
     account: YahooAccount;
 }
 
-export function getSession(username: string) {
+export function getSession(username: string): Execution<YahooSession> {
     return Execution.transaction(arguments, "Yahoo", getCurrentFilename())
         .then(val => DBExecution.yahoo(rep => rep.getAccount(username)))
         .then(val => {
@@ -23,9 +23,10 @@ export function getSession(username: string) {
             if (!account.cookies) {
                 return Execution.transaction(account)
                     .then(val => yahooDriver.login(username, val.password))
-                    .then(val => DBExecution.yahoo(rep => rep.saveCookies(username, val)).map(_ => val));
+                    .then(val => DBExecution.yahoo(rep => rep.saveCookies(username, val))
+                        .map(_ => ({ cookie: val, account })));
             } else {
-                return Execution.resolve(account.cookies);
+                return Execution.resolve({ cookie: account.cookies, account });
             }
         })
 }

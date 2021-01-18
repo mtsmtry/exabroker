@@ -1,4 +1,4 @@
-import { EntityManager, Repository } from "typeorm";
+import { EntityManager, LessThan, MoreThan, Repository } from "typeorm";
 import { YahooAuctionAccountStatus } from "../executions/yahoo/YahooDriver";
 import { YahooAccount } from "../entities/YahooAccount";
 import { YahooAccountSetting } from "../entities/YahooAccountSetting";
@@ -119,5 +119,10 @@ export class YahooRepository {
 
     async getAuctionBid(aid: string) {
         return await this.bids.findOne(aid);
+    }
+
+    async getExhibitCount(username: string) {
+        await this.exhibits.delete({ endDate: LessThan(new Date()) });
+        return await this.exhibits.count({ username });
     }
 }

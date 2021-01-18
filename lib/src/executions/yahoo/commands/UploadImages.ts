@@ -22,7 +22,7 @@ export function uploadImages(session: Cookie, buffers: Buffer[]) {
         .thenPost("Upload",
             val => ({
                 url: "https://auctions.yahoo.co.jp/img/images/new",
-                form: val.form,
+                fields: { ".crumb": val.form["img_crumb"] },
                 attachments: buffers.map((img, i) => ({
                     field: `files[${i}]`,
                     buffer: img,

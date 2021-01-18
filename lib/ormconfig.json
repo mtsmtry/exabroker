@@ -1,26 +1,26 @@
 {
-   "type": "aurora-data-api",
-   "database": "exabroker",
-
-   "region": "ap-northeast-1",
-   "resourceArn": "arn:aws:rds:ap-northeast-1:203303191911:cluster:incentknow-aurora",
-   "secretArn": "arn:aws:secretsmanager:ap-northeast-1:203303191911:secret:incentknow-aurora-secret-n7U5Hb",
-
-   "logging": [],
-
-   "synchronize": false, 
-   "entities": [
-      "dist/src/entities/**/*.js"
-   ],
-   "migrations": [
-      "dist/src/migration/**/*.js"
-   ],
-   "subscribers": [
-      "dist/src/subscriber/**/*.js"
-   ],
-   "cli": {
-      "entitiesDir": "src/entity",
-      "migrationsDir": "src/migration",
-      "subscribersDir": "src/subscriber"
-   }
-}
+    "type": "aurora-data-api",
+    "database": "exabroker",
+ 
+    "region": "ap-northeast-1",
+    "resourceArn": "arn:aws:rds:ap-northeast-1:203303191911:cluster:incentknow-aurora",
+    "secretArn": "arn:aws:secretsmanager:ap-northeast-1:203303191911:secret:incentknow-aurora-secret-n7U5Hb",
+ 
+    "logging": ["error", "schema", "warn"],
+ 
+    "synchronize": false, 
+    "entities": [
+       "dist/src/entities/**/*.js"
+    ],
+    "migrations": [
+       "dist/src/migration/**/*.js"
+    ],
+    "subscribers": [
+       "dist/src/subscriber/**/*.js"
+    ],
+    "cli": {
+       "entitiesDir": "src/entity",
+       "migrationsDir": "src/migration",
+       "subscribersDir": "src/subscriber"
+    }
+ }

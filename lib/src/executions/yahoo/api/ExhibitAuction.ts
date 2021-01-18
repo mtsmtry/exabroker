@@ -26,7 +26,16 @@ export function exhibitAuction(session: YahooSession, auction: AuctionExhibit) {
                     return yahooDriver.getCategory(session.cookie, auction.title).map(x => ({ category: x[0].id }));
                 })
                 .and(val => {
-                    return yahooDriver.uploadImages(session.cookie, auction.images);
+                    if (auction.images.length > 0) {
+                        return yahooDriver.uploadImages(session.cookie, auction.images);
+                    } else {
+                        return Execution.resolve({
+                            total_results_available: 0,
+                            total_results_returned: 0,
+                            first_result_position: 0,
+                            images: []
+                        });
+                    }
                 })
         })
         .then(val => {
@@ -57,7 +66,7 @@ export function exhibitAuction(session: YahooSession, auction: AuctionExhibit) {
                     shipschedule: auction.shipSchedule,
                     loc_cd: auction.prefecture, 
                     city: "",
-                    retpolicy: 0,               
+                    retpolicy: 0,
                     retpolicy_comment: "",
                     minBidRating: 0,
                     badRatingRatio: "yes",

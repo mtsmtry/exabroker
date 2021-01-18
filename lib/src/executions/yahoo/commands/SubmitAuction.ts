@@ -86,7 +86,7 @@ export function submitAuction(session: Cookie, auction: AuctionSubmission, image
                 return {
                     url: "https://auctions.yahoo.co.jp/sell/jp/show/preview",
                     form: auction
-                }
+                };
             },
             doc => ({
                 form: getFormHiddenInputData(doc, "//form[@name='auction']")
@@ -94,12 +94,14 @@ export function submitAuction(session: Cookie, auction: AuctionSubmission, image
         .thenPost("Submit",
             val => ({
                 url: "https://auctions.yahoo.co.jp/sell/jp/config/submit",
-                form: Object.assign(auction, val.form)
+                form: { ...val.form, ...auction }
             }),
-            (doc, val) => toNotNull({
+            (doc, val) => ({
                 error: doc.get("//div[@id='modAlertBox']//div[@class='decJS']"),
-                aid: doc.text.match("aID=([0-9a-z]+)")?.[1],
-                endDate: new Date(val.form["endDate"] as number * 1000)
+                ...toNotNull({
+                    aid: doc.text.match("aID=([0-9a-z]+)")?.[1],
+                    endDate: new Date(val.form["endDate"] as number * 1000)
+                })
             }))
         .resolve(val => ({
             valid: !val.error,

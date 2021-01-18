@@ -4,11 +4,11 @@ locals {
 }
 
 // Event
-/*
+
 resource "aws_cloudwatch_event_rule" "sync" {
     name                = "exabroker_sync"
-    description         = "Fires every ten minutes"
-    schedule_expression = "cron(* * * * ? *)"
+    description         = "Fires every five minutes"
+    schedule_expression = "cron(*/5 * * * ? *)"
 }
 
 resource "aws_cloudwatch_event_target" "sync" {
@@ -25,7 +25,6 @@ resource "aws_lambda_permission" "sync" {
     source_arn    = aws_cloudwatch_event_rule.sync.arn
 }
 
-*/
 
 // Role
 
@@ -57,4 +56,8 @@ resource "aws_ecr_repository" "exabroker_sync" {
   image_scanning_configuration {
     scan_on_push = true
   }
+}
+
+resource "aws_cloudwatch_log_group" "sync" {
+  name = "/aws/lambda/exabroker-sync"
 }

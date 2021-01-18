@@ -1,8 +1,11 @@
-import { DeepPartial, EntityManager, Not, Repository } from "typeorm";
+import { DeepPartial, EntityManager, MoreThanOrEqual, Not, Repository } from "typeorm";
 import { AmazonItem } from "../entities/AmazonItem";
 import { AmazonItemDetail } from "../entities/AmazonItemDetail";
-import { BrowseNode, CrawlingStatus } from "../entities/BrowseNode";
+import { BrowseNode } from "../entities/BrowseNode";
 import { YahooAuctionExhibit } from "../entities/YahooAuctionExhibit";
+import { amazonItemDetailCollection, AMAZON_ITEM_DETAIL_VERSION } from "../collections/AmazonItemDetailCollection";
+import { Document } from "../system/Document";
+import * as aws from "aws-sdk";
 
 function random(min: number, max: number) {
     return Math.floor( Math.random() * (max + 1 - min) ) + min;
@@ -13,24 +16,18 @@ export class AmazonRepository {
     amazonItemDetails: Repository<AmazonItemDetail>;
     browseNodes: Repository<BrowseNode>;
 
-    constructor(mng: EntityManager) {
+    constructor(mng: EntityManager, private s3: aws.S3) {
         this.amazonItems = mng.getRepository(AmazonItem);
         this.amazonItemDetails = mng.getRepository(AmazonItemDetail);
         this.browseNodes = mng.getRepository(BrowseNode);
     }
 
-    async completeBrowseNodeCrawling(nodeId: string, page: number, hasItem: boolean) {
-        if (hasItem) {
-            await this.browseNodes.update(nodeId, { status: CrawlingStatus.PENDING, latestPage: page });
-        } else {
-            await this.browseNodes.update(nodeId, { status: CrawlingStatus.COMPLETED });
-        }
-        console.log(`completed:node=${nodeId},page=${page},hasItem=${hasItem}`);
-    }
-
-    async failedBrowseNodeCrawling(nodeId: string, page: number) {
-        await this.browseNodes.update(nodeId, { status: CrawlingStatus.PENDING });
-        console.log(`failed:node=${nodeId},page=${page}`);
+    async getBrowseNodes(leastLevel: number) {
+        const nodes = await this.browseNodes.createQueryBuilder()
+            .select([ "nodeId" ])
+            .where({ level: MoreThanOrEqual(leastLevel) })
+            .getRawMany();
+        return nodes.map(x => x.nodeId as string);
     }
 
     async upsertAmazonItems(items: AmazonItem[]) {
@@ -62,85 +59,17 @@ export class AmazonRepository {
             .execute();
     }
 
-    async getCrawlingBrowseNodes(count: number): Promise<BrowseNode[]> {
-        const currentLevelBrowseNode = await this.browseNodes
-            .createQueryBuilder()
-            .where({ status: CrawlingStatus.PENDING })
-            .andWhere("level >= 1")
-            .orderBy("level", "ASC")
-            .limit(1)
-            .getOne();
-        if (!currentLevelBrowseNode) {
-            console.log("currentLevelBrowseNode is null!");
-            return [];
-        }
-        const currentLevel = currentLevelBrowseNode.level;
-        const process = random(0, 100000000);
-
-        await this.browseNodes
-            .createQueryBuilder()
-            .update()
-            .set({ status: CrawlingStatus.RUNNING, process })
-            .where({ status: CrawlingStatus.PENDING, level: currentLevel })
-            .orderBy("latestPage", "ASC")
-            .limit(count)
-            .execute();
-
-        return await this.browseNodes
-            .createQueryBuilder()
-            .where({ status: CrawlingStatus.RUNNING, process })
-            .getMany();
-    }
-
-    async checkAllCompleted(): Promise<boolean> {
-        const count = await this.browseNodes
-            .createQueryBuilder()
-            .where({ status: Not(CrawlingStatus.COMPLETED) })
-            .andWhere("level >= 1")
-            .getCount();
-        return count == 0;
-    }
-
-    async cancelAllRunningBrowseNodeCrawling() {
-        await this.browseNodes.createQueryBuilder()
-            .update()
-            .set({ status: CrawlingStatus.PENDING })
-            .where({ status: CrawlingStatus.RUNNING })
-            .execute();
-    }
-
-    async resetAllBrowseNodeCrawling() {
-        await this.browseNodes.createQueryBuilder()
-            .update()
-            .set({ status: CrawlingStatus.PENDING, latestPage: 0 })
-            .execute();
-    }
-
-    async getCrawlingASINs(count: number): Promise<string[]> {
-        const items = await this.amazonItems.createQueryBuilder("item")
-            .leftJoin(AmazonItemDetail, "details", "item.asin = details.asin")
-            .where("details.title IS NULL AND item.isCrawledDetail = 0")
-            .orderBy("item.reviewCount", "DESC")
-            .limit(count)
-            .getMany();
-        return items.map(x => x.asin);
-    }
-
     async deleteItem(asin: string) {
         await this.amazonItems.delete(asin);
     }
-
-    async crawledItemDetail(asin: string) {
-        await this.amazonItems.update(asin, { isCrawledDetail: true })
-    }
-
+    
     async getExhibitableASINs(count: number) {
         const items = await this.amazonItemDetails.createQueryBuilder("detail")
             .select(["item.asin"])
             .innerJoin(AmazonItem, "item", "detail.asin = item.asin")
             .leftJoin(YahooAuctionExhibit, "exhibit", "detail.asin = exhibit.asin")
             .where(`item.updatedAt > DATE_SUB(CURRENT_DATE, INTERVAL 1 DAY) 
-                AND item.deliverDay IS NOT NULL
+               
                 AND exhibit.aid IS NULL 
                 AND detail.title NOT LIKE '%Amazon%'
                 AND detail.title NOT LIKE '%輸入%'`)
@@ -151,15 +80,26 @@ export class AmazonRepository {
     }
 
     async getItemDetail(asin: string) {
-        const detail = await this.amazonItemDetails.findOne(asin);
+        let detail = await this.amazonItemDetails.findOne(asin);
         if (!detail) {
             return undefined;
         }
+
         const item = await this.amazonItems.findOne(asin);
         if (!item) {
             return undefined;
         }
         detail.item = item;
+
         return detail;
+    }
+
+    async getNoCrawledDatailASINs(asins: string[]) {
+        const items = await this.amazonItemDetails.createQueryBuilder("item")
+            .where("asin IN (:...asins)", { asins })
+            .select([ "asin" ])
+            .getRawMany();
+        const crawledASINs = items.map(x => x.item_asin as string);
+        return asins.filter(x => !crawledASINs.includes(x));
     }
 }

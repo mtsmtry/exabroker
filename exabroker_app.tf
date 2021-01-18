@@ -41,8 +41,17 @@ resource "aws_ecs_cluster" "default" {
 
 // Repository
 
-resource "aws_ecr_repository" "default" {
-  name                 = "${local.service_name}-app"
+resource "aws_ecr_repository" "crawler" {
+  name                 = "${local.service_name}-crawler"
+  image_tag_mutability = "MUTABLE"
+
+  image_scanning_configuration {
+    scan_on_push = true
+  }
+}
+
+resource "aws_ecr_repository" "executer" {
+  name                 = "${local.service_name}-executer"
   image_tag_mutability = "MUTABLE"
 
   image_scanning_configuration {
@@ -52,18 +61,18 @@ resource "aws_ecr_repository" "default" {
 
 // Task definition
 
-data "template_file" "container_defininitions" {
+data "template_file" "containerDefininitionsCrawler" {
   template = file("exabroker_containerDefinitions.json")
   vars = {
-    CONTAINER_NAME = "${local.service_name}-app"
-    SERVICE_NAME   = local.service_name
-    ECR_ARN        = "${aws_ecr_repository.default.repository_url}:0.1"
+    CONTAINER_NAME = "${local.service_name}-crawler"
+    SERVICE_NAME   = "${local.service_name}-crawler"
+    ECR_ARN        = "${aws_ecr_repository.crawler.repository_url}:1.0"
   }
 }
 
-resource "aws_ecs_task_definition" "default" {
-  family                   = "${local.service_name}-task"
-  container_definitions    = data.template_file.container_defininitions.rendered
+resource "aws_ecs_task_definition" "crawler" {
+  family                   = "${local.service_name}-crawler"
+  container_definitions    = data.template_file.containerDefininitionsCrawler.rendered
   network_mode             = "awsvpc"
   task_role_arn            = aws_iam_role.ECSTaskExecutionRole.arn
   execution_role_arn       = aws_iam_role.ECSTaskExecutionRole.arn
@@ -72,8 +81,36 @@ resource "aws_ecs_task_definition" "default" {
   requires_compatibilities = ["FARGATE"]
 }
 
-// Service
+resource "aws_cloudwatch_log_group" "crawler" {
+  name = "/ecs/${local.service_name}-crawler"
+}
 
+data "template_file" "containerDefininitionsExecuter" {
+  template = file("exabroker_containerDefinitions.json")
+  vars = {
+    CONTAINER_NAME = "${local.service_name}-executer"
+    SERVICE_NAME   = "${local.service_name}-executer"
+    ECR_ARN        = "${aws_ecr_repository.executer.repository_url}:1.0"
+  }
+}
+
+resource "aws_ecs_task_definition" "executer" {
+  family                   = "${local.service_name}-executer"
+  container_definitions    = data.template_file.containerDefininitionsExecuter.rendered
+  network_mode             = "awsvpc"
+  task_role_arn            = aws_iam_role.ECSTaskExecutionRole.arn
+  execution_role_arn       = aws_iam_role.ECSTaskExecutionRole.arn
+  cpu                      = 512
+  memory                   = 1024
+  requires_compatibilities = ["FARGATE"]
+}
+
+resource "aws_cloudwatch_log_group" "executer" {
+  name = "/ecs/${local.service_name}-executer"
+}
+
+// Service
+/*
 resource "aws_cloudwatch_log_group" "default" {
   name = "/ecs/${local.service_name}"
 }
@@ -98,7 +135,7 @@ resource "aws_ecs_service" "default" {
 
   depends_on = [ aws_iam_role.ECSTaskExecutionRole ]
 }
-
+*/
 // ECS Scheduled Tasks
 /*
 data "aws_iam_policy_document" "ECSScheduledTasksRoleAssumeRolePolicy" {

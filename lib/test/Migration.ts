@@ -1,4 +1,4 @@
-import { createDatabaseConnection } from "../src/Factory";
+import { createDatabaseConnection } from "../src/system/Database";
 
 createDatabaseConnection({
     logging: "all",
