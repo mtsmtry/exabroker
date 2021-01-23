@@ -6,6 +6,7 @@ import { randomPositiveInteger, toTimestamp } from "../Utils";
 import * as aws from "aws-sdk";
 import { getException } from "./Utils";
 import { getRepositories } from "../system/Database";
+import { ECSCredentials } from "aws-sdk";
 
 export class AdditionalExecutionData {
     web: WebExecutionData;
@@ -28,10 +29,56 @@ export class ExecutionRepository {
     tasks: Repository<ExecutionTask>;
     schedules: Repository<CrawlingSchedule>;
 
-    constructor(mng: EntityManager) {
+    constructor(mng: EntityManager, private firestore: FirebaseFirestore.Firestore) {
         this.records = mng.getRepository(ExecutionRecord);
         this.tasks = mng.getRepository(ExecutionTask);
         this.schedules = mng.getRepository(CrawlingSchedule); 
+    }
+
+    private async createRecord(exec: DeepPartial<ExecutionRecord>) {
+        const ids = await this.createRecords([exec]);
+        return ids[0];
+    }
+
+    private toObject(exec: DeepPartial<ExecutionRecord>): object {
+        const result = {};
+        function toHeadUpper(str: string) {
+            return str.slice(0, 1).toUpperCase() + str.slice(1);
+        }
+        Object.keys(exec).forEach(key => {
+            if (key == "web") {
+                Object.keys(exec.web || {}).forEach(subKey => {
+                    result["web" + toHeadUpper(subKey)] = (exec.web as any)[subKey];
+                });
+            } else if (key == "sequence") {
+                Object.keys(exec.sequence || {}).forEach(subKey => {
+                    result["sequence" + toHeadUpper(subKey)] = (exec.sequence as any)[subKey];
+                });
+            } else {
+                result[key] = exec[key];
+            }
+        });
+        return result;
+    }
+
+    private async createRecords(execs: DeepPartial<ExecutionRecord>[]) {
+        const rdbs = execs.map(x => this.records.create(x));
+        const rdbExecs = await this.records.save(rdbs);
+        const batch = this.firestore.batch();
+        execs.forEach((exec, i) => {
+            const path = this.firestore.collection("execution_records").doc(rdbExecs[i].id.toString());
+            exec.id = rdbExecs[i].id;
+            batch.create(path, this.toObject(exec));
+        });
+        await batch.commit();
+        return rdbExecs.map(x => x.id);
+    }
+
+    private async updateRecord(id: number, exec: DeepPartial<ExecutionRecord>) {
+        await Promise.all([
+            await this.records.update(id, exec),
+            await this.firestore.collection("execution_records").doc(id.toString()).update(this.toObject(exec))
+        ]);
     }
 
     private async saveDocument(add: DeepPartial<AdditionalExecutionData>) {
@@ -48,7 +95,7 @@ export class ExecutionRepository {
 
     async startExecution(parentId: number | null, type: ExecutionType, layer: string, name: string, additional: DeepPartial<AdditionalExecutionData> = {}) {
         additional = await this.saveDocument(additional);
-        let execution = this.records.create({
+        return await this.createRecord({
             layer,
             name,
             type,
@@ -57,13 +104,11 @@ export class ExecutionRepository {
             startedAt: new Date(),
             ...additional
         });
-        execution = await this.records.save(execution);
-        return execution.id;
     }
 
     async failedExecution(id: number, exception: string | object | null = null, additional: DeepPartial<AdditionalExecutionData> = {}) {
         additional = await this.saveDocument(additional);
-        await this.records.update(id, {
+        await this.updateRecord(id, {
             status: ExecutionStatus.FAILED,
             endedAt: new Date(),
             exception: getException(exception),
@@ -73,7 +118,7 @@ export class ExecutionRepository {
 
     async completedExecution(id: number, additional: DeepPartial<AdditionalExecutionData> = {}) {
         additional = await this.saveDocument(additional);
-        await this.records.update(id, {
+        await this.updateRecord(id, {
             status: ExecutionStatus.COMPLETED,
             endedAt: new Date(),
             ...additional
@@ -82,7 +127,7 @@ export class ExecutionRepository {
 
     async submitExecutions(parentId: number | null, submissions: ExecutionSubmission[]) {
         const adds = await Promise.all(submissions.map(async x => x.additional ? await this.saveDocument(x.additional) : {}));
-        let ents = submissions.map((x, i) => this.records.create({
+        const execs = submissions.map((x, i) => ({
             layer: x.layer,
             name: x.name,
             startedAt: x.startedAt,
@@ -93,14 +138,13 @@ export class ExecutionRepository {
             status: x.successful ? ExecutionStatus.COMPLETED : ExecutionStatus.FAILED,
             parentExecutionId: parentId,
         }));
-        console.log(ents);
-        ents = await this.records.save(ents);
-        return ents.map(x => x.id);
+        console.log(execs);
+        return await this.createRecords(execs);
     }
 
     async updateExecution(id: number, additional: DeepPartial<AdditionalExecutionData> = {}) {
         additional = await this.saveDocument(additional);
-        await this.records.update(id, additional)
+        await this.updateRecord(id, additional)
     }
 
     async createTaskOnSchedule() {

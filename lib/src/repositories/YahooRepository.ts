@@ -1,11 +1,12 @@
 import { EntityManager, LessThan, MoreThan, Repository } from "typeorm";
-import { YahooAuctionAccountStatus } from "../executions/yahoo/YahooDriver";
+import { YahooAuctionAccountStatus } from "../executions/web/yahoo/YahooDriver";
 import { YahooAccount } from "../entities/YahooAccount";
 import { YahooAccountSetting } from "../entities/YahooAccountSetting";
 import { YahooAuctionBid, BidStatus } from "../entities/YahooAuctionBid";
 import { YahooAuctionExhibit } from "../entities/YahooAuctionExhibit";
 import { YahooAuctionNotice } from "../entities/YahooAuctionNotice";
 import { Dto } from "../Utils";
+import { YahooSoldAuction } from "../entities/YahooSoldAuction";
 
 export interface AccountSettingInfo {
     nameSei: string;
@@ -30,6 +31,7 @@ export class YahooRepository {
     notices: Repository<YahooAuctionNotice>;
     bids: Repository<YahooAuctionBid>;
     settings: Repository<YahooAccountSetting>;
+    soldAuctions: Repository<YahooSoldAuction>;
 
     constructor(mng: EntityManager) {
         this.accounts = mng.getRepository(YahooAccount);
@@ -37,6 +39,7 @@ export class YahooRepository {
         this.notices = mng.getRepository(YahooAuctionNotice);
         this.bids = mng.getRepository(YahooAuctionBid);
         this.settings = mng.getRepository(YahooAccountSetting);
+        this.soldAuctions = mng.getRepository(YahooSoldAuction);
     }
 
     async getAccount(username: string) {
@@ -88,14 +91,14 @@ export class YahooRepository {
         });
     }
 
-    async createAuctionExhibit(dto: { aid: string, username: string, title: string, price: number, endDate: Date, category: number }) {
+    async createAuctionExhibit(dto: { aid: string, username: string, title: string, price: number, endDate: Date, category: number, asin: string | null }) {
         const auction = this.exhibits.create(dto);
         await this.exhibits.save(auction);
     }
 
     async deleteAuctionExhibit(aid: string) {
         await this.exhibits.delete(aid);
-    } 
+    }
 
     async saveNotices(username: string, dto: { aid: string, code: string, message: string, date: Date, type: string }[]) {
         const columns = this.notices.metadata.columns.map(x => x.propertyName);
@@ -124,5 +127,16 @@ export class YahooRepository {
     async getExhibitCount(username: string) {
         await this.exhibits.delete({ endDate: LessThan(new Date()) });
         return await this.exhibits.count({ username });
+    }
+
+    async upsertSoldAuction(auction: YahooSoldAuction) {
+        auction = this.soldAuctions.create(auction);
+        const columns = this.soldAuctions.metadata.columns.map(x => x.propertyName);
+        await this.soldAuctions
+            .createQueryBuilder()
+            .insert()
+            .orUpdate({ overwrite: columns })
+            .values(auction)
+            .execute();
     }
 }

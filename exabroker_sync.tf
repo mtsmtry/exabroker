@@ -5,12 +5,12 @@ locals {
 
 // Event
 
-resource "aws_cloudwatch_event_rule" "sync" {
-    name                = "exabroker_sync"
-    description         = "Fires every five minutes"
-    schedule_expression = "cron(*/5 * * * ? *)"
-}
-
+//resource "aws_cloudwatch_event_rule" "sync" {
+//    name                = "exabroker_sync"
+//    description         = "Fires every five minutes"
+ //   schedule_expression = "cron(*/5 * * * ? *)"
+//}
+/*
 resource "aws_cloudwatch_event_target" "sync" {
     rule      = aws_cloudwatch_event_rule.sync.name
     target_id = "output_report"
@@ -23,7 +23,7 @@ resource "aws_lambda_permission" "sync" {
     function_name = local.lambda_sync_name
     principal     = "events.amazonaws.com"
     source_arn    = aws_cloudwatch_event_rule.sync.arn
-}
+}*/
 
 
 // Role
@@ -39,6 +39,11 @@ data "aws_iam_policy_document" "ExabrokerSyncLambdaRoleAssumeRolePolicy" {
       identifiers = ["lambda.amazonaws.com"]
     }
   }
+}
+
+resource "aws_iam_role_policy_attachment" "ExabrokerSyncLambdaRole" {
+  role       = aws_iam_role.exabroker_sync.name
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
 }
 
 resource "aws_iam_role" "exabroker_sync" {

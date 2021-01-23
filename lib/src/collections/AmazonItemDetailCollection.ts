@@ -7,8 +7,9 @@ import { parseFloatOrNull } from "../Utils";
 import { Collection } from "../system/collection/Collection";
 import { DBExecution } from "../system/execution/DatabaseExecution";
 import { getRepositories } from "../system/Database";
+import { indexCrawler } from "../crawlers/IndexCrawler";
 
-export const AMAZON_ITEM_DETAIL_VERSION = 2;
+export const AMAZON_ITEM_DETAIL_VERSION = 3;
 
 type Dict = { [x: string]: string };
 
@@ -28,7 +29,7 @@ export const amazonItemDetailCollection =
         .property(doc => ({ price_block: doc.getById("priceblock_ourprice")?.extractDigits() }))
         .property(doc => ({ price_swatches: doc.getById("tmmSwatches")?.extractDigits() }))
         .property(doc => ({ features_productOverview: table_to_dict_td_td(doc.get("//*[@id='productOverview_feature_div']//table")) }))
-        .property(doc => ({ features_detailBullets: 
+        .property(doc => ({ features_detailBullets:
             doc .find("//*[@id='detailBullets_feature_div']//li")
                 .map(x => x.text.split(":"))
                 .reduce((dict: Dict, x) => ({ [x[0]]: x[1], ...dict }), {})}))
@@ -41,7 +42,7 @@ export const amazonItemDetailCollection =
         .property(doc => ({ askCount: doc.getById("askATFLink")?.extractDigits()  }))
         .property(doc => ({ rating: parseFloatOrNull(doc.getById("averageCustomerReviews")?.parent.text.match("5つ星のうち([0-9/.]+)")?.[1]) }))
         .property(doc => ({ availability: doc.get("//*[@id='availability']/span")?.text }))
-        .property(doc => ({ images: JSON.parse(doc.getNeeded("//*[@id='landingImage']").attrNeeded("data-a-dynamic-image")) }))
+        .property(doc => ({ images: doc.find("//*[@id='altImages']//img").map(x => x.attr("src")?.match("(.+?)\.[0-9a-zA-Z_]+\.jpg")?.[1] + ".jpg") }))
         .property(doc => ({ version: AMAZON_ITEM_DETAIL_VERSION }))
         .saveOne(val => DBExecution.amazon(rep => rep.upsertAmazonItemDetail(val)))
 
@@ -72,24 +73,33 @@ function table_to_dict_th_td(table: Element | null) {
 
 export async function getLatestVersionAmazonItemDetail(asin: string) {
     const reps = await getRepositories();
-    let detail = await reps.amazon.getItemDetail(asin);
-    if (!detail) {
+    const item = await reps.amazon.getItem(asin);
+    if (!item) {
         return undefined;
     }
+    let detail = await reps.amazon.getItemDetail(asin);
+    if (!detail || detail.version < AMAZON_ITEM_DETAIL_VERSION) {
+        if (!item) {
+            return undefined;
+        }
 
-    if (!detail.images) {
-        const s3Key = "items/" + asin;
-        const object = await this.s3.getObject({ Bucket: "exabroker-crawled", Key: s3Key }).promise();
+        const s3Key = "items/" + asin;        
+        let object = await reps.s3.getObject({ Bucket: "exabroker-crawled", Key: s3Key }).promise();
+
+        if (object.$response.error && object.$response.error.code == "NotFound") {
+            await indexCrawler.crawl(-1, { site: "Amazon", page: { kind: "Item", asin: asin } });
+            object = await reps.s3.getObject({ Bucket: "exabroker-crawled", Key: s3Key }).promise();
+        }
+
         const body = object.Body as Buffer;
         const doc = new Document(body.toString());
         const res = await amazonItemDetailCollection.collectItems(doc, s3Key);
         if (res.result == null) {
             throw "Failed to crawl";
         }
-        const item = detail.item;
         detail = res.result as AmazonItemDetail;
-        detail.item = item;
     }
+    detail.item = item;
 
     return detail;
 }

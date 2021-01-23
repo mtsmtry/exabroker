@@ -98,7 +98,7 @@ export class WebExecution<T> extends ExecutionAtom<T> {
             let response: superagent.Response;
             let exception: any = undefined;
             let result: any = undefined;
-            let document: string | undefined = undefined;
+            let document: string | null = null; // Not undefined due to typeorm bug
             try {
                 if (method == "GET") {
                     response = await requestGet(data as GetRequestData);
@@ -106,7 +106,9 @@ export class WebExecution<T> extends ExecutionAtom<T> {
                     response = await requestPost(data as PostRequestData);
                 }
 
-                document = response.text;
+                if (typeof response.text == "string") {
+                    document = response.text;
+                }
                 const doc = new Document(response);
                 result = submit(doc);
             } catch (ex) {

@@ -50,7 +50,9 @@ export class AmazonRepository {
     }
 
     async upsertAmazonItemDetail(detail: DeepPartial<AmazonItemDetail>) {
-        const columns = this.amazonItemDetails.metadata.columns.map(x => x.propertyName);
+        const columns = this.amazonItemDetails.metadata.columns
+            .map(x => x.propertyName)
+            .filter(x => detail[x] !== undefined);
         await this.amazonItemDetails
             .createQueryBuilder()
             .insert()
@@ -64,34 +66,31 @@ export class AmazonRepository {
     }
     
     async getExhibitableASINs(count: number) {
-        const items = await this.amazonItemDetails.createQueryBuilder("detail")
+        const ngWords = ["Amazon", "輸入", "Blu-ray", "DVD"];
+        let conds = "item.updatedAt > DATE_SUB(CURRENT_DATE, INTERVAL 1 DAY)";
+   //     conds += " AND exhibit.aid IS NULL";
+        conds += " AND LENGTH(item.title) != CHARACTER_LENGTH(item.title)"
+        conds += " AND LENGTH(item.title) > 100";
+        conds += " AND item.price < 10000"
+        conds += " AND " + ngWords.map(x => `item.title NOT LIKE '%${x}%'`).join(" AND ");
+        const items = await this.amazonItems.createQueryBuilder("item")
             .select(["item.asin"])
-            .innerJoin(AmazonItem, "item", "detail.asin = item.asin")
-            .leftJoin(YahooAuctionExhibit, "exhibit", "detail.asin = exhibit.asin")
-            .where(`item.updatedAt > DATE_SUB(CURRENT_DATE, INTERVAL 1 DAY) 
-               
-                AND exhibit.aid IS NULL 
-                AND detail.title NOT LIKE '%Amazon%'
-                AND detail.title NOT LIKE '%輸入%'`)
-            .orderBy("detail.reviewCount", "DESC")
+            //.innerJoin(AmazonItem, "item", "detail.asin = item.asin")
+        //    .leftJoin(YahooAuctionExhibit, "exhibit", "item.asin = exhibit.asin")
+            .where(conds)
+            .orderBy("item.reviewCount", "DESC")
             .limit(count)
             .getRawMany();
+        console.log(`Items:${items}`);
         return items.map(x => x.item_asin as string);
     }
 
     async getItemDetail(asin: string) {
-        let detail = await this.amazonItemDetails.findOne(asin);
-        if (!detail) {
-            return undefined;
-        }
+        return await this.amazonItemDetails.findOne(asin);
+    }
 
-        const item = await this.amazonItems.findOne(asin);
-        if (!item) {
-            return undefined;
-        }
-        detail.item = item;
-
-        return detail;
+    async getItem(asin: string) {
+        return await this.amazonItems.findOne(asin);
     }
 
     async getNoCrawledDatailASINs(asins: string[]) {

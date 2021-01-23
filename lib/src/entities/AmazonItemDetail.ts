@@ -4,8 +4,6 @@ import { CreatedAt, UpdatedAt } from "./Utils";
 
 type Dict = { [x: string]: string };
 
-type AmazonItemImages = { [x: string]: [number, number] };
-
 @Entity()
 export class AmazonItemDetail {
     @PrimaryColumn("char", { length: 10 })
@@ -74,7 +72,7 @@ export class AmazonItemDetail {
     shipper_info: string | null;
 
     @Column("simple-json", { nullable: true })
-    images: AmazonItemImages | null;
+    images: string[] | null;
 
     @Index()
     @Column({ type: "varchar", nullable: true, asExpression: "coalesce(seller_buybox, seller_info)", generatedType: "VIRTUAL" })
@@ -87,6 +85,6 @@ export class AmazonItemDetail {
     @UpdatedAt()
     updatedAt: Date;
 
-   // @Column("int", { default: 1 })
+    @Column("int", { default: 1 })
     version: number;
 }

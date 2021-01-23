@@ -12,7 +12,7 @@ const browseNodeCrawler =
         getUrl: val => `https://www.amazon.co.jp/s?rh=n%3A${val.nodeId}&page=${val.page}`,
         getS3Key: val => `browseNodes/${val.nodeId}-${val.page}`,
         getNextCrawlings: (val, itemCount) => {
-            if (itemCount == 0) {
+            if (itemCount < 10) {
                 return [];
             }
             const page: AmazonCrawlingObject = { kind: "BrowseNode", nodeId: val.nodeId, page: val.page + 1 };

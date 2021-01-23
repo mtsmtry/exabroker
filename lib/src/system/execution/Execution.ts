@@ -43,8 +43,8 @@ export class Execution<T> {
         return new BatchExecution<T>(layer, name, value);
     }
 
-    static sequence<T, T2>(values: T[], concurrencyLimit?: number, layer: string = "Inner", name: string = "Lambda") {
-        return new SequenceExecution<T, T2>(layer, name, values, concurrencyLimit);
+    static sequence<T, T2>(values: T[], concurrencyLimit?: number, logType: LogType = LogType.IMMEDIATE, layer: string = "Inner", name: string = "Lambda") {
+        return new SequenceExecution<T, T2>(layer, name, values, concurrencyLimit, logType);
     }
 
     static transaction<T, T2 = T>(value: T, layer: string = "Inner", name: string = "Lambda") {
@@ -77,7 +77,9 @@ class MappedExecution<T> extends Execution<T> {
 
     async executeImpl(depth: number, log?: ExecutionLog): Promise<ExecutionResult<T>> {
         const result = await this.execution.executeImpl(depth, log);
-        result.result = this.convert(result.result);
+        if (result.submission.successful) {
+            result.result = this.convert(result.result);
+        }
         return result;
     }
 }
@@ -203,13 +205,14 @@ class ExecutionComposition<T1, T2> extends Execution<T2> {
         
         // Create promices
         let i=0;
-        let promices = this.children.map(async child => {
+        let promices = this.children.map(child => async () => {
             // Execute child
             const log = this.childrenLogType == LogType.ON_FAILURE_ONLY || !rep ? undefined : { rep, parentId: executionId };
             const childExec = child(this.value);
-            const result = await childExec.executeImpl(depth+1, log);
-            console.log(`${"  ".repeat(depth)}[${i+1}/${this.children.length}] ${childExec.layer}.${childExec.name}:${JSON.stringify(result)?.slice(0, 200)}`);
             i++;
+            console.log(`${"  ".repeat(depth)}[${i}/${this.children.length}]  Start ${childExec.layer}.${childExec.name}:${JSON.stringify(this.value)?.slice(0, 200)}`);
+            const result = await childExec.executeImpl(depth+1, log);
+            console.log(`${"  ".repeat(depth)}[${i}/${this.children.length}]  End ${childExec.layer}.${childExec.name}:${JSON.stringify(result.result)?.slice(0, 200) || result.submission.exception}`);
 
             // Count
             if (result.submission.successful) {
@@ -225,7 +228,7 @@ class ExecutionComposition<T1, T2> extends Execution<T2> {
                         doneCount: successfulCount + failureCount,
                         successfulCount,
                         failureCount
-                    } 
+                    }
                 }
                 await rep.updateExecution(executionId, addtional);
             }
@@ -244,11 +247,11 @@ class ExecutionComposition<T1, T2> extends Execution<T2> {
             while(promices.length > 0) {
                 const promiseSet = promices.slice(0, this.concurrencyLimit);
                 promices = promices.slice(this.concurrencyLimit);
-                const resultSet = await Promise.all(promiseSet);
-                results.concat(resultSet);
+                const resultSet = await Promise.all(promiseSet.map(x => x()));
+                results = results.concat(resultSet);
             }
         } else {
-            results = await Promise.all(promices);
+            results = await Promise.all(promices.map(x => x()));
         }
         const endedAt = new Date();
 
@@ -293,9 +296,10 @@ class ExecutionComposition<T1, T2> extends Execution<T2> {
             // Execute child
             const log = this.childrenLogType == LogType.ON_FAILURE_ONLY || !rep ? undefined : { rep, parentId: executionId };
             const child = this.children[i](stack);
+            console.log(`${"  ".repeat(depth)}[${i+1}/${this.children.length}] Start ${child.layer}.${child.name}:${JSON.stringify(stack)?.slice(0, 200)}`);
             const result = await child.executeImpl(depth+1, log);
             stack = result.result;
-            console.log(`${"  ".repeat(depth)}[${i+1}/${this.children.length}] ${child.layer}.${child.name}:${JSON.stringify(stack)?.slice(0, 200)}`);
+            console.log(`${"  ".repeat(depth)}[${i+1}/${this.children.length}] End ${child.layer}.${child.name}:${JSON.stringify(stack)?.slice(0, 200) || result.submission.exception}`);
 
             // Log child
             if (rep) {
@@ -317,9 +321,6 @@ class ExecutionComposition<T1, T2> extends Execution<T2> {
 
         // Log
         if (rep) {
-            if (this.name.startsWith("TestTransactionThrow")) {
-                console.log(`TestTransactionThrow: ${executionId} ${successful}`)
-            }
             if (successful) {
                 await rep.completedExecution(executionId);
             } else {
@@ -389,8 +390,8 @@ export class BatchExecution<T1, T2 = {}> extends ExecutionComposition<T1, T2> {
 }
 
 export class SequenceExecution<T1, T2> extends ExecutionComposition<T1[], T2[]> {
-    constructor(layer: string, name: string, private values: T1[], concurrencyLimit?: number) {
-        super(layer, name, values, x => x, CompositionType.PARALLEL, EvaluationType.AS_MUCH_AS_POSSIBLE, LogType.IMMEDIATE, concurrencyLimit);
+    constructor(layer: string, name: string, private values: T1[], concurrencyLimit?: number, logType: LogType = LogType.IMMEDIATE) {
+        super(layer, name, values, x => x, CompositionType.PARALLEL, EvaluationType.AS_MUCH_AS_POSSIBLE, logType, concurrencyLimit);
     }
 
     element(exec: (val: T1) => Execution<T2>): Execution<T2[]> {

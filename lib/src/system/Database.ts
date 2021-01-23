@@ -7,9 +7,10 @@ import { CrawlingRepository } from "../repositories/CrawlingRepository";
 import { ExceptionRepository } from "../repositories/ExceptionRepository";
 import { ExecutionRepository } from "../repositories/ExecutionRepository";
 import { YahooRepository } from "../repositories/YahooRepository";
+import * as admin from "firebase-admin";
 
 export async function createDatabaseConnection(options: object={}) {
-//    aws.config.httpOptions = { timeout: 30 * 1000 };
+    aws.config.httpOptions = { timeout: 60 * 1000 };
 
     let connectOption: any = null;
     console.log(__dirname);
@@ -37,6 +38,16 @@ export async function createDatabaseConnection(options: object={}) {
     return conn;
 }
 
+export async function initFirestore() {
+    let config: any = null;
+    try {
+        config = require(`../../../firestore-config.json`);
+    } catch(ex) {
+        config = require(`../../../firestore-config.json`);
+    }
+    admin.initializeApp({ credential: admin.credential.cert(config) });
+}
+
 let repositories: null |  {
     amazon: AmazonRepository,
     yahoo: YahooRepository,
@@ -45,6 +56,7 @@ let repositories: null |  {
     collection: CollectionRepository,
     exception: ExceptionRepository,
     connection: Connection,
+    firestore: FirebaseFirestore.Firestore,
     s3: aws.S3
 } = null;
 
@@ -53,14 +65,17 @@ export async function getRepositories() {
         const config = aws.config.loadFromPath('./aws-config.json');
         const conn = await createDatabaseConnection();
         const s3 = new aws.S3(config);
+        initFirestore();
+        const firestore = admin.firestore();
         repositories = {
             amazon: new AmazonRepository(conn.manager, s3),
             yahoo: new YahooRepository(conn.manager),
             crawling: new CrawlingRepository(conn.manager),
-            execution: new ExecutionRepository(conn.manager),
+            execution: new ExecutionRepository(conn.manager, firestore),
             collection: new CollectionRepository(conn.manager),
             exception: new ExceptionRepository(conn.manager),
             connection: conn,
+            firestore,
             s3
         }
     }
