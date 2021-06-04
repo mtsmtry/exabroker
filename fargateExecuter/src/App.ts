@@ -1,5 +1,9 @@
 import * as lib from "exabroker-lib";
 
-const worker = lib.createExecutionContainer();
-worker.init();
-worker.run();
+async function main() {
+    const worker = lib.createExecutionContainer();
+    await worker.init();
+    await worker.run();
+}
+
+main()

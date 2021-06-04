@@ -1,5 +1,5 @@
 import { WebDriver } from "../WebDriver";
-import { Execution, TransactionExecution } from "./Execution";
+import { Execution, LogType, TransactionExecution } from "./Execution";
 import { Cookie } from "./WebExecution";
 
 const LAYER = "BrowserExecution";
@@ -7,59 +7,67 @@ const LAYER = "BrowserExecution";
 export class BrowserExecution extends TransactionExecution<{}, WebDriver> {
     constructor(layer: string, name: string, cookie?: Cookie) {
         super(layer, name, {});
-        async function promise(webDriver: WebDriver) {
+        async function promise(val: {}) {
             return {
                 result: new WebDriver(cookie)
             };
         }
-        this.then(val => Execution.atom("BrowserExecution", "Initialize", () => promise(val)));
+        this.then(val => Execution.atom("BrowserExecution", "Initialize", () => promise(val), LogType.ON_FAILURE_ONLY));
     }
 
-    navigate(make: (val: WebDriver) => { url: string }) {
+    navigate(url: string) {
         async function promise(webDriver: WebDriver) {
-            const { url } = make(webDriver);
             await webDriver.navigate(url);
             return {
                 result: webDriver,
-                executionData: { web: { url: url } }
+                executionData: { web: { document: await webDriver.getHtml(), url: url.slice(0, 255) } }
             };
         }
-        return this.then(val => Execution.atom(LAYER, "Navigate", () => promise(val))) as BrowserExecution;
+        return this.then(val => Execution.atom(LAYER, "Navigate", () => promise(val), LogType.ON_FAILURE_ONLY)) as BrowserExecution;
     }
 
-    click(make: (val: WebDriver) => { xpath: string }) {
+    click(xpath: string) {
         async function promise(webDriver: WebDriver) {
-            const { xpath } = make(webDriver);
-            const element = await this.driver.getOne(xpath);
+            const element = await webDriver.getOne(xpath);
             await element.click();
             return {
                 result: webDriver
             };
         }
-        return this.then(val => Execution.atom(LAYER, "Click", () => promise(val))) as BrowserExecution;
+        return this.then(val => Execution.atom(LAYER, "Click", () => promise(val), LogType.ON_FAILURE_ONLY)) as BrowserExecution;
     }
 
-    sendKeys(make: (val: WebDriver) => { xpath: string, keys: string }) {
+    submitElement(xpath: string) {
         async function promise(webDriver: WebDriver) {
-            const { xpath, keys } = make(webDriver);
-            const element = await this.driver.getOne(xpath);
+            const element = await webDriver.getOne(xpath);
+            await element.submit();
+            return {
+                result: webDriver
+            };
+        }
+        return this.then(val => Execution.atom(LAYER, "Submit", () => promise(val), LogType.ON_FAILURE_ONLY)) as BrowserExecution;
+    }
+
+    sendKeys(xpath: string, keys: string) {
+        async function promise(webDriver: WebDriver) {
+            const element = await webDriver.getOne(xpath);
             await element.sendKeys(keys);
             return {
                 result: webDriver
             };
         }
-        return this.then(val => Execution.atom(LAYER, "SendKeys", () => promise(val))) as BrowserExecution;
+        return this.then(val => Execution.atom(LAYER, "SendKeys", () => promise(val), LogType.ON_FAILURE_ONLY)) as BrowserExecution;
     }
 
     returnCookie() {
         async function promise(webDriver: WebDriver) {
-            const cookie = await this.driver.getCookies();
-            await this.driver.quit();
+            const cookie = await webDriver.getCookies();
+            await webDriver.quit();
             return {
                 result: cookie
             };
         }
-        return this.then(val => Execution.atom(LAYER, "GetCookie", () => promise(val))) as TransactionExecution<{}, Cookie>;
+        return this.then(val => Execution.atom(LAYER, "GetCookie", () => promise(val), LogType.ON_FAILURE_ONLY)) as TransactionExecution<{}, Cookie>;
     }
 }
 

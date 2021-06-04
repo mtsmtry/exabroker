@@ -1,7 +1,7 @@
 import fetch from "node-fetch";
 import { Connection } from "typeorm";
-import { CollectionException } from "../../src/entities/CollectionException";
-import { ExecutionRecord, ExecutionStatus } from "../../src/entities/ExecutionRecord";
+import { CollectionException } from "../../src/entities/system/CollectionException";
+import { ExecutionRecord, ExecutionStatus } from "../../src/entities/system/ExecutionRecord";
 import { Collection } from "../../src/system/collection/Collection";
 import { getRepositories } from "../../src/system/Database";
 import { Document } from "../../src/system/Document";
@@ -35,7 +35,7 @@ describe("Collection", () => {
                 items = vals;
                 return { result: null };
             }));
-        await coll.collectItems(doc, "tests/index");
+        await coll.collectItems(doc, "tests/index", "tests/index");
         expect(items.length).toEqual(2);
         expect(items[0].name).toEqual("ItemA");
         expect(items[1].name).toEqual("ItemB");
@@ -50,7 +50,7 @@ describe("Collection", () => {
             .property(doc => { throw error })
             .propertyRequired(doc => { throw error })
             .saveOne(_ => Execution.resolve(null));
-        await coll.collectItems(doc, s3Key);
+        await coll.collectItems(doc, s3Key, s3Key);
 
         const exps = await conn.getRepository(CollectionException).find({ s3Key });
         expect(exps.length).toEqual(2);
@@ -67,7 +67,7 @@ describe("Collection", () => {
             .property(doc => { throw error })
             .propertyRequired(doc => { throw error })
             .saveMany(_ => Execution.resolve(null));
-        await coll.collectItems(doc, s3Key);
+        await coll.collectItems(doc, s3Key, s3Key);
 
         const exps = await conn.getRepository(CollectionException).find({ s3Key });
         expect(exps.length).toEqual(4);

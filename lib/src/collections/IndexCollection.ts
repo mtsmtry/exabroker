@@ -12,10 +12,10 @@ export const indexCollection =
             const [nodeId, pageText] = name.split("-");
             return { nodeId, page: parseInt(pageText) };
         })
-        .case(amazonItemDetailCollection, val => {
+        /*.case(amazonItemDetailCollection, val => {
             const [kind, asin] = val.split("/");
             if (kind != "items") {
                 return null;
             }
             return { asin };
-        });
+        })*/;

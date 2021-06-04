@@ -2,7 +2,7 @@ import * as crypto from 'crypto';
 import * as path from 'path';
 
 export function notNull<T>(item: T | null | undefined): item is T {
-    return item != null;
+    return item !== null && item !== undefined;
 }
 
 export function groupBy<T>(array: T[], getKey: (obj: T) => number | null): { [key: number]: T[] } {

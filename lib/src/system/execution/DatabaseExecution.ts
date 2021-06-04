@@ -1,9 +1,11 @@
 import { AmazonRepository } from "../../repositories/AmazonRepository";
 import { CrawlingRepository } from "../../repositories/CrawlingRepository";
 import { ExecutionRepository } from "../../repositories/ExecutionRepository";
+import { IntegrationRepository } from "../../repositories/IntegrationRepository";
 import { YahooRepository } from "../../repositories/YahooRepository";
 import { getRepositories } from "../Database";
-import { ExecutionAtom } from "./Execution";
+import { ExecutionAtom, LogType } from "./Execution";
+import * as aws from "aws-sdk";
 
 export class DBExecution<T, TRep> extends ExecutionAtom<T> {
     constructor(getRep: () => Promise<TRep>,  exec: (rep: TRep) => Promise<T>) {
@@ -12,7 +14,11 @@ export class DBExecution<T, TRep> extends ExecutionAtom<T> {
             const result = await exec(rep);
             return { result };
         }
-        super("DBExecution", "", run);
+        super("DBExecution", "", run, LogType.ON_FAILURE_ONLY);
+    }
+
+    static s3<T>(exec: (rep: aws.S3) => Promise<T>) {
+        return new DBExecution(async () => (await getRepositories()).s3, exec);
     }
 
     static amazon<T>(exec: (rep: AmazonRepository) => Promise<T>) {
@@ -29,5 +35,9 @@ export class DBExecution<T, TRep> extends ExecutionAtom<T> {
 
     static execution<T>(exec: (rep: ExecutionRepository) => Promise<T>) {
         return new DBExecution(async () => (await getRepositories()).execution, exec);
+    }
+
+    static integration<T>(exec: (rep: IntegrationRepository) => Promise<T>) {
+        return new DBExecution(async () => (await getRepositories()).integration, exec);
     }
 }

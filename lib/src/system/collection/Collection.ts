@@ -1,4 +1,4 @@
-import { CollectionException } from "../../entities/CollectionException";
+import { CollectionException } from "../../entities/system/CollectionException";
 import { CollectionExceptionDto, CollectionRepository } from "../../repositories/CollectionRepository";
 import { notNull, ObjectNotNullable, ObjectUndefinedToNull } from "../../Utils";
 import { getRepositories } from "../Database";
@@ -21,9 +21,9 @@ export class Collection<T> {
         return new CollectionBranch<T>();
     }
 
-    async collectItems(doc: Document, s3Key: string) {
+    async collectItems(doc: Document, val: T, s3Key: string) {
         const reps = await getRepositories();
-        return await this.collectItemsImpl(doc, s3Key as any, s3Key, reps.collection);
+        return await this.collectItemsImpl(doc, val, s3Key, reps.collection);
     }
 
     collectItemsImpl(doc: Document, val: T, s3Key: string, rep: CollectionRepository): Promise<CollectionResult> {

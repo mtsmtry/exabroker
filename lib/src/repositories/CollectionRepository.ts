@@ -1,10 +1,10 @@
 import { EntityManager, Repository } from "typeorm";
 import { Proxy } from "../executions/ProxyBonanza";
-import { AmazonItem } from "../entities/AmazonItem";
-import { AmazonItemDetail } from "../entities/AmazonItemDetail";
+import { AmazonItem } from "../entities/website/AmazonItem";
+import { AmazonItemDetail } from "../entities/website/AmazonItemDetail";
 import { BrowseNode } from "../entities/BrowseNode";
-import { CollectionRecord } from "../entities/CollectionRecord";
-import { CollectionException } from "../entities/CollectionException";
+import { CollectionRecord } from "../entities/system/CollectionRecord";
+import { CollectionException } from "../entities/system/CollectionException";
 import { getException } from "./Utils";
 
 export interface CollectionExceptionDto {

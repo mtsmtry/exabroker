@@ -28,10 +28,11 @@ export class Crawler<T> {
 
     async crawl(taskId: number, target: T) {
         const reps = await getRepositories();
-        this.crawlImpl(taskId, target, reps.crawling);
+        return this.crawlImpl(taskId, target, reps.crawling);
     }
 
-    async crawlImpl(taskId: number, target: T, rep: CrawlingRepository) {
+    async crawlImpl(taskId: number, target: T, rep: CrawlingRepository): Promise<string | null> {
+        return null;
     }
 }
 
@@ -65,12 +66,12 @@ export class CrawlerPage<T> extends Crawler<T> {
 
             // Upload
             const putStart = Date.now();
-            const reps = await getRepositories();
+            /*const reps = await getRepositories();
             const result = await reps.s3.putObject({ Bucket: bucketName, Key: key, Body: body }).promise();
             if (result.$response.error) {
                 throw result.$response.error.message;
             }
-            uploadLatency = Date.now() - putStart;
+            uploadLatency = Date.now() - putStart;*/
 
             // Process
             const processStart = Date.now();
@@ -89,6 +90,8 @@ export class CrawlerPage<T> extends Crawler<T> {
                 textCount, downloadLatency, uploadLatency, processLatency, collectionCount, error
             });
         }
+
+        return body;
     }
 }
 
@@ -119,5 +122,6 @@ export class CrawlerBranch<T> extends Crawler<T> {
             collectionCount: null,
             error: "Not matched all cases"
         });
+        return null;
     }
 }

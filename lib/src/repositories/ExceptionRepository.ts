@@ -1,5 +1,5 @@
 import { EntityManager, Repository } from "typeorm";
-import { Exception, ExceptionCategory } from "../entities/Exception";
+import { Exception, ExceptionCategory } from "../entities/system/Exception";
 
 export class ExceptionRepository {
     exceptions: Repository<Exception>

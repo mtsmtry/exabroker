@@ -1,14 +1,14 @@
 import { EntityManager, LessThan, MoreThan, Repository } from "typeorm";
 import { Proxy } from "../executions/ProxyBonanza";
-import { AmazonItem } from "../entities/AmazonItem";
-import { AmazonItemDetail } from "../entities/AmazonItemDetail";
+import { AmazonItem } from "../entities/website/AmazonItem";
+import { AmazonItemDetail } from "../entities/website/AmazonItemDetail";
 import { BrowseNode } from "../entities/BrowseNode";
-import { CrawlingRecord, CrawlingResult } from "../entities/CrawlingRecord";
+import { CrawlingRecord, CrawlingResult } from "../entities/system/CrawlingRecord";
 import * as ip from "ip";
 import { CrawlingObject } from "../crawlers/IndexCrawler";
-import { CrawlingTask, CrawlingTaskStatus } from "../entities/CrawlingTask";
+import { CrawlingTask, CrawlingTaskStatus } from "../entities/system/CrawlingTask";
 import { randomPositiveInteger } from "../Utils";
-import { CrawlingSchedule } from "../entities/CrawlingSchedule";
+import { CrawlingSchedule } from "../entities/system/CrawlingSchedule";
 import { getException } from "./Utils";
 
 export class CrawlingRepository {

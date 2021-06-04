@@ -15,6 +15,7 @@ export interface GetRequestData {
 
 export interface PostRequestData {
     url: string;
+    params?: object;
     form?: object;
     headers?: object;
     cookie?: Cookie;
@@ -55,6 +56,9 @@ async function requestPost(data: PostRequestData) {
     if (data.form) {
         req.type("form").send(data.form);
     }
+    if (data.params) {
+        req.query(data.params)
+    }
     if (data.headers) {
         req.set(data.headers);
     }
@@ -91,26 +95,35 @@ async function requestPost(data: PostRequestData) {
 export class WebExecution<T> extends ExecutionAtom<T> {
     constructor(
         layer: string,
-        name: string, 
+        name: string,
         method: "GET" | "POST",
         data: GetRequestData | PostRequestData, submit: (doc: Document) => T) {
         async function run(): Promise<ExecutionAtomResult<T>> {
-            let response: superagent.Response;
             let exception: any = undefined;
             let result: any = undefined;
             let document: string | null = null; // Not undefined due to typeorm bug
+            let response: superagent.Response | null;
+
             try {
                 if (method == "GET") {
-                    response = await requestGet(data as GetRequestData);
+                    response = await requestGet(data as GetRequestData).catch(ex => {
+                        exception = ex;
+                        return null;
+                    });
                 } else {
-                    response = await requestPost(data as PostRequestData);
+                    response = await requestPost(data as PostRequestData).catch(ex => {
+                        exception = ex;
+                        return null;
+                    });
                 }
 
-                if (typeof response.text == "string") {
-                    document = response.text;
+                if (response) {
+                    if (typeof response.text == "string") {
+                        document = response.text;
+                    }
+                    const doc = new Document(response);
+                    result = submit(doc);
                 }
-                const doc = new Document(response);
-                result = submit(doc);
             } catch (ex) {
                 exception = ex;
             }
@@ -128,7 +141,7 @@ export class WebExecution<T> extends ExecutionAtom<T> {
                 }
             }
         }
-        super(layer, name, run);
+        super(layer, name, run, LogType.ON_FAILURE_ONLY);
     }
 
     static get<T>(data: GetRequestData, submit: (doc: Document) => T, layer: string = "Inner", name: string = "WebGet") {
@@ -144,12 +157,11 @@ export class WebExecution<T> extends ExecutionAtom<T> {
     }
 }
 
-export class WebTransaction<T1, T2> extends TransactionExecution<T1, T2> {
+export class WebTransaction<T1, T2> extends TransactionExecution<T1, T2 & { cookie: Cookie }> {
     private cookie: ((val: T2) => Cookie) | null = null;
 
     constructor(layer: string, name: string, value: T1) {
         super(layer, name, value);
-        this.childrenLogType = LogType.ON_FAILURE_ONLY;
     }
 
     setCookie(cookie: ((val: T2) => Cookie) | null) {
@@ -169,7 +181,7 @@ export class WebTransaction<T1, T2> extends TransactionExecution<T1, T2> {
         return this.then(exec) as any;
     }
 
-    private thenRequest<T3>(name: string, method: "GET" | "POST", make: (val: T2) => GetRequestData | PostRequestData, submit: (doc: Document, val: T2) => T3) {
+    private thenRequest<T3>(name: string, method: "GET" | "POST", make: (val: T2) => GetRequestData | PostRequestData, submit: (doc: Document, val: T2) => T3): WebTransaction<T1, T3> {
         const cookie = this.cookie;
         if (cookie) {
             const make2 = (val: any) => ({
@@ -180,9 +192,9 @@ export class WebTransaction<T1, T2> extends TransactionExecution<T1, T2> {
                 ...submit(doc, val),
                 cookie: val.cookie || cookie(val)
             }) as any;
-            return this.then(val => new WebExecution("WebTransaction", name, method, make2(val), doc => submit2(doc, val))) as WebTransaction<T1, T3>;
+            return this.then(val => new WebExecution("WebTransaction", name, method, make2(val), doc => submit2(doc, val))) as any;
         } else {
-            return this.then(val => new WebExecution("WebTransaction", name, method, make(val), doc => submit(doc, val))) as WebTransaction<T1, T3>;
+            return this.then(val => new WebExecution("WebTransaction", name, method, make(val), doc => submit(doc, val))) as any;
         }
     }
 
@@ -194,6 +206,6 @@ export class WebTransaction<T1, T2> extends TransactionExecution<T1, T2> {
             }
             return { result: result.result };
         }
-        return this.then(val => Execution.atom("Local", "Resolve", () => run(val)));
+        return this.then(val => Execution.atom("Local", "Resolve", () => run(val), LogType.ON_FAILURE_ONLY));
     }
 }

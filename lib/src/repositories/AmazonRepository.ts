@@ -1,11 +1,14 @@
 import { DeepPartial, EntityManager, MoreThanOrEqual, Not, Repository } from "typeorm";
-import { AmazonItem } from "../entities/AmazonItem";
-import { AmazonItemDetail } from "../entities/AmazonItemDetail";
+import { AmazonItem } from "../entities/website/AmazonItem";
+import { AmazonItemDetail } from "../entities/website/AmazonItemDetail";
 import { BrowseNode } from "../entities/BrowseNode";
-import { YahooAuctionExhibit } from "../entities/YahooAuctionExhibit";
+import { YahooAuctionExhibit } from "../entities/website/YahooAuctionExhibit";
 import { amazonItemDetailCollection, AMAZON_ITEM_DETAIL_VERSION } from "../collections/AmazonItemDetailCollection";
 import { Document } from "../system/Document";
 import * as aws from "aws-sdk";
+import { AmazonAccount } from "../entities/website/AmazonAccount";
+import { AmazonOrder, DeliveryAddress, DeliveryPlace, OrderStatus } from "../entities/website/AmazonOrder";
+import { AmazonItemState } from "../entities/website/AmazonItemState";
 
 function random(min: number, max: number) {
     return Math.floor( Math.random() * (max + 1 - min) ) + min;
@@ -15,11 +18,17 @@ export class AmazonRepository {
     amazonItems: Repository<AmazonItem>;
     amazonItemDetails: Repository<AmazonItemDetail>;
     browseNodes: Repository<BrowseNode>;
+    accounts: Repository<AmazonAccount>;
+    orders: Repository<AmazonOrder>;
+    itemStates: Repository<AmazonItemState>;
 
     constructor(mng: EntityManager, private s3: aws.S3) {
         this.amazonItems = mng.getRepository(AmazonItem);
         this.amazonItemDetails = mng.getRepository(AmazonItemDetail);
         this.browseNodes = mng.getRepository(BrowseNode);
+        this.accounts = mng.getRepository(AmazonAccount);
+        this.orders = mng.getRepository(AmazonOrder);
+        this.itemStates = mng.getRepository(AmazonItemState);
     }
 
     async getBrowseNodes(leastLevel: number) {
@@ -64,26 +73,6 @@ export class AmazonRepository {
     async deleteItem(asin: string) {
         await this.amazonItems.delete(asin);
     }
-    
-    async getExhibitableASINs(count: number) {
-        const ngWords = ["Amazon", "輸入", "Blu-ray", "DVD"];
-        let conds = "item.updatedAt > DATE_SUB(CURRENT_DATE, INTERVAL 1 DAY)";
-   //     conds += " AND exhibit.aid IS NULL";
-        conds += " AND LENGTH(item.title) != CHARACTER_LENGTH(item.title)"
-        conds += " AND LENGTH(item.title) > 100";
-        conds += " AND item.price < 10000"
-        conds += " AND " + ngWords.map(x => `item.title NOT LIKE '%${x}%'`).join(" AND ");
-        const items = await this.amazonItems.createQueryBuilder("item")
-            .select(["item.asin"])
-            //.innerJoin(AmazonItem, "item", "detail.asin = item.asin")
-        //    .leftJoin(YahooAuctionExhibit, "exhibit", "item.asin = exhibit.asin")
-            .where(conds)
-            .orderBy("item.reviewCount", "DESC")
-            .limit(count)
-            .getRawMany();
-        console.log(`Items:${items}`);
-        return items.map(x => x.item_asin as string);
-    }
 
     async getItemDetail(asin: string) {
         return await this.amazonItemDetails.findOne(asin);
@@ -100,5 +89,62 @@ export class AmazonRepository {
             .getRawMany();
         const crawledASINs = items.map(x => x.item_asin as string);
         return asins.filter(x => !crawledASINs.includes(x));
+    }
+
+    async createAccount(email: string, password: string) {
+        const account = this.accounts.create({
+            email, password
+        });
+        await this.accounts.save(account);
+    }
+
+    async saveCookies(email: string, cookies: { [name: string]: string }) {
+        await this.accounts.update(email, { cookies, loggedinAt: new Date });
+    }
+
+    async getAccount(email: string) {
+        return await this.accounts.createQueryBuilder("x")
+            .where({ email })
+            .getOne();
+    }
+
+    async createOrder(dto: {
+        orderId: string,
+        asin: string,
+        account: string,
+        price: number,
+        deliveryAddress: DeliveryAddress,
+        deliveryAddressText: string,
+        deliveryDay: Date,
+        deliveryLatestDay: Date | null,
+        deliveryDayText: string
+    }) {
+        const order = this.orders.create({ ...dto, status: OrderStatus.NONE });
+        await this.orders.save(order);
+    }
+
+    async updateOrderDetail(orderId: string, dto: {
+        status: OrderStatus,
+        deliveryCompany: string | null,
+        deliveryTrackingId: string | null,
+        deliveryPlace: DeliveryPlace | null,
+        deliveryPhotoUrl: string | null
+    }) {
+        await this.orders.update(orderId, dto);
+    }
+
+    async getOrdersNotReceived(account: string) {
+        return await this.orders.createQueryBuilder()
+            .where({ account, status: Not(OrderStatus.RECEIVED) })
+            .getMany();
+    }
+
+    async getOrder(orderId: string) {
+        return await this.orders.findOne({ orderId });
+    }
+
+    async createItemState(asin: string, price: number | null, hasStock: boolean, isAddon: boolean) {
+        const state = this.itemStates.create({ asin, price, hasStock, isAddon });
+        return await this.itemStates.save(state);
     }
 }

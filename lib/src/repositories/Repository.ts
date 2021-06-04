@@ -1,4 +1,4 @@
-import { ExceptionCategory } from "../entities/Exception";
+import { ExceptionCategory } from "../entities/system/Exception";
 import { getRepositories } from "../system/Database";
 
 export class Repository {

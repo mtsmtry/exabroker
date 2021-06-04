@@ -22,7 +22,7 @@ const browseNodeCrawler =
         collection: browseNodeCollection
     });
 
-const amazonItemDetailCrawler =
+export const amazonItemDetailCrawler =
     Crawler.page<{ asin: string }>({
         getUrl: val => `https://www.amazon.co.jp/dp/${val.asin}`,
         getS3Key: val => `items/${val.asin}`,

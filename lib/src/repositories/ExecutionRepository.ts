@@ -1,12 +1,12 @@
-import { DeepPartial, EntityManager, MoreThan, Repository } from "typeorm";
-import { CrawlingSchedule } from "../entities/CrawlingSchedule";
-import { ExecutionRecord, ExecutionStatus, ExecutionType, WebExecutionData, SequenceExecutionData } from "../entities/ExecutionRecord";
-import { ExecutionTask, ExecutionTaskStatus } from "../entities/ExecutionTask"
+import { DeepPartial, EntityManager, LessThan, MoreThan, Repository } from "typeorm";
+import { CrawlingSchedule } from "../entities/system/CrawlingSchedule";
+import { ExecutionRecord, ExecutionStatus, ExecutionType, WebExecutionData, SequenceExecutionData } from "../entities/system/ExecutionRecord";
 import { randomPositiveInteger, toTimestamp } from "../Utils";
 import * as aws from "aws-sdk";
 import { getException } from "./Utils";
 import { getRepositories } from "../system/Database";
 import { ECSCredentials } from "aws-sdk";
+import { ExecutionSchedule, ExecutionTaskStatus } from "../entities/system/ExecutionSchedule";
 
 export class AdditionalExecutionData {
     web: WebExecutionData;
@@ -24,15 +24,15 @@ export interface ExecutionSubmission {
     successful: boolean;
 }
 
+const NO_LOG = false;
+
 export class ExecutionRepository {
     records: Repository<ExecutionRecord>;
-    tasks: Repository<ExecutionTask>;
-    schedules: Repository<CrawlingSchedule>;
+    schedules: Repository<ExecutionSchedule>;
 
     constructor(mng: EntityManager, private firestore: FirebaseFirestore.Firestore) {
         this.records = mng.getRepository(ExecutionRecord);
-        this.tasks = mng.getRepository(ExecutionTask);
-        this.schedules = mng.getRepository(CrawlingSchedule); 
+        this.schedules = mng.getRepository(ExecutionSchedule); 
     }
 
     private async createRecord(exec: DeepPartial<ExecutionRecord>) {
@@ -62,6 +62,7 @@ export class ExecutionRepository {
     }
 
     private async createRecords(execs: DeepPartial<ExecutionRecord>[]) {
+        if (NO_LOG) return [];
         const rdbs = execs.map(x => this.records.create(x));
         const rdbExecs = await this.records.save(rdbs);
         const batch = this.firestore.batch();
@@ -75,6 +76,7 @@ export class ExecutionRepository {
     }
 
     private async updateRecord(id: number, exec: DeepPartial<ExecutionRecord>) {
+        if (NO_LOG) return;
         await Promise.all([
             await this.records.update(id, exec),
             await this.firestore.collection("execution_records").doc(id.toString()).update(this.toObject(exec))
@@ -82,6 +84,7 @@ export class ExecutionRepository {
     }
 
     private async saveDocument(add: DeepPartial<AdditionalExecutionData>) {
+        if (NO_LOG) return add;
         if (add?.web?.document) {
             const key = `ex${toTimestamp(new Date())}${randomPositiveInteger()}`;
             const reps = await getRepositories();
@@ -94,6 +97,7 @@ export class ExecutionRepository {
     }
 
     async startExecution(parentId: number | null, type: ExecutionType, layer: string, name: string, additional: DeepPartial<AdditionalExecutionData> = {}) {
+        if (NO_LOG) return 0;
         additional = await this.saveDocument(additional);
         return await this.createRecord({
             layer,
@@ -107,6 +111,7 @@ export class ExecutionRepository {
     }
 
     async failedExecution(id: number, exception: string | object | null = null, additional: DeepPartial<AdditionalExecutionData> = {}) {
+        if (NO_LOG) return;
         additional = await this.saveDocument(additional);
         await this.updateRecord(id, {
             status: ExecutionStatus.FAILED,
@@ -117,6 +122,7 @@ export class ExecutionRepository {
     }
 
     async completedExecution(id: number, additional: DeepPartial<AdditionalExecutionData> = {}) {
+        if (NO_LOG) return;
         additional = await this.saveDocument(additional);
         await this.updateRecord(id, {
             status: ExecutionStatus.COMPLETED,
@@ -126,6 +132,7 @@ export class ExecutionRepository {
     }
 
     async submitExecutions(parentId: number | null, submissions: ExecutionSubmission[]) {
+        if (NO_LOG) return [];
         const adds = await Promise.all(submissions.map(async x => x.additional ? await this.saveDocument(x.additional) : {}));
         const execs = submissions.map((x, i) => ({
             layer: x.layer,
@@ -143,54 +150,35 @@ export class ExecutionRepository {
     }
 
     async updateExecution(id: number, additional: DeepPartial<AdditionalExecutionData> = {}) {
+        if (NO_LOG) return;
         additional = await this.saveDocument(additional);
         await this.updateRecord(id, additional)
     }
 
-    async createTaskOnSchedule() {
-        while(true) {
-            const schedules = await this.schedules.createQueryBuilder()
-                .where({ pendedUntil: MoreThan(new Date()) })
-                .limit(100)
-                .getMany();
-            if (schedules.length == 0) {
-                break;
-            }
-
-            const tasks = schedules.map(x => this.tasks.create({ target: x.startupTarget }));
-            await this.tasks.save(tasks);
-            await this.schedules.update(schedules.map(x => x.id), { lastInvokedAt: new Date() });
-        }
-    }
-
-    async getTasks(count: number) {
-        const process = randomPositiveInteger();
-
-        await this.tasks
+    async getTasks() {
+        await this.schedules
             .createQueryBuilder()
             .update()
-            .set({ status: ExecutionTaskStatus.RUNNING, process })
-            .where({ status: ExecutionTaskStatus.PENDING })
-            .orderBy("id", "ASC")
-            .limit(count)
+            .set({ status: ExecutionTaskStatus.RUNNING })
+            .where({ pendedUntil: LessThan(new Date()) })
             .execute();
 
-        return await this.tasks
+        const items = await this.schedules
             .createQueryBuilder()
-            .where({ status: ExecutionTaskStatus.RUNNING, process })
+            .where({ pendedUntil: LessThan(new Date()) })
             .getMany();
+
+        return items.map(x => ({ id: x.id, method: x.method }));
     }
 
     async existsTask() {
-        const count = await this.tasks.count();
+        const count = await this.schedules.createQueryBuilder()
+            .where({ pendedUntil: LessThan(new Date()) })
+            .getCount();
         return count > 0;
     }
 
-    async stopAllRunningTasks() {
-        await this.tasks.createQueryBuilder()
-            .update()
-            .set({ status: ExecutionTaskStatus.PENDING })
-            .where({ status: ExecutionTaskStatus.RUNNING })
-            .execute();
+    async completeTask(id: number) {
+        await this.schedules.update(id, { status: ExecutionTaskStatus.PENDING, lastInvokedAt: new Date() });
     }
 }

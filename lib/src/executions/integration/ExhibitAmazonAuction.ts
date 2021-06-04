@@ -1,5 +1,5 @@
-import { Connection } from "typeorm";
-import { AmazonItemDetail } from "../../entities/AmazonItemDetail";
+import { Connection, Transaction } from "typeorm";
+import { AmazonItemDetail } from "../../entities/website/AmazonItemDetail";
 import { AmazonRepository } from "../../repositories/AmazonRepository";
 import { YahooRepository } from "../../repositories/YahooRepository";
 import { getCurrentFilename, notNull, random, randomPositiveInteger } from "../../Utils";
@@ -7,38 +7,19 @@ import * as stripHtml from "string-strip-html";
 import * as normalizeWhitespace from "normalize-html-whitespace";
 import * as fs from "fs";
 import { Document } from "../../system/Document";
-import { AuctionExhibit, exhibitAuction } from "../web/yahoo/api/ExhibitAuction";
-import { Prefecture, ShipSchedule } from "../web/yahoo/YahooDriver";
-import { YahooSession } from "../web/yahoo/api/GetSession";
+import { AuctionExhibit, exhibitAuction } from "../website/yahoo/api/ExhibitAuction";
+import { Prefecture, ShipSchedule } from "../website/yahoo/YahooDriver";
+import { YahooSession } from "../website/yahoo/api/GetSession";
 import { Execution, LogType } from "../../system/execution/Execution";
 import { DBExecution } from "../../system/execution/DatabaseExecution";
 import { WebExecution } from "../../system/execution/WebExecution";
-import { getLatestVersionAmazonItemDetail } from "../../collections/AmazonItemDetailCollection";
+import { getWideLength, replaceDict } from "./Utils";
+import { getAmazonItemDetail } from "./GetAmazonItemDetail";
+import { AuctionImage } from "../../entities/website/YahooAuctionExhibit";
+import { getAuctionPrice, isAvailableItem } from "./Algorithm";
+import { getItemState } from "../website/amazon/Amazon";
 
 const MAX_TITLE_LENGTH = 65;
-
-function getWideLength(str: string) {
-    let result = 0;
-    for (let i = 0; i < str.length; i++) {
-        const chr = str.charCodeAt(i);
-        if ((chr >= 0x00 && chr < 0x81) ||
-            (chr === 0xf8f0) ||
-            (chr >= 0xff61 && chr < 0xffa0) ||
-            (chr >= 0xf8f1 && chr < 0xf8f4)) {
-            result += 1;
-        } else {
-            result += 2;
-        }
-    }
-    return result;
-};
-
-function replaceDict(src: string, dict: { [n: string]: string }) {
-    Object.keys(dict).forEach(key => {
-        src = src.replace(new RegExp("\\" + key), dict[key]);
-    })
-    return src;
-}
 
 function normalizeTitle(title: string) {
     const replaces = {
@@ -75,6 +56,7 @@ function descriptionTitle(title: string) {
 function descriptionDetails(details: (object | null)[]) {
     const dict = details.filter(notNull).reduce((x, m) => Object.assign(x, m), {});
     const rows = Object.keys(dict)
+        .map(x => x.trim())
         .filter(x => !x.includes("カスタマーレビュー") && !x.includes("Amazon") && x != "ASIN" && x != "型番")
         .map(key => {
             return `◆${key}：${dict[key]}`;
@@ -148,65 +130,28 @@ function descriptionRelated(username: string, categoryId: number) {
     return createSection("関連商品", content);
 }
 
-const desc1 = `■ Yahoo!かんたん決済`;
-
-const desc2 = `・お支払いの確認後 1日から2日以内で、発送できるよう対応しております。
-・提携業者倉庫やAmazonに配送と管理を委託しております。時と場合により、業者名入りの梱包で配送になる場合が御座います。予め、ご了承下さい。
-・配送業者の指定、着払い または代引き.営業所止め.局留め.コンビニ受取.他の商品との同梱、領収証の発行には対応できません。
-・ヤマト運輸.郵便局.その他の配送業者での配達となります。［定形外.メール便.クリックポスト.などへの変更.ご指定は不可］
-・運送会社の指定、には対応できません。
-・運送会社への発送には対応できません。
-・配送方法から送料をご確認下さい。
-
-一部の予約商品を除いて商品は、提携業者倉庫にて保管しております。ですので迅速な発送が可能となります。
-配送委託業者より商品が発送される事もあります。ですので業者名入り、または無地以外の梱包で商品が届く事がございます。
-
-配送時の事故などは、免責とさせていただきます。配送時の外装パッケージの変形やヘコミなどの不良は保証対象外になります。［保証の対象は、商品本体のみ となっております］
-落札商品を配送する為に、必要な範囲でだけ個人情報を利用させていただきます。［※配送委託している配送業者、など第三者に伝達させて頂きます］
+const desc1 = `Yahoo!かんたん決済
+- クレジットカード
+- 銀行振込（振込先：ジャパンネット銀行）
+- ジャパンネット銀行支払い
+- PayPay
+- コンビニ支払い
+- Ｔポイント
 `;
 
-const desc3 = `【注意】
-Yahooオークションのシステムが変更され、商品到着後に商品受取連絡をしないと入金とされない形式になりました。
-落札者様の中に受け取り連絡を忘れてしまう落札者様も多数いる為
-商品の到着後2日以内に受取ボタンを押されない場合には申し訳ありませんが悪いの評価とさせて頂きます。
+const desc2 = `・送料は、<b>全国一律で無料</b>となっております。
+・お支払い後、<b>通常24時間以内</b>に発送いたします。
+・提携倉庫業者やAmazonに配送と管理を委託しております。業者名入りの梱包で配送になる場合がございます。
+・着払いまたは代引き、営業所止め、局留め、コンビニ受取、他の商品との同梱には対応できません。
+・ヤマト運輸、日本郵政、その他の配送業者での配達となります。配送業者の指定には対応できません。
+・発送委託業者より商品が発送される事があります。業者名入り、または無地以外の梱包で商品が届く事があります。
+・配送時の事故などは、免責とさせていただきます。配送時の外装パッケージの変形やヘコミなどの不良は保証対象外になります。
+`;
 
-●落札後にキャンセルできません
-
-●配送は、局留め対応できません
-●局留め不可、センタ―止めの対応できません
-以前トラブルとなりました。その為に対応しておりません
-
-もしですが、2個以上の商品を購入したい場合には【商品代金＋配送料】が個々に発生いたします。
-お手頃なお値段で商品代金の提供させていただく形をとっております。
-落札代金＋配送料(送料)となります。
-低価格からオークションの開始とさせて頂いております
-複数店舗で同時販売の為、売切となってしまう事も御座います。
-店舗の販売、限定品で行っておりますので商品が僅かな差で売切れとなる時も御座います。
-そういった場合には商品の補充に2週間、程度のお時間がかかってしまう事もあります。
-
-◆急いでる場合には
-3日経過後に連絡やメッセージ一切ない時にはキャンセル扱いとなる時があります。
-キャンセル扱いとなりますと落札者都合のキャンセルとなりますので、ヤフーオークションのシステムの関係上ヤフーより悪い評価がついてしまいます。
-
-◆落札商品の発送に関しまして
-お一人様につき1個の限定とさせて頂きます。
-配送委託の業者=ヤマト運輸.日本郵政［配送委託業者の指定不可、対応できません］
-配達業者の指定、局留め又は代金引換、営業所止め、コンビニ受取、その他商品との同梱、領収証の発行には対応できません。
-
-迅速に商品の発送を可能にする為に、一部の予約商品以外を配送センターで保管し管理しております。
-物により関連のSHOPや委託配送の業者から直送となる場合が御座います。予めのご了承をお願い致します。
-
-提携の業者倉庫に配送と管理を委託しております。
-時と場合になり委託業者名の記載された梱包で発送されます。ご了承下さい。
-また梱包にシールや印字、無地ではない梱包がされている事がございます。着払いと手渡し不可、対応できません。
-
-◆免責事項
-配達途中の天候や災害、交通機関による事故と遅延
-配達途中にできた梱包の汚れ、外箱の変形など本体以外の不良は保証外となります。
-
-◆個人情報について
-落札商品の配達に必要な範囲で、利用させて頂きます。
-第三者となる配送委託の業者に必要範囲のみ通知させて頂きます。
+const desc3 = `・商品が不良品の場合は、<b>返送と返金</b>にて対応いたします。
+・受け取り連絡を忘れてしまう落札者様が多いため、商品の到着後2日以内に受取ボタンを押されない場合には、申し訳ありませんが悪い評価とさせて頂きます。
+・商品の配送のため、発送委託など必要な範囲内において個人情報を利用させていただきます。
+・領収証の発行には対応できません。
 `;
 
 function createDescription(item: AmazonItemDetail) {
@@ -223,14 +168,11 @@ function createDescription(item: AmazonItemDetail) {
     return normalizeWhitespace(desc);
 }
 
-function createAuctionData(detail: AmazonItemDetail): AuctionExhibit {
-    const COMMISION = 0.1;
-    const PROFIT = 300;
-    let price = detail.item.price * (1.0 / (1.0 - COMMISION)) * 1.05 + PROFIT;
+function createAuctionData(detail: AmazonItemDetail, price: number): AuctionExhibit {
     return {
         images: [],
         title: normalizeTitle(detail.title),
-        price: price | 0,
+        price,
         description: createDescription(detail),
         days: 7,
         closingHours: random(0, 23),
@@ -241,22 +183,42 @@ function createAuctionData(detail: AmazonItemDetail): AuctionExhibit {
 }
 
 export function exhibitAmazonAuction(session: YahooSession, asin: string) {
-    return Execution.transaction(arguments, "Application", getCurrentFilename())
-        .then(val => DBExecution.amazon(rep => getLatestVersionAmazonItemDetail(asin)))
+    return Execution.transaction("Integration", getCurrentFilename())
+        .then(val => DBExecution.integration(rep => rep.existsAuctionExhibit(asin)))
         .then(val => {
-            if (!val) {
-                throw `${asin} is not found`;
-            }
-            return Execution.resolve(val);
-        })
-        .then(detail => Execution.sequence<string, Buffer>(detail.images?.slice(0, 10) || [], undefined, LogType.ON_FAILURE_ONLY)
-            .element(val => WebExecution.get({ url: val, useBinary: true }, doc => doc.buffer))
-            .map(val => ({ detail, images: val })))
-        .then(val => {
-            if (val.images && val.images.length > 0) {
-                return exhibitAuction(session, { ...createAuctionData(val.detail), images: val.images }, asin);
-            } else {
+            if (val) {
                 return Execution.cancel();
             }
+            return Execution.transaction()
+                .then(() => Execution.batch()
+                    .and(() => getItemState(asin).map(state => ({ state })))
+                    .and(() => DBExecution.integration(rep => rep.getAuctionImages(asin)).map(cacheImages => ({ cacheImages })))
+                )
+                .then(val => {
+                    if (!isAvailableItem(val.state)) {
+                        return Execution.cancel();
+                    }
+                    return Execution.transaction()
+                        .then(() => getAmazonItemDetail(asin).map(detail => ({ ...val, detail })))
+                        .then(val => {
+                            if (Array.isArray(val.cacheImages) && val.cacheImages.length > 0) {
+                                return Execution.resolve({ ...val, images: val.cacheImages as Buffer[] | AuctionImage[] })
+                            } else {
+                                return Execution.sequence<string, Buffer>(val.detail.images?.slice(0, 10) || [], 5, "Inner", "DownloadImages")
+                                    .element(val => WebExecution.get({ url: val, useBinary: true }, doc => doc.buffer))
+                                    .map(images => ({ ...val, images: images as Buffer[] | AuctionImage[] }))
+                            }
+                        })
+                        .then(val => {
+                            if (val.images.length > 0 && val.state.price) {
+                                const price = getAuctionPrice(val.state.price);
+                                const auctionData = createAuctionData(val.detail, price);
+                                return Execution.transaction()
+                                    .then(_ => exhibitAuction(session, { ...auctionData, images: val.images }))
+                                    .then(aid => DBExecution.integration(rep => rep.createArb(aid, asin, val.state, price)));
+                            }
+                            return Execution.cancel();
+                        });
+                })
         });
-}  
+}

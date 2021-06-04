@@ -4,6 +4,7 @@ import { ExecutionRepository } from "../repositories/ExecutionRepository";
 import * as scraperapi from "../executions/Scraperapi";
 import { Worker } from "./Worker";
 import { getRepositories } from "../system/Database";
+import { syncNotices } from "../executions/apps/Sync";
 
 const cluster = "exabroker-cluster";
 const executionTaskFamily = "exabroker-executer";
@@ -46,10 +47,9 @@ export class ContainerMaintainer extends Worker {
     }
 
     async maintainExecutionContainer() {
-        await this.execRep.createTaskOnSchedule();
         const listTasks = await this.ecs.listTasks({ cluster, family: executionTaskFamily, desiredStatus: "RUNNING" }).promise();
+        console.log(`Running exeuction task count:${listTasks.taskArns?.length}`);
         if (!listTasks.taskArns || listTasks.taskArns.length == 0) {
-            await this.execRep.stopAllRunningTasks();
             if (await this.execRep.existsTask()) {
                 await this.ecs.runTask(executionTask).promise();
             }
@@ -58,7 +58,7 @@ export class ContainerMaintainer extends Worker {
 
     async maintainCrawlingContainer() {
         const listTasks = await this.ecs.listTasks({ cluster, family: crawlingTaskFamily, desiredStatus: "RUNNING" }).promise();
-        console.log(`Running task count:${listTasks.taskArns?.length}`);
+        console.log(`Running crawling task count:${listTasks.taskArns?.length}`);
         if (!listTasks.taskArns || listTasks.taskArns.length == 0) {
             if (await this.crawlingRep.existsTask()) {
                 console.log("Task exists");
@@ -72,7 +72,8 @@ export class ContainerMaintainer extends Worker {
     }
 
     async run() {
-        await this.maintainCrawlingContainer();
-       // await Promise.all([this.maintainExecutionContainer(), this.maintainCrawlingContainer()]);
+        await this.maintainExecutionContainer();
+        await syncNotices().execute();
+        // await Promise.all([this.maintainExecutionContainer(), this.maintainCrawlingContainer()]);
     }
 }

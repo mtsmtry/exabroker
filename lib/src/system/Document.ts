@@ -53,11 +53,11 @@ export class Document {
     }
     
     getNeeded(xpath: string) {
-        const elm = this.doc.find(xpath)[0];
-        if (!elm) {
+        const elm = this.doc.find(xpath);
+        if (!elm || elm.length == 0) {
             throw `${xpath} is not found`;
         }
-        return new Element(elm, xpath);
+        return new Element(elm[0], xpath);
     }
 
     find(xpath: string) {

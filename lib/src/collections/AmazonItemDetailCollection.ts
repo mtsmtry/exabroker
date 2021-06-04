@@ -1,15 +1,15 @@
 import { DeepPartial } from "typeorm";
-import { AmazonItem } from "../entities/AmazonItem";
+import { AmazonItem } from "../entities/website/AmazonItem";
 import { Document, Element } from "../system/Document";
 import { Dto, notNull } from "../Utils";
-import { AmazonItemDetail } from "../entities/AmazonItemDetail";
+import { AmazonItemDetail } from "../entities/website/AmazonItemDetail";
 import { parseFloatOrNull } from "../Utils";
 import { Collection } from "../system/collection/Collection";
 import { DBExecution } from "../system/execution/DatabaseExecution";
 import { getRepositories } from "../system/Database";
 import { indexCrawler } from "../crawlers/IndexCrawler";
 
-export const AMAZON_ITEM_DETAIL_VERSION = 3;
+export const AMAZON_ITEM_DETAIL_VERSION = 4;
 
 type Dict = { [x: string]: string };
 
@@ -42,7 +42,10 @@ export const amazonItemDetailCollection =
         .property(doc => ({ askCount: doc.getById("askATFLink")?.extractDigits()  }))
         .property(doc => ({ rating: parseFloatOrNull(doc.getById("averageCustomerReviews")?.parent.text.match("5つ星のうち([0-9/.]+)")?.[1]) }))
         .property(doc => ({ availability: doc.get("//*[@id='availability']/span")?.text }))
-        .property(doc => ({ images: doc.find("//*[@id='altImages']//img").map(x => x.attr("src")?.match("(.+?)\.[0-9a-zA-Z_]+\.jpg")?.[1] + ".jpg") }))
+        .property(doc => ({ images: doc.find("//*[@id='altImages']//img")
+            .map(x => x.attr("src")?.match(/(.+?)\.[0-9a-zA-Z_]+\.jpg/)?.[1])
+            .filter(notNull)
+            .map(x => x + ".jpg") }))
         .property(doc => ({ version: AMAZON_ITEM_DETAIL_VERSION }))
         .saveOne(val => DBExecution.amazon(rep => rep.upsertAmazonItemDetail(val)))
 
@@ -69,37 +72,4 @@ function table_to_dict_th_td(table: Element | null) {
         }
         return dict;
     }, {});
-}
-
-export async function getLatestVersionAmazonItemDetail(asin: string) {
-    const reps = await getRepositories();
-    const item = await reps.amazon.getItem(asin);
-    if (!item) {
-        return undefined;
-    }
-    let detail = await reps.amazon.getItemDetail(asin);
-    if (!detail || detail.version < AMAZON_ITEM_DETAIL_VERSION) {
-        if (!item) {
-            return undefined;
-        }
-
-        const s3Key = "items/" + asin;        
-        let object = await reps.s3.getObject({ Bucket: "exabroker-crawled", Key: s3Key }).promise();
-
-        if (object.$response.error && object.$response.error.code == "NotFound") {
-            await indexCrawler.crawl(-1, { site: "Amazon", page: { kind: "Item", asin: asin } });
-            object = await reps.s3.getObject({ Bucket: "exabroker-crawled", Key: s3Key }).promise();
-        }
-
-        const body = object.Body as Buffer;
-        const doc = new Document(body.toString());
-        const res = await amazonItemDetailCollection.collectItems(doc, s3Key);
-        if (res.result == null) {
-            throw "Failed to crawl";
-        }
-        detail = res.result as AmazonItemDetail;
-    }
-    detail.item = item;
-
-    return detail;
 }

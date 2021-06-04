@@ -1,8 +1,10 @@
 import { promise } from "selenium-webdriver";
+import { indexCollection } from "../collections/IndexCollection";
 import { indexCrawler } from "../crawlers/IndexCrawler";
 import * as scraperapi from "../executions/Scraperapi";
 import { CrawlingRepository } from "../repositories/CrawlingRepository";
 import { getRepositories } from "../system/Database";
+import { Document } from "../system/Document";
 import { sleep } from "../Utils";
 import { Worker } from "./Worker";
 
@@ -38,7 +40,10 @@ export class CrawlingContainer extends Worker {
                 }
                 tasks = await this.crawlingRep.getTasks(conCount);
             }
-            const promises = tasks.map(task => indexCrawler.crawl(task.id, task.target));
+            const promises = tasks.map(async task => {
+                const body = await indexCrawler.crawl(task.id, task.target);
+                indexCollection.collectItems(new Document(body || ""), "", "");
+            });
             await Promise.all(promises);
         }
     }

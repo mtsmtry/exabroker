@@ -1,7 +1,7 @@
 import fetch from "node-fetch";
 import { Connection } from "typeorm";
-import { CollectionException } from "../../src/entities/CollectionException";
-import { ExecutionRecord, ExecutionStatus } from "../../src/entities/ExecutionRecord";
+import { CollectionException } from "../../src/entities/system/CollectionException";
+import { ExecutionRecord, ExecutionStatus } from "../../src/entities/system/ExecutionRecord";
 import { Collection } from "../../src/system/collection/Collection";
 import { getRepositories } from "../../src/system/Database";
 import { Document } from "../../src/system/Document";
@@ -44,9 +44,9 @@ describe("Execution", () => {
         const transactionName = `TestTransaction${randomPositiveInteger()}`;
         const atom1Name = `Test${randomPositiveInteger()}`;
         const atom2Name = `Test${randomPositiveInteger()}`;
-        const exec = Execution.transaction(1, "Test", transactionName)
+        const exec = Execution.transaction("Test", transactionName)
             .then(val => Execution.atom("Test", atom1Name, async () => {
-                return { result: val + 1 };
+                return { result: 1 + 1 };
             }))
             .then(val => Execution.atom("Test", atom2Name, async () => {
                 return { result: val + 1 };
@@ -71,9 +71,9 @@ describe("Execution", () => {
     it("Transaction throw", async () => {
         const transactionName = `TestTransactionThrow${randomPositiveInteger()}`;
         const error = `error: ${randomPositiveInteger()}`
-        const exec = Execution.transaction(1, "Test", transactionName)
+        const exec = Execution.transaction("Test", transactionName)
             .then(val => Execution.atom("Test", "Test1", async () => {
-                return { result: val + 1 };
+                return { result: 1 + 1 };
             }))
             .then(val => Execution.atom("Test", "Test2", () => Promise.reject(error)))
             .then(val => Execution.atom("Test", "Test3", async () => {

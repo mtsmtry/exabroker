@@ -13,7 +13,7 @@ export class WebDriver {
 
         const cap = selenium.Capabilities.chrome();
         
-        cap.setPageLoadStrategy("eager");
+        cap.setPageLoadStrategy("normal");
         cap.set("chromeOptions", {
             w3c: false,
             args: [
@@ -33,7 +33,7 @@ export class WebDriver {
             if (url == "") {
                 throw "Not specified domain";
             }
-
+            
             // Get driver
             const driver = await this.driverPromise;
             this._driver = driver;
@@ -92,6 +92,12 @@ export class WebDriver {
             return m;
         }, {});
     }
+
+    async getHtml() {
+        const driver = await this.getDriver();
+        const element = await driver.findElement(selenium.By.xpath("html"));
+        return await element.getAttribute("innerHTML");
+    }
 }
 
 class WebElement {
@@ -99,10 +105,8 @@ class WebElement {
     }
 
     async sendKeys(keys: string) {
-        console.log(`    webdriver:${this.xpath}:sendKeys '${keys}'`);
         await this.elm.getDriver().wait(async () => {
             const displayed = await this.elm.isDisplayed();
-            console.log(`    webdriver:${this.xpath}:wait, displayed ${displayed}`)
             return displayed;
         });
         await this.elm.sendKeys(keys);
@@ -113,12 +117,22 @@ class WebElement {
     }
 
     async submit() {
-        console.log(`    webdriver:${this.xpath}:submit`);
+        await this.elm.getDriver().wait(async () => {
+            const displayed = await this.elm.isDisplayed();
+            return displayed;
+        });
         await this.elm.submit();
     }
 
     async click() {
-        console.log(`    webdriver:${this.xpath}:click`);
-        await this.elm.click();
+        try {
+            await this.elm.click();
+        } catch(exp) {
+            if (exp instanceof selenium.error.StaleElementReferenceError) {
+                console.log(exp);
+            } else {
+                throw exp;
+            }
+        }
     }
 }

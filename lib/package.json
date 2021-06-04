@@ -12,6 +12,7 @@
     "pack": "tsc && npm pack",
     "test": "jest",
     "sc": "tsc && node dist/test/CrawlingSchedule.js",
+    "loadbn": "tsc && node dist/test/LoadBrowseNode.js",
     "crawl": "tsc && node dist/test/CrawlingContainer.js",
     "scrape": "tsc && node dist/test/CollectionHandler.js",
     "mc": "tsc && node dist/test/ContainerMaintainer.js",

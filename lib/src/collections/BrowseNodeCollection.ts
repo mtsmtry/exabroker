@@ -1,4 +1,4 @@
-import { AmazonItem } from "../entities/AmazonItem";
+import { AmazonItem } from "../entities/website/AmazonItem";
 import { Collection } from "../system/collection/Collection";
 import { BrowseNode } from "../entities/BrowseNode";
 import { Document } from "../system/Document";
@@ -8,12 +8,13 @@ import { DBExecution } from "../system/execution/DatabaseExecution";
 import { Execution } from "../system/execution/Execution";
 
 function saveItems(val: AmazonItem[]) {
-    return Execution.batch(val)
-        .and(val => DBExecution.amazon(rep => rep.upsertAmazonItems(val)))
-        .and(val => Execution.transaction(val)
-            .then(val => DBExecution.amazon(rep => rep.getNoCrawledDatailASINs(val.map(x => x.asin))))
+    return DBExecution.amazon(rep => rep.upsertAmazonItems(val));
+    /*return Execution.batch()
+        .and(() => DBExecution.amazon(rep => rep.upsertAmazonItems(val)))
+        .and(val => Execution.transaction()
+            .then(() => DBExecution.amazon(rep => rep.getNoCrawledDatailASINs(val.map(x => x.asin))))
             .then(val => DBExecution.crawling(rep => rep.createTasks(val.map(asin => ({ site: "Amazon", page: { kind: "Item", asin } })))))
-        )
+        )*/
 }
 
 const browseNodeCollectionHead =

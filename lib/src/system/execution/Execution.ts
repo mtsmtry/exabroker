@@ -1,5 +1,5 @@
 import { DeepPartial } from "typeorm";
-import { ExecutionType } from "../../entities/ExecutionRecord";
+import { ExecutionType } from "../../entities/system/ExecutionRecord";
 import { AdditionalExecutionData, ExecutionRepository, ExecutionSubmission } from "../../repositories/ExecutionRepository";
 import { getRepositories } from "../Database";
 
@@ -9,7 +9,8 @@ export interface ExecutionLog {
 }
 
 export interface ExecutionResult<T> {
-    childrenNoSubmit: ExecutionResult<any>[];
+    childrenNotLogged: ExecutionResult<any>[];
+    logged: boolean;
     submission: ExecutionSubmission;
     result?: T;
 }
@@ -27,60 +28,64 @@ export class Execution<T> {
         return result.result as any;
     }
 
-    async executeImpl(depth: number, log?: ExecutionLog): Promise<ExecutionResult<T>> {
+    async executeImpl(depth: number, log: ExecutionLog): Promise<ExecutionResult<T>> {
         return undefined as any;
     }
 
     map<T2>(convert: (val: T) => T2): Execution<T2> {
-        return new MappedExecution(this, convert);
+        return Execution.transaction("System", "MappedExecution")
+            .then(_ => this)
+            .then(val => Execution.resolve(convert(val)));
     }
 
-    static atom<T>(layer: string, name: string, run: () => Promise<ExecutionAtomResult<T>>) {
-        return new ExecutionAtom<T>(layer, name, run);
+    static atom<T>(layer: string, name: string, run: () => Promise<ExecutionAtomResult<T>>, logType: LogType = LogType.IMMEDIATE) {
+        return new ExecutionAtom<T>(layer, name, run, logType);
     }
 
-    static batch<T>(value: T, layer: string = "Inner", name: string = "Lambda") {
-        return new BatchExecution<T>(layer, name, value);
+    static batch(layer: string = "Inner", name: string = "Lambda") {
+        return new BatchExecution<{}, {}>(layer, name, {});
     }
 
-    static sequence<T, T2>(values: T[], concurrencyLimit?: number, logType: LogType = LogType.IMMEDIATE, layer: string = "Inner", name: string = "Lambda") {
-        return new SequenceExecution<T, T2>(layer, name, values, concurrencyLimit, logType);
+    static sequence<T, T2>(values: T[], concurrencyLimit?: number, layer: string = "Inner", name: string = "Lambda") {
+        return new SequenceExecution<T, T2>(layer, name, values, concurrencyLimit);
     }
 
-    static transaction<T, T2 = T>(value: T, layer: string = "Inner", name: string = "Lambda") {
-        return new TransactionExecution<T, T2>(layer, name, value);
+    static transaction(layer: string = "Inner", name: string = "Lambda") {
+        return new TransactionExecution<void, void>(layer, name, (() => {})());
     }
-    
+
     static progress<T>(value: T, layer: string = "Inner", name: string = "Lambda") {
         return new ProgressExecution<T, T>(layer, name, value);
+    }
+
+    static loop<T>(value: T, layer: string = "Inner", name: string = "Lambda") {
+        return new LoopExecution<T>(layer, name, value);
     }
 
     static cancel() {
         async function run(): Promise<ExecutionAtomResult<undefined>> {
             return { result: undefined }
         }
-        return new ExecutionAtom("Execution", "CancelExecution", run);
+        return new ExecutionAtom("Execution", "CancelExecution", run, LogType.ON_FAILURE_ONLY);
     }
 
     static resolve<T>(value: T) {
         async function run(): Promise<ExecutionAtomResult<T>> {
             return { result: value }
         }
-        return new ExecutionAtom("Execution", "Resolve", run);
-    }
-}
-
-class MappedExecution<T> extends Execution<T> {
-    constructor(private execution: Execution<any>, private convert: (val: any) => T) {
-        super(execution.layer, execution.name);
+        return new ExecutionAtom("Execution", "Resolve", run, LogType.ON_FAILURE_ONLY);
     }
 
-    async executeImpl(depth: number, log?: ExecutionLog): Promise<ExecutionResult<T>> {
-        const result = await this.execution.executeImpl(depth, log);
-        if (result.submission.successful) {
-            result.result = this.convert(result.result);
-        }
-        return result;
+    mustBeNotNull() {
+        return this.map(val => {
+            if (val === null) {
+                throw "value is null";
+            }
+            if (val === undefined) {
+                throw "value is undefined";
+            }
+            return val as Exclude<T, null | undefined>;
+        });
     }
 }
 
@@ -94,22 +99,34 @@ export class ExecutionAtom<T> extends Execution<T> {
     constructor(
         layer: string,
         name: string,
-        private run: () => Promise<ExecutionAtomResult<T>>) {
+        private run: () => Promise<ExecutionAtomResult<T>>,
+        private logType: LogType) {
         super(layer, name);
     }
 
-    async executeImpl(depth: number, log?: ExecutionLog): Promise<ExecutionResult<T>> {
+    async executeImpl(depth: number, log: ExecutionLog): Promise<ExecutionResult<T>> {
         // Start log
         let executionId = -1;
-        if (log) {
+        if (this.logType == LogType.IMMEDIATE) {
             executionId = await log.rep.startExecution(log.parentId, ExecutionType.ATOM, this.layer, this.name);
         }
 
         // Execute
         const startedAt = new Date();
-        let { result, exception, successful } = await this.run()
-            .then(result => ({ result, exception: null, successful: true }))
-            .catch(exception => ({ result: null, exception, successful: false }))
+        let result: ExecutionAtomResult<T> | null, exception: any, successful: boolean;
+        try {
+            const res = await this.run()
+                .then(result => ({ result, exception: null, successful: true }))
+                .catch(exception => ({ result: null, exception, successful: false }));
+            result = res.result;
+            exception = res.exception;
+            successful = res.successful;
+        } catch (ex) {
+            result = null;
+            exception = ex;
+            successful = false;
+        }
+
         const endedAt = new Date();
 
         if (successful) {
@@ -119,27 +136,35 @@ export class ExecutionAtom<T> extends Execution<T> {
             }
         }
 
+        const submission: ExecutionSubmission = {
+            type: ExecutionType.ATOM,
+            layer: this.layer,
+            name: this.name,
+            additional: result?.executionData,
+            startedAt,
+            endedAt,
+            successful,
+            exception
+        };
+
         // Log
-        if (log) {
+        let logged = false;
+        if (this.logType == LogType.IMMEDIATE) {
+            logged = true;
             if (successful) {
                 await log.rep.completedExecution(executionId, result?.executionData);
             } else {
                 await log.rep.failedExecution(executionId, exception, result?.executionData);
             }
+        } else if (!successful) {
+            logged = true;
+            await log.rep.submitExecutions(log.parentId, [submission]);
         }
 
         return {
-            childrenNoSubmit: [],
-            submission: {
-                type: ExecutionType.ATOM,
-                layer: this.layer,
-                name: this.name,
-                additional: result?.executionData,
-                startedAt,
-                endedAt,
-                successful,
-                exception
-            },
+            childrenNotLogged: [],
+            logged,
+            submission,
             result: result?.result
         };
     }
@@ -160,12 +185,28 @@ export enum LogType {
 async function submitChildren(rep: ExecutionRepository, executionId: number, children: ExecutionResult<any>[]) {
     const ids = await rep.submitExecutions(executionId, children.map(x => x.submission));
     const promises = children.map(async (x, i) => {
-        if (x.childrenNoSubmit.length > 0) {
-            await submitChildren(rep, ids[i], x.childrenNoSubmit);
+        if (x.childrenNotLogged.length > 0) {
+            await submitChildren(rep, ids[i], x.childrenNotLogged);
         }
     });
     await Promise.all(promises);
 }
+
+function getFailureResult(ex: any): ExecutionResult<any> {
+    return {
+        childrenNotLogged: [],
+        logged: true,
+        submission: {
+            type: ExecutionType.ATOM,
+            layer: "System",
+            name: "Failure",
+            startedAt: new Date(),
+            endedAt: new Date(),
+            successful: false,
+            exception: ex
+        }
+    };
+};
 
 class ExecutionComposition<T1, T2> extends Execution<T2> {
     protected children: ((val: any) => Execution<any>)[];
@@ -175,9 +216,8 @@ class ExecutionComposition<T1, T2> extends Execution<T2> {
         name: string,
         private value: T1,
         private submit: (results: any) => T2,
-        protected compositionType: CompositionType, 
+        protected compositionType: CompositionType,
         protected evaluationType: EvaluationType,
-        protected childrenLogType: LogType,
         protected concurrencyLimit?: number) {
         super(layer, name);
         this.children = [];
@@ -199,21 +239,26 @@ class ExecutionComposition<T1, T2> extends Execution<T2> {
         }
     }
 
-    private async executeParallel(executionId: number, depth: number, rep?: ExecutionRepository): Promise<ExecutionResult<T2>> {
+    private async executeParallel(executionId: number, depth: number, rep: ExecutionRepository): Promise<ExecutionResult<T2>> {
         let successfulCount = 0, failureCount = 0;
-        let childResultsNoSubmit: ExecutionResult<any>[] = []; 
-        
+        let childResultsNoSubmit: ExecutionResult<any>[] = [];
+        let exception: any = null;
         // Create promices
-        let i=0;
+        let i = 0;
         let promices = this.children.map(child => async () => {
             // Execute child
-            const log = this.childrenLogType == LogType.ON_FAILURE_ONLY || !rep ? undefined : { rep, parentId: executionId };
-            const childExec = child(this.value);
-            i++;
-            console.log(`${"  ".repeat(depth)}[${i}/${this.children.length}]  Start ${childExec.layer}.${childExec.name}:${JSON.stringify(this.value)?.slice(0, 200)}`);
-            const result = await childExec.executeImpl(depth+1, log);
-            console.log(`${"  ".repeat(depth)}[${i}/${this.children.length}]  End ${childExec.layer}.${childExec.name}:${JSON.stringify(result.result)?.slice(0, 200) || result.submission.exception}`);
-
+            let result: ExecutionResult<any>;
+            try {
+                const log = { rep, parentId: executionId };
+                const childExec = child(this.value);
+                i++;
+                console.log(`${"  ".repeat(depth)}[${i}/${this.children.length}]  Start ${childExec.layer}.${childExec.name}:${JSON.stringify(this.value)?.slice(0, 200)}`);
+                result = await childExec.executeImpl(depth + 1, log);
+                console.log(`${"  ".repeat(depth)}[${i}/${this.children.length}]  End ${childExec.layer}.${childExec.name}:${JSON.stringify(result.result)?.slice(0, 200) || result.submission.exception}`);
+            } catch (ex) {
+                exception = ex;
+                result = getFailureResult(ex);
+            }
             // Count
             if (result.submission.successful) {
                 successfulCount++;
@@ -223,8 +268,8 @@ class ExecutionComposition<T1, T2> extends Execution<T2> {
 
             // Log child
             if (rep) {
-                const addtional = { 
-                    sequence: { 
+                const addtional = {
+                    sequence: {
                         doneCount: successfulCount + failureCount,
                         successfulCount,
                         failureCount
@@ -233,7 +278,7 @@ class ExecutionComposition<T1, T2> extends Execution<T2> {
                 await rep.updateExecution(executionId, addtional);
             }
 
-            if (!rep || this.childrenLogType == LogType.ON_FAILURE_ONLY) {
+            if (!result.logged) {
                 childResultsNoSubmit.push(result);
             }
 
@@ -244,7 +289,7 @@ class ExecutionComposition<T1, T2> extends Execution<T2> {
         const startedAt = new Date();
         let results: ExecutionResult<any>[] = [];
         if (this.concurrencyLimit) {
-            while(promices.length > 0) {
+            while (promices.length > 0) {
                 const promiseSet = promices.slice(0, this.concurrencyLimit);
                 promices = promices.slice(this.concurrencyLimit);
                 const resultSet = await Promise.all(promiseSet.map(x => x()));
@@ -258,21 +303,20 @@ class ExecutionComposition<T1, T2> extends Execution<T2> {
         const successful = failureCount == 0 || this.evaluationType == EvaluationType.AS_MUCH_AS_POSSIBLE;
 
         // Log
-        if (rep) {
-            if (successful) {
-                await rep.completedExecution(executionId);
-            } else {
-                await rep.failedExecution(executionId);
+        if (successful) {
+            await rep.completedExecution(executionId);
+        } else {
+            await rep.failedExecution(executionId, exception);
 
-                if (this.childrenLogType == LogType.ON_FAILURE_ONLY && childResultsNoSubmit.length > 0) {
-                    await submitChildren(rep, executionId, childResultsNoSubmit);
-                    childResultsNoSubmit = [];
-                }
-            } 
+            if (childResultsNoSubmit.length > 0) {
+                await submitChildren(rep, executionId, childResultsNoSubmit);
+                childResultsNoSubmit = [];
+            }
         }
 
         return {
-            childrenNoSubmit: childResultsNoSubmit,
+            childrenNotLogged: childResultsNoSubmit,
+            logged: true,
             submission: {
                 type: this.executionType,
                 layer: this.layer,
@@ -285,29 +329,36 @@ class ExecutionComposition<T1, T2> extends Execution<T2> {
         };
     }
 
-    private async executeSeries(executionId: number, depth: number, rep?: ExecutionRepository): Promise<ExecutionResult<T2>> {
-        let childResultsNoSubmit: ExecutionResult<any>[] = []; 
+    private async executeSeries(executionId: number, depth: number, rep: ExecutionRepository): Promise<ExecutionResult<T2>> {
+        let childResultsNoSubmit: ExecutionResult<any>[] = [];
 
         // Execute children
         const startedAt = new Date();
         let stack: any = this.value;
         let successful = true;
+        let exception: any = null;
+
         for (let i = 0; i < this.children.length; i++) {
             // Execute child
-            const log = this.childrenLogType == LogType.ON_FAILURE_ONLY || !rep ? undefined : { rep, parentId: executionId };
-            const child = this.children[i](stack);
-            console.log(`${"  ".repeat(depth)}[${i+1}/${this.children.length}] Start ${child.layer}.${child.name}:${JSON.stringify(stack)?.slice(0, 200)}`);
-            const result = await child.executeImpl(depth+1, log);
-            stack = result.result;
-            console.log(`${"  ".repeat(depth)}[${i+1}/${this.children.length}] End ${child.layer}.${child.name}:${JSON.stringify(stack)?.slice(0, 200) || result.submission.exception}`);
-
+            let result: ExecutionResult<any>;
+            try {
+                const log = { rep, parentId: executionId };
+                const child = this.children[i](stack);
+                console.log(`${"  ".repeat(depth)}[${i + 1}/${this.children.length}] Start ${child.layer}.${child.name}:${JSON.stringify(stack)?.slice(0, 200)}`);
+                result = await child.executeImpl(depth + 1, log);
+                stack = result.result;
+                console.log(`${"  ".repeat(depth)}[${i + 1}/${this.children.length}] End ${child.layer}.${child.name}:${JSON.stringify(stack)?.slice(0, 200) || result.submission.exception}`);
+            } catch (ex) {
+                exception = ex;
+                result = getFailureResult(ex);
+            }
             // Log child
             if (rep) {
                 await rep.updateExecution(executionId, { sequence: { doneCount: i + 1 } })
             }
 
             // Add array
-            if (!rep || this.childrenLogType == LogType.ON_FAILURE_ONLY) {
+            if (!result.logged) {
                 childResultsNoSubmit.push(result);
             }
 
@@ -324,9 +375,9 @@ class ExecutionComposition<T1, T2> extends Execution<T2> {
             if (successful) {
                 await rep.completedExecution(executionId);
             } else {
-                await rep.failedExecution(executionId);
+                await rep.failedExecution(executionId, exception);
 
-                if (this.childrenLogType == LogType.ON_FAILURE_ONLY && childResultsNoSubmit.length > 0) {
+                if (childResultsNoSubmit.length > 0) {
                     await submitChildren(rep, executionId, childResultsNoSubmit);
                     childResultsNoSubmit = [];
                 }
@@ -334,7 +385,8 @@ class ExecutionComposition<T1, T2> extends Execution<T2> {
         }
 
         return {
-            childrenNoSubmit: childResultsNoSubmit,
+            childrenNotLogged: childResultsNoSubmit,
+            logged: true,
             submission: {
                 type: this.executionType,
                 layer: this.layer,
@@ -347,25 +399,23 @@ class ExecutionComposition<T1, T2> extends Execution<T2> {
         };
     }
 
-    async executeImpl(depth: number, log?: ExecutionLog): Promise<ExecutionResult<T2>> {
+    async executeImpl(depth: number, log: ExecutionLog): Promise<ExecutionResult<T2>> {
         let executionId = -1;
-        if (log) {
-            const addtional = this.evaluationType == EvaluationType.NONE_OR_ALL ? 
-            { 
-                sequence: { 
-                    totalCount: this.children.length, 
+        const addtional = this.evaluationType == EvaluationType.NONE_OR_ALL ?
+            {
+                sequence: {
+                    totalCount: this.children.length,
                     doneCount: 0
                 }
-            } : { 
-                sequence: { 
-                    totalCount: this.children.length, 
+            } : {
+                sequence: {
+                    totalCount: this.children.length,
                     doneCount: 0,
                     successfulCount: 0,
                     failureCount: 0
                 }
             };
-            executionId = await log.rep.startExecution(log.parentId, this.executionType, this.layer, this.name, addtional);
-        }
+        executionId = await log.rep.startExecution(log.parentId, this.executionType, this.layer, this.name, addtional);
 
         if (this.compositionType == CompositionType.PARALLEL) {
             return await this.executeParallel(executionId, depth, log?.rep);
@@ -382,7 +432,7 @@ export class BatchExecution<T1, T2 = {}> extends ExecutionComposition<T1, T2> {
         }
         super(layer, name, value, submit, CompositionType.PARALLEL, EvaluationType.NONE_OR_ALL, LogType.IMMEDIATE);
     }
-   
+
     and<T3>(exec: (val: T1) => Execution<T3>): BatchExecution<T1, T2 & T3> {
         this.children.push(exec);
         return this as any;
@@ -390,8 +440,8 @@ export class BatchExecution<T1, T2 = {}> extends ExecutionComposition<T1, T2> {
 }
 
 export class SequenceExecution<T1, T2> extends ExecutionComposition<T1[], T2[]> {
-    constructor(layer: string, name: string, private values: T1[], concurrencyLimit?: number, logType: LogType = LogType.IMMEDIATE) {
-        super(layer, name, values, x => x, CompositionType.PARALLEL, EvaluationType.AS_MUCH_AS_POSSIBLE, logType, concurrencyLimit);
+    constructor(layer: string, name: string, private values: T1[], concurrencyLimit?: number) {
+        super(layer, name, values, x => x, CompositionType.PARALLEL, EvaluationType.AS_MUCH_AS_POSSIBLE, concurrencyLimit);
     }
 
     element(exec: (val: T1) => Execution<T2>): Execution<T2[]> {
@@ -416,8 +466,110 @@ export class ProgressExecution<T1, T2> extends ExecutionComposition<T1, T2> {
         super(layer, name, value, x => x, CompositionType.SERIES, EvaluationType.AS_MUCH_AS_POSSIBLE, LogType.IMMEDIATE);
     }
 
-    then<T3>(exec: (val: T2) => Execution<T3>): TransactionExecution<T1, T3> {
+    next<T3>(exec: (val: T2) => Execution<T3>): ProgressExecution<T1, T3> {
         this.children.push(exec);
         return this as any;
+    }
+}
+
+export class LoopExecution<T> extends Execution<T> {
+    makeExec: (val: T) => Execution<{ result: T, continue: boolean }>;
+    value: T;
+
+    constructor(layer: string, name: string, value: T) {
+        super(layer, name);
+        this.value = value;
+    }
+
+    routine(makeExec: (val: T) => Execution<{ result: T, continue: boolean }>) {
+        this.makeExec = makeExec;
+        return this;
+    }
+
+    async executeImpl(depth: number, log: ExecutionLog): Promise<ExecutionResult<T>> {
+        let executionId = await log.rep.startExecution(log.parentId, ExecutionType.LOOP, this.layer, this.name, {
+            sequence: {
+                totalCount: 0,
+                doneCount: 0,
+                successfulCount: 0,
+                failureCount: 0
+            }
+        });
+
+        let childResultsNoSubmit: ExecutionResult<any>[] = [];
+
+        // Execute children
+        const startedAt = new Date();
+        let stack: any = this.value;
+        let successful = true;
+        let exception: any = null;
+
+        for (let i = 0; ; i++) {
+            // Execute child
+            let result: ExecutionResult<{ result: T, continue: boolean }>;
+            try {
+                const exec = this.makeExec(stack);
+                console.log(`${"  ".repeat(depth)}[${i + 1}/LOOP] Start ${exec.layer}.${exec.name}:${JSON.stringify(stack)?.slice(0, 200)}`);
+                result = await exec.executeImpl(depth + 1, { rep: log.rep, parentId: executionId });
+                stack = result.result?.result;
+                console.log(`${"  ".repeat(depth)}[${i + 1}/LOOP] End ${exec.layer}.${exec.name}:${JSON.stringify(stack)?.slice(0, 200) || result.submission.exception}`);
+            } catch (ex) {
+                exception = ex;
+                result = getFailureResult(ex);
+            }
+            // Log child
+            if (log.rep) {
+                await log.rep.updateExecution(executionId, {
+                    sequence: {
+                        totalCount: i + 1,
+                        doneCount: i + 1,
+                        successfulCount: result.submission.successful ? i + 1 : i,
+                        failureCount: result.submission.successful ? 1 : 0
+                    }
+                })
+            }
+
+            // Add array
+            if (!result.logged) {
+                childResultsNoSubmit.push(result);
+            }
+
+            // Error
+            if (!result.submission.successful) {
+                successful = false;
+                break;
+            }
+
+            if (result.result?.continue === false) {
+                break;
+            }
+        }
+        const endedAt = new Date();
+
+        // Log
+        if (successful) {
+            await log.rep.completedExecution(executionId);
+        } else {
+            await log.rep.failedExecution(executionId, exception);
+
+            if (childResultsNoSubmit.length > 0) {
+                await submitChildren(log.rep, executionId, childResultsNoSubmit);
+                childResultsNoSubmit = [];
+            }
+        }
+
+        return {
+            childrenNotLogged: childResultsNoSubmit,
+            logged: true,
+            submission: {
+                type: ExecutionType.LOOP,
+                layer: this.layer,
+                name: this.name,
+                startedAt,
+                endedAt,
+                successful
+            },
+            result: successful ? stack : undefined
+        };
     }
 }

@@ -18,7 +18,7 @@ export class CollectionHandler extends Handler {
         const object = await this.s3.getObject({ Bucket: bucketName, Key: objectKey }).promise();
         const body = object.Body as Buffer;
         const doc = new Document(body.toString());
-        await indexCollection.collectItems(doc, objectKey);
+        await indexCollection.collectItems(doc, objectKey, objectKey);
     }
 
     async handle(event: lambda.S3CreateEvent, context: lambda.Context) {
