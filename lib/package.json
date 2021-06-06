@@ -11,16 +11,7 @@
     "build": "tsc",
     "pack": "tsc && npm pack",
     "test": "jest",
-    "sc": "tsc && node dist/test/CrawlingSchedule.js",
-    "loadbn": "tsc && node dist/test/LoadBrowseNode.js",
-    "crawl": "tsc && node dist/test/CrawlingContainer.js",
-    "scrape": "tsc && node dist/test/CollectionHandler.js",
-    "mc": "tsc && node dist/test/ContainerMaintainer.js",
-    "ec": "tsc && node dist/test/ExecutionContainer.js",
-    "rep": "tsc && node dist/test/Repository.js",
-    "yahoo": "tsc && node dist/test/Yahoo.js",
-    "amazon": "tsc && node dist/test/Amazon.js",
-    "migrate": "tsc && node dist/test/Migration.js"
+    "crawl": "ts-node src/entries/Crawler.ts"
   },
   "files": [
     "dist",

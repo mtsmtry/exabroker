@@ -8,19 +8,16 @@ import * as ip from "ip";
 import { CrawlingObject } from "../crawlers/IndexCrawler";
 import { CrawlingTask, CrawlingTaskStatus } from "../entities/system/CrawlingTask";
 import { randomPositiveInteger } from "../Utils";
-import { CrawlingSchedule } from "../entities/system/CrawlingSchedule";
 import { getException } from "./Utils";
 
 export class CrawlingRepository {
     records: Repository<CrawlingRecord>;
     tasks: Repository<CrawlingTask>;
-    schedules: Repository<CrawlingSchedule>;
     hostIp: string;
 
     constructor(mng: EntityManager) {
         this.records = mng.getRepository(CrawlingRecord);
         this.tasks = mng.getRepository(CrawlingTask);
-        this.schedules = mng.getRepository(CrawlingSchedule);
         this.hostIp = ip.address();
     }
 
@@ -81,21 +78,8 @@ export class CrawlingRepository {
     }
 
     async existsTask() {
-        const scheduleCount = await this.schedules.count({ pendedUntil: LessThan(new Date()) });
         const taskCount = await this.tasks.count();
-        return taskCount > 0 || scheduleCount > 0;
-    }
-
-    async createTaskOnSchedule(count: number) {
-        const schedules = await this.schedules.createQueryBuilder()
-            .where({ pendedUntil: LessThan(new Date()) })
-            .limit(count)
-            .getMany();
-        console.log(schedules.map(x => x.id));
-        const tasks = schedules.map(x => this.tasks.create({ target: x.startupTarget }));
-        await this.tasks.save(tasks);
-        await this.schedules.update(schedules.map(x => x.id), { lastInvokedAt: new Date() });
-        return tasks.length;
+        return taskCount > 0;
     }
 
     async stopAllRunningTasks() {
@@ -104,26 +88,5 @@ export class CrawlingRepository {
             .set({ status: CrawlingTaskStatus.PENDING })
             .where({ status: CrawlingTaskStatus.RUNNING })
             .execute();
-    }
-
-    async removeAllSchedules() {
-        await this.schedules.createQueryBuilder()
-            .delete()
-            .execute();
-    }
-
-    async createSchedules(targets: CrawlingObject[], timeSpan: number) {
-        const arrayChunk = ([...array], size = 1) => {
-            return array.reduce((acc, value, index) => index % size ? acc : [...acc, array.slice(index, index + size)], []);
-        }
-        const chunks = arrayChunk(targets, 300) as CrawlingObject[][];
-        let count = 1;
-        const promises = chunks.map(async chunk => {
-            const schedules = chunk.map(x => this.schedules.create({ startupTarget: x, timeSpan }));
-            await this.schedules.save(schedules);
-            console.log(`createSchedules:${count}/${chunks.length}`);
-            count++;
-        });
-        await Promise.all(promises);
     }
 }

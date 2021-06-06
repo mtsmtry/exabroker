@@ -11,7 +11,6 @@ const timeout = 10000;
 
 export interface PageCrawling<T> {
     getUrl(val: T): string;
-    getS3Key(val: T): string;
     getNextCrawlings(val: T, itemCount: number): CrawlingObject[];
     collection: Collection<T>;
 }
@@ -31,7 +30,7 @@ export class Crawler<T> {
         return this.crawlImpl(taskId, target, reps.crawling);
     }
 
-    async crawlImpl(taskId: number, target: T, rep: CrawlingRepository): Promise<string | null> {
+    async crawlImpl(taskId: number, target: T, rep: CrawlingRepository): Promise<any> {
         return null;
     }
 }
@@ -44,7 +43,6 @@ export class CrawlerPage<T> extends Crawler<T> {
 
     async crawlImpl(taskId: number, target: T, rep: CrawlingRepository) {
         const url = this.config.getUrl(target);
-        const key = this.config.getS3Key(target);
 
         let downloadLatency: number | null = null;
         let uploadLatency: number | null = null;
@@ -52,6 +50,7 @@ export class CrawlerPage<T> extends Crawler<T> {
         let error: string | null = null;
         let body: string | null = null;
         let collectionCount: number | null = null;
+        let collectionResult: any = null;
         const timeout = 60 * 1000; // Scraperapi
         try {
             // Download
@@ -65,21 +64,25 @@ export class CrawlerPage<T> extends Crawler<T> {
             }
 
             // Upload
-            const putStart = Date.now();
-            /*const reps = await getRepositories();
+            /*const putStart = Date.now();
+            const reps = await getRepositories();
             const result = await reps.s3.putObject({ Bucket: bucketName, Key: key, Body: body }).promise();
             if (result.$response.error) {
                 throw result.$response.error.message;
             }
             uploadLatency = Date.now() - putStart;*/
 
+            // Collection
+            const doc = new Document(body);
+            collectionResult = (await this.config.collection.collectItems(doc, target, url)).result;
+
             // Process
             const processStart = Date.now();
-            const doc = new Document(body);
             collectionCount = this.config.collection.getItemCount(doc, target);
             processLatency = Date.now() - processStart;
             const nexts = this.config.getNextCrawlings(target, collectionCount);
             await rep.createTasks(nexts);
+
         } catch (ex) {
             console.log(ex);
             error = ex;
@@ -91,7 +94,7 @@ export class CrawlerPage<T> extends Crawler<T> {
             });
         }
 
-        return body;
+        return collectionResult;
     }
 }
 

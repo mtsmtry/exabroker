@@ -9,7 +9,7 @@ export class CollectionException {
     id: number;
 
     @Column()
-    s3Key: string;
+    url: string;
 
     @CreatedAt()
     timestamp: Date;

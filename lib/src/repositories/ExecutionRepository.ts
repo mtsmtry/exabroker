@@ -1,12 +1,10 @@
 import { DeepPartial, EntityManager, LessThan, MoreThan, Repository } from "typeorm";
-import { CrawlingSchedule } from "../entities/system/CrawlingSchedule";
 import { ExecutionRecord, ExecutionStatus, ExecutionType, WebExecutionData, SequenceExecutionData } from "../entities/system/ExecutionRecord";
 import { randomPositiveInteger, toTimestamp } from "../Utils";
 import * as aws from "aws-sdk";
 import { getException } from "./Utils";
 import { getRepositories } from "../system/Database";
 import { ECSCredentials } from "aws-sdk";
-import { ExecutionSchedule, ExecutionTaskStatus } from "../entities/system/ExecutionSchedule";
 
 export class AdditionalExecutionData {
     web: WebExecutionData;
@@ -28,11 +26,9 @@ const NO_LOG = false;
 
 export class ExecutionRepository {
     records: Repository<ExecutionRecord>;
-    schedules: Repository<ExecutionSchedule>;
 
     constructor(mng: EntityManager, private firestore: FirebaseFirestore.Firestore) {
         this.records = mng.getRepository(ExecutionRecord);
-        this.schedules = mng.getRepository(ExecutionSchedule); 
     }
 
     private async createRecord(exec: DeepPartial<ExecutionRecord>) {
@@ -153,32 +149,5 @@ export class ExecutionRepository {
         if (NO_LOG) return;
         additional = await this.saveDocument(additional);
         await this.updateRecord(id, additional)
-    }
-
-    async getTasks() {
-        await this.schedules
-            .createQueryBuilder()
-            .update()
-            .set({ status: ExecutionTaskStatus.RUNNING })
-            .where({ pendedUntil: LessThan(new Date()) })
-            .execute();
-
-        const items = await this.schedules
-            .createQueryBuilder()
-            .where({ pendedUntil: LessThan(new Date()) })
-            .getMany();
-
-        return items.map(x => ({ id: x.id, method: x.method }));
-    }
-
-    async existsTask() {
-        const count = await this.schedules.createQueryBuilder()
-            .where({ pendedUntil: LessThan(new Date()) })
-            .getCount();
-        return count > 0;
-    }
-
-    async completeTask(id: number) {
-        await this.schedules.update(id, { status: ExecutionTaskStatus.PENDING, lastInvokedAt: new Date() });
     }
 }

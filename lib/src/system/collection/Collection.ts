@@ -21,12 +21,12 @@ export class Collection<T> {
         return new CollectionBranch<T>();
     }
 
-    async collectItems(doc: Document, val: T, s3Key: string) {
+    async collectItems(doc: Document, val: T, url: string) {
         const reps = await getRepositories();
-        return await this.collectItemsImpl(doc, val, s3Key, reps.collection);
+        return await this.collectItemsImpl(doc, val, url, reps.collection);
     }
 
-    collectItemsImpl(doc: Document, val: T, s3Key: string, rep: CollectionRepository): Promise<CollectionResult> {
+    collectItemsImpl(doc: Document, val: T, url: string, rep: CollectionRepository): Promise<CollectionResult> {
         throw "";
     }
 
@@ -43,12 +43,12 @@ export class CollectionBranch<T> extends Collection<T> {
         return this;
     }
 
-    collectItemsImpl(doc: Document, val: T, s3Key: string, rep: CollectionRepository): Promise<CollectionResult> {
+    collectItemsImpl(doc: Document, val: T, url: string, rep: CollectionRepository): Promise<CollectionResult> {
         for (let i = 0; i < this.cases.length; i++) {
             const x = this.cases[i];
             const obj = x.get(val);
             if (obj) {
-                return x.coll.collectItemsImpl(doc, obj, s3Key, rep);
+                return x.coll.collectItemsImpl(doc, obj, url, rep);
             }
         }
         throw "Not matched";
@@ -171,7 +171,7 @@ class CollectionDocument<T> extends Collection<T> {
         return { successful, item: result, exceptions };
     }
 
-    async collectItemsImpl(doc: Document, val: T, s3Key: string, rep: CollectionRepository): Promise<CollectionResult> {
+    async collectItemsImpl(doc: Document, val: T, url: string, rep: CollectionRepository): Promise<CollectionResult> {
         let propertyCounts: { [prop: string]: number } = {};
         let itemCount = 0, successCount = 0;
         let error: object | null = null;
@@ -204,10 +204,10 @@ class CollectionDocument<T> extends Collection<T> {
             }
 
             // Create a record
-            const recordId = await rep.createRecord({ s3Key, itemCount, successCount, propertyCounts, error });
+            const recordId = await rep.createRecord({ url, itemCount, successCount, propertyCounts, error });
 
             // Create exceptions
-            await rep.createExceptions(recordId, s3Key, exceptions);
+            await rep.createExceptions(recordId, url, exceptions);
 
             return { itemCount, successCount, propertyCounts, result: items };
         } else {
@@ -235,10 +235,10 @@ class CollectionDocument<T> extends Collection<T> {
             }
 
             // Create a record
-            const recordId = await rep.createRecord({ s3Key, itemCount, successCount, propertyCounts, error });
+            const recordId = await rep.createRecord({ url, itemCount, successCount, propertyCounts, error });
 
             // Create exceptions
-            await rep.createExceptions(recordId, s3Key, exceptions);
+            await rep.createExceptions(recordId, url, exceptions);
 
             return { itemCount, successCount, propertyCounts, result: item };
         }

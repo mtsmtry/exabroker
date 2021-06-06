@@ -12,7 +12,7 @@ export class CollectionRecord {
     id: number;
 
     @Column()
-    s3Key: string;
+    url: string;
 
     @Column()
     itemCount: number;

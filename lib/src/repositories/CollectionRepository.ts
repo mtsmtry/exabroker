@@ -22,14 +22,14 @@ export class CollectionRepository {
     }
 
     async createRecord(dto: {
-        s3Key: string,
+        url: string,
         itemCount: number,
         successCount: number,
         propertyCounts: { [prop: string]: number },
         error: object | null
     }) {
         let record = this.records.create({
-            s3Key: dto.s3Key,
+            url: dto.url,
             itemCount: dto.itemCount,
             successCount: dto.successCount,
             propertyCounts: dto.propertyCounts,
@@ -39,10 +39,10 @@ export class CollectionRepository {
         return record.id;
     }
 
-    async createExceptions(recordId: number, s3Key: string, dtos: CollectionExceptionDto[]) {
+    async createExceptions(recordId: number, url: string, dtos: CollectionExceptionDto[]) {
         const exceptions = dtos.map(x => this.exceptions.create({
             recordId,
-            s3Key,
+            url,
             function: x.function,
             message: x.message
         }));;

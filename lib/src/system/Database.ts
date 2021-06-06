@@ -8,8 +8,9 @@ import { ExecutionRepository } from "../repositories/ExecutionRepository";
 import { YahooRepository } from "../repositories/YahooRepository";
 import * as admin from "firebase-admin";
 import { IntegrationRepository } from "../repositories/IntegrationRepository";
-import { ExecutionSchedule } from "../entities/system/ExecutionSchedule";
 import { sleep } from "../Utils";
+import { AmazonItem } from "../entities/website/AmazonItem";
+import { ArbYahooAmazon } from "../entities/integration/ArbYahooAmazon";
 
 export async function createDatabaseConnection(options: object={}) {
     aws.config.httpOptions = { timeout: 60 * 1000 };
@@ -21,15 +22,15 @@ export async function createDatabaseConnection(options: object={}) {
         connectOption.entities = [__dirname + "/../entities/**/*.js"];
     } catch(ex) {
         connectOption = require(`../../ormconfig.json`);
-        connectOption.entities = [__dirname + "/../../dist/src/entities/**/*.js"];
+        connectOption.entities = [__dirname + "/../../dist/entities/**/*.js"];
     }
     Object.assign(connectOption, options);
-    console.log(connectOption.entities);
+    console.log(connectOption);
     const conn = await createConnection(connectOption);
     while(true) {
         console.log("connecting...");
         const connected = await conn.manager
-            .getRepository(ExecutionSchedule)
+            .getRepository("execution_record")
             .findOne(0)
             .then(_ => true)
             .catch(err => {
