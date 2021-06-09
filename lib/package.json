@@ -11,7 +11,7 @@
     "build": "tsc",
     "pack": "tsc && npm pack",
     "test": "jest",
-    "crawl": "ts-node src/entries/Crawler.ts"
+    "crawl": "tsc && node dist/entries/Crawler.js"
   },
   "files": [
     "dist",

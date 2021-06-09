@@ -56,7 +56,9 @@ export class CrawlingRepository {
 
     async createTasks(targets: CrawlingObject[]) {
         const tasks = targets.map(x => this.tasks.create({ target: x }));
-        await this.tasks.save(tasks);
+        for(let i=0;i<tasks.length;i++) {
+            await this.tasks.insert(tasks[i]);
+        }
     }
 
     async getTasks(count: number) {

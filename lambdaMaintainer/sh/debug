@@ -1,3 +1,0 @@
-npm run build --prefix ../lib
-tsc
-ts-node src/Test

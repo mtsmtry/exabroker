@@ -106,7 +106,7 @@ export function purchase(asin: string, address: DeliveryAddress, cookie: Cookie,
         .thenPost("ContinueShipOption",
             val => ({
                 url: "https://www.amazon.co.jp/gp/buy/shipoptionselect/handlers/continue.html/ref=chk_ship_option_continue?ie=UTF8&fromAnywhere=0",
-                form: { ...val.shippingForm, order_0_ShippingSpeed: "exp-jp-timed" } || {}
+                form: { ...val.shippingForm, order_0_ShippingSpeed: "exp-jp-timed" }
             }),
             (doc, val) => {
                 if (val.shippingForm) {

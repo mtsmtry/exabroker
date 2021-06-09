@@ -11,6 +11,7 @@ import { IntegrationRepository } from "../repositories/IntegrationRepository";
 import { sleep } from "../Utils";
 import { AmazonItem } from "../entities/website/AmazonItem";
 import { ArbYahooAmazon } from "../entities/integration/ArbYahooAmazon";
+import { ExecutionRecord } from "../entities/system/ExecutionRecord";
 
 export async function createDatabaseConnection(options: object={}) {
     aws.config.httpOptions = { timeout: 60 * 1000 };
@@ -30,7 +31,7 @@ export async function createDatabaseConnection(options: object={}) {
     while(true) {
         console.log("connecting...");
         const connected = await conn.manager
-            .getRepository("execution_record")
+            .getRepository(ExecutionRecord)
             .findOne(0)
             .then(_ => true)
             .catch(err => {
