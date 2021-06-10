@@ -32,6 +32,7 @@ async function run() {
     const batchs = arraySplit(crawlingObjects, 200);
     for(let batch of batchs) {
         await crawlingRep.createTasks(batch);
+        console.log(`createTasks: ${batch.length}`)
     }
 
     // クロールする
