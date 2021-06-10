@@ -7,6 +7,9 @@ import { getRepositories } from "../system/Database";
 import { Document } from "../system/Document";
 import { sleep } from "../Utils";
 
+const arraySplit = <T = object>(array: T[], n: number): T[][] =>
+  array.reduce((acc: T[][], c, i: number) => (i % n ? acc : [...acc, ...[array.slice(i, i + n)]]), []);
+
 async function run() {
     console.log("start");
     const reps = await getRepositories();
@@ -25,8 +28,11 @@ async function run() {
             }
         } as CrawlingObject;
     });
-    console.log(crawlingObjects);
-    await crawlingRep.createTasks(crawlingObjects.slice(0, 200));
+
+    const batchs = arraySplit(crawlingObjects, 200);
+    for(let batch of batchs) {
+        await crawlingRep.createTasks(batch);
+    }
 
     // クロールする
     while(true) {
