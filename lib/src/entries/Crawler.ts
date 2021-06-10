@@ -14,8 +14,8 @@ async function run() {
     await crawlingRep.stopAllRunningTasks();
 
     // ここで各カテゴリの1ページ目をクロールするを作成する
-    /*const nodes = loadBrowseNode();
-    const crawlingObjects = nodes.map(node => {
+    const nodes = loadBrowseNode();
+    const crawlingObjects = nodes.filter(node => node.children.length == 0).map(node => {
         return {
             site: "Amazon",
             page: {
@@ -26,7 +26,7 @@ async function run() {
         } as CrawlingObject;
     });
     console.log(crawlingObjects);
-    await crawlingRep.createTasks(crawlingObjects.slice(0, 200));*/
+    await crawlingRep.createTasks(crawlingObjects.slice(0, 200));
 
     // クロールする
     while(true) {

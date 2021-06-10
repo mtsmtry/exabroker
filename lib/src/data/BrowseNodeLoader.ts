@@ -4,23 +4,36 @@ import { EntityManager } from "typeorm";
 import { BrowseNode } from "../entities/BrowseNode";
 import { notNull } from "../Utils";
 
-interface Node {
+export interface Node {
     level: number;
     nodeId: string;
     name: string;
+    children: Node[];
 }
 
 export function loadBrowseNode() {
     const text = fs.readFileSync("./browse-node.txt", "utf-8");
     const lines = text.split("\n");
-    return lines.map(line => {
+    const nodes = lines.map(line => {
         const match = line.match(/^(\s*)([0-9]+):(.+)$/);
         if (!match) {
             return null;
         }
-        const node: Node = { level: match[1].length / 2, nodeId: match[2], name: match[3] };
+        const node: Node = { level: match[1].length / 2, nodeId: match[2], name: match[3], children: [] };
         return node;
     }).filter(notNull);
+
+    const nodeStack: (Node | null)[] = [null, null, null, null, null, null, null, null, null, null, null, null, null];
+    nodes.forEach(node => {
+        if (node.level > 0) {
+            const parent = nodeStack[node.level - 1];
+            if (parent) {
+                parent.children.push(node);
+            }
+        }
+        nodeStack[node.level] = node;
+    });
+    return nodes;
 }
 
 function arrayChunk<T>(array: T[], size: number): T[][] {
