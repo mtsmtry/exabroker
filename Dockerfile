@@ -12,4 +12,4 @@ RUN apk add alpine-sdk
 RUN npm install
 
 # 実行
-ENTRYPOINT [ "npm", "run", "crawl" ]
+ENTRYPOINT [ "python3", "/code/crawler_run.py" ]
