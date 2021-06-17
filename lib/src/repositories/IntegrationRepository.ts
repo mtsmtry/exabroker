@@ -3,6 +3,7 @@ import { ArbYahooAmazon } from "../entities/integration/ArbYahooAmazon";
 import { ArbYahooAmazonCanceled, ArbYahooAmazonCanceledDto, CancelAuctionMessageStatus } from "../entities/integration/ArbYahooAmazonCanceled";
 import { ArbYahooAmazonSold, MessageStatus } from "../entities/integration/ArbYahooAmazonSold";
 import { ArbYahooAmazonSync, SyncMethod } from "../entities/integration/ArbYahooAmazonSync";
+import { YahooImageAuction } from "../entities/integration/YahooImageAuction";
 import { AmazonItem } from "../entities/website/AmazonItem";
 import { AmazonItemState } from "../entities/website/AmazonItemState";
 import { AuctionDealStatus, YahooAuctionDeal } from "../entities/website/YahooAuctionDeal";
@@ -15,6 +16,7 @@ export class IntegrationRepository {
     yaSoldArbs: Repository<ArbYahooAmazonSold>;
     yaCanceledArbs: Repository<ArbYahooAmazonCanceled>;
     yaSyncArbs: Repository<ArbYahooAmazonSync>;
+    imageAuctions: Repository<YahooImageAuction>;
 
     constructor(mng: EntityManager) {
         this.exhibits = mng.getRepository(YahooAuctionExhibit);
@@ -23,6 +25,17 @@ export class IntegrationRepository {
         this.yaSoldArbs = mng.getRepository(ArbYahooAmazonSold);
         this.yaCanceledArbs = mng.getRepository(ArbYahooAmazonCanceled);
         this.yaSyncArbs = mng.getRepository(ArbYahooAmazonSync);
+        this.imageAuctions = mng.getRepository(YahooImageAuction);
+    }
+
+    async getImageAuctionExhibitCount(username: string) {
+        // 出品中の画像
+        return await this.imageAuctions
+            .createQueryBuilder('yia')
+            .leftJoinAndSelect('yia.exhibit', 'exhibit')
+            .where('exhibit.actuallyEndDate IS NULL OR exhibit.endDate < NOW()')
+            .andWhere('exhibit.username = :username', { username })
+            .getCount();
     }
 
     async createArb(aid: string, asin: string, state: AmazonItemState, price: number) {
