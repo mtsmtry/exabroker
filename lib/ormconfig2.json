@@ -1,12 +1,11 @@
 {
-    "type": "mysql",
- 
-    "host": "localhost",
-    "port": 3306,
-    "username": "test",
-    "password": "test",
+    "type": "aurora-data-api",
     "database": "exabroker",
-
+ 
+    "region": "ap-northeast-1",
+    "resourceArn": "arn:aws:rds:ap-northeast-1:198989792983:cluster:exabroker-sql2",
+    "secretArn": "arn:aws:secretsmanager:ap-northeast-1:198989792983:secret:exabroker-sql2-secret-gRKstS",
+ 
     "logging": [],
  
     "synchronize": true, 
