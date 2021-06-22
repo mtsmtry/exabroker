@@ -1,0 +1,12 @@
+[Unit]
+Description=exabroker crawler
+After=network.target
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/docker run exabroker-crawler
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
+

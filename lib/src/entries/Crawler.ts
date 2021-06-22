@@ -16,24 +16,25 @@ async function run() {
     const crawlingRep = reps.crawling;
     await crawlingRep.stopAllRunningTasks();
 
+    // TODO: あとでコメントアウト戻す
     // ここで各カテゴリの1ページ目をクロールするを作成する
-    const nodes = loadBrowseNode();
-    const crawlingObjects = nodes.filter(node => node.children.length == 0).map(node => {
-        return {
-            site: "Amazon",
-            page: {
-                kind: "BrowseNode",
-                nodeId: node.nodeId,
-                page: 1
-            }
-        } as CrawlingObject;
-    });
+    // const nodes = loadBrowseNode();
+    // const crawlingObjects = nodes.filter(node => node.children.length == 0).map(node => {
+    //     return {
+    //         site: "Amazon",
+    //         page: {
+    //             kind: "BrowseNode",
+    //             nodeId: node.nodeId,
+    //             page: 1
+    //         }
+    //     } as CrawlingObject;
+    // });
 
-    const batchs = arraySplit(crawlingObjects, 200);
-    for(let batch of batchs) {
-        await crawlingRep.createTasks(batch);
-        console.log(`createTasks: ${batch.length}`)
-    }
+    // const batchs = arraySplit(crawlingObjects, 200);
+    // for(let batch of batchs) {
+    //     await crawlingRep.createTasks(batch);
+    //     console.log(`createTasks: ${batch.length}`)
+    // }
 
     // クロールする
     while(true) {
