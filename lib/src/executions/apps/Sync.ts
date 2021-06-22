@@ -5,7 +5,6 @@ import * as yahoo from "../website/yahoo/Yahoo";
 import * as yahooDriver from "../website/yahoo/YahooDriver";
 import * as amazon from "../website/amazon/Amazon";
 import { reviseAuction } from "../integration/ReviseAuction";
-import { AccountSettingInfo } from "../../repositories/YahooRepository";
 
 export function syncAccounts() {
     return Execution.transaction("Application", "SyncAccounts")
@@ -72,32 +71,4 @@ export function removeClosedAuction() {
                 )
             )
         );
-}
-
-const setting: AccountSettingInfo = {
-    nameSei: "松本",
-    nameMei: "吉弘",
-    nameSeiKana: "マツモト",
-    nameMeiKana: "ヨシヒロ",
-    phone: "08093414838",
-    zip: "2520823",
-    prefecture: "神奈川県",
-    city: "藤沢市",
-    address1: "菖蒲沢",
-    address2: "1204-2",
-    ccNumber: "4619 3541 7527 3826",
-    ccExpMonth: "03",
-    ccExpYear: "2025",
-    ccCVV: "126",
-};
-
-export function setupAccounts() {
-    return Execution.transaction("Application", "SetupAccounts")
-        .then(val => DBExecution.yahoo(rep => rep.getAccountUsernames()))
-        .then(usernames => Execution.sequence(usernames, 1)
-            .element(username => Execution.transaction()
-                .then(val => yahoo.getSession(username))
-                .then(val => yahoo.setupAccount(val, setting, val.account.password)
-            )
-        ));
 }

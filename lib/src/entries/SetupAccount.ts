@@ -3,8 +3,8 @@ import { Execution } from "../system/execution/Execution";
 import * as yahoo from "../executions/website/yahoo/Yahoo";
 import * as yahooDriver from "../executions/website/yahoo/YahooDriver";
 import * as amazon from "../executions/website/amazon/Amazon";
-import { AccountSettingInfo } from "../repositories/YahooRepository";
 import { getRepositories } from "../system/Database";
+import { AccountSettingInfo } from "../executions/website/yahoo/Yahoo";
 
 let accounts: ({ username: string, password: string } & AccountSettingInfo)[] = []
 try {
