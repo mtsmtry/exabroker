@@ -63,7 +63,7 @@ export class ExecutionRepository {
         const rdbExecs = await this.records.save(rdbs);
         const batch = this.firestore.batch();
         execs.forEach((exec, i) => {
-            const path = this.firestore.collection("execution_records").doc(rdbExecs[i].id.toString());
+            const path = this.firestore.collection("execution_records2").doc(rdbExecs[i].id.toString());
             exec.id = rdbExecs[i].id;
             batch.create(path, this.toObject(exec));
         });
@@ -75,7 +75,7 @@ export class ExecutionRepository {
         if (NO_LOG) return;
         await Promise.all([
             await this.records.update(id, exec),
-            await this.firestore.collection("execution_records").doc(id.toString()).update(this.toObject(exec))
+            await this.firestore.collection("execution_records2").doc(id.toString()).update(this.toObject(exec))
         ]);
     }
 
