@@ -1,26 +1,27 @@
 {
-    "type": "aurora-data-api",
-    "database": "exabroker",
- 
-    "region": "ap-northeast-1",
-    "resourceArn": "arn:aws:rds:ap-northeast-1:198989792983:cluster:exabroker-sql2",
-    "secretArn": "arn:aws:secretsmanager:ap-northeast-1:198989792983:secret:exabroker-sql2-secret-gRKstS",
- 
-    "logging": [],
- 
-    "synchronize": true, 
-    "entities": [
-       "dist/src/entities/**/*.js"
-    ],
-    "migrations": [
-       "dist/src/migration/**/*.js"
-    ],
-    "subscribers": [
-       "dist/src/subscriber/**/*.js"
-    ],
-    "cli": {
-       "entitiesDir": "src/entity",
-       "migrationsDir": "src/migration",
-       "subscribersDir": "src/subscriber"
-    }
- }
+   "type": "mysql",
+
+   "host": "db",
+   "port": 3306,
+   "username": "docker",
+   "password": "password",
+   "database": "exabroker",
+
+   "logging": [],
+
+   "synchronize": true,
+   "entities": [
+      "dist/src/entities/**/*.js"
+   ],
+   "migrations": [
+      "dist/src/migration/**/*.js"
+   ],
+   "subscribers": [
+      "dist/src/subscriber/**/*.js"
+   ],
+   "cli": {
+      "entitiesDir": "src/entity",
+      "migrationsDir": "src/migration",
+      "subscribersDir": "src/subscriber"
+   }
+}

@@ -1,0 +1,67 @@
+// Copyright (c) 2021 Hiroki Takemura (kekeho)
+// 
+// This software is released under the MIT License.
+// https://opensource.org/licenses/MIT
+
+出品を自動化
+ExhibitImage
+
+
+# YahooImageAuction.ts
+
+
+isExhibitable : アカウントが凍結されてないか
+
+rating: 評価数
+balance: 売上金
+statusUpdatedAt: 最後に、isExhibitable, rating, balanceなどがいつ確認されたか
+
+lastSetting: ヤフオクのアカウントの設定状態
+
+desiredSetting: 設定したいやつ これを設定すればいい
+
+
+# Yahoo Auction Exihibit.ts
+出品されるごとに、これがテーブルに乗る
+actuallyEndDate: 数日で終了するよ→終わった日が入る(入っていなければ開催中か、早めに終わらなかった)
+
+
+# ArbYahooAmazon.ts
+はやとり
+
+YahooAuctionExhibitとAmazonItemを結合
+
+aid: 外部テーブル Foreing key yahoo auction exhibitのaidと一対一。
+exhibit: 自動でaidにおうじてyahooのがくっつく
+
+item: asinに応じて、AmazonItemがくっつく
+
+画像ならASINがない
+
+
+# IntegrationRepository.ts
+getRepository: Repositoryクラス
+
+
+まだ出品中のやつだけ
+
+
+JOINされない
+
+
+username
+
+
+
+getImageActで今の出品数を取得
+常に同じ個数を保つように出品したい
+
+
+netからダウンロードして, bufferで打ち込めば
+
+
+
+# DB
+lib/ormonfig.jsonに接続情報が書かれている
+
+# 19

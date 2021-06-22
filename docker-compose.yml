@@ -1,0 +1,33 @@
+version: "3"
+
+services:
+  crawler:
+    build:
+      context: .
+      dockerfile: Dockerfile_crawler
+    depends_on:
+      - db
+    restart: always
+    
+  exhibitimage:
+    build:
+      context: .
+      dockerfile: Dockerfile_exhibitimage
+    depends_on:
+      - db
+    restart: always
+
+  db:
+    image: mysql:5.7
+    environment:
+      - MYSQL_USER=docker
+      - MYSQL_PASSWORD=password
+      - MYSQL_DATABASE=exabroker
+      - MYSQL_ALLOW_EMPTY_PASSWORD=yes
+    command: "mysqld --skip-name-resolve"
+    volumes:
+      - /mnt/hdd/exabroker:/var/lib/mysql
+      - ./db/conf.d:/etc/mysql/conf.d
+    ports:
+      - "3306:3306"
+    restart: always
