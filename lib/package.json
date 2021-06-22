@@ -12,6 +12,7 @@
     "pack": "tsc && npm pack",
     "test": "jest",
     "crawl": "tsc && node dist/entries/Crawler.js",
+    "setup": "tsc && node dist/entries/SetupAccount.js",
     "exhibitimage": "tsc && node dist/entries/ExhibitImage.js"
   },
   "files": [
@@ -35,6 +36,7 @@
     "firebase-admin": "^9.4.2",
     "ip": "^1.1.5",
     "libxmljs": "^0.19.7",
+    "mysql": "^2.18.1",
     "node-fetch": "^2.6.1",
     "normalize-html-whitespace": "^1.0.0",
     "proxy-agent": "^4.0.0",
