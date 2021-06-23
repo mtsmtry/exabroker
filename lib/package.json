@@ -14,7 +14,8 @@
     "crawl": "tsc && node dist/entries/Crawler.js",
     "setup": "tsc && node dist/entries/SetupAccount.js",
     "exhibit": "tsc && node dist/entries/Exhibit.js",
-    "exhibitimage": "tsc && node dist/entries/ExhibitImage.js"
+    "exhibitimage": "tsc && node dist/entries/ExhibitImage.js",
+    "listup": "tsc && node dist/entries/ListupItems.js"
   },
   "files": [
     "dist",

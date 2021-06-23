@@ -16,7 +16,7 @@ export function exhibitImageAuction(session: YahooSession, imageId: number) {
         1アカウントにつき、1度のみの落札となります。複数回・複数商品の落札はご遠慮頂ますよう、よろしくお願いします。
         
         ■お取引の流れ
-         
+        
         ①落札後、Yahoo!かんたん決済にてお支払い（落札者様）
         ②発送連絡（出品者）※ 現物の発送はございません
         ③受取連絡 +「非常に良い」の評価（落札者様）

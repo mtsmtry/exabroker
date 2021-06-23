@@ -15,30 +15,16 @@ export function getAmazonItemDetail(asin: string) {
                 return Execution.resolve(detail);
             }
             return Execution.transaction()
-                .then(val => DBExecution.s3(rep => {
-                    return rep.getObject({ Bucket: "exabroker-crawled", Key: s3Key }).promise().catch(ex => {
-                        if ((ex.toString() as string).includes("NoSuchKey")) {
-                            return null;
-                        } else {
-                            throw ex;
-                        }
-                    })
-                }))
                 .then(val => {
-                    if (!val) {
-                        return Execution.atom("Inner", "CrawlAmazonItemDetail",
-                            async () => amazonItemDetailCrawler.crawl(-1, { asin }).then(result => ({ result }))
-                        ).mustBeNotNull();
-                    }
-                    return Execution.resolve((val.Body as Buffer).toString());
-                })
-                .then(val => Execution.atom("", "", async () => {
-                    const doc = new Document(val);
-                    const result = await amazonItemDetailCollection.collectItems(doc, { asin }, s3Key);
-                    if (result.result == null) {
-                        throw "Failed to crawl";
-                    }
-                    return { result: result.result as AmazonItemDetail };
-                }));
+                    return Execution.atom("Inner", "CrawlAmazonItemDetail",
+                        async () => {
+                            const result = await amazonItemDetailCrawler.crawl(-1, { asin });
+                            if (!result) {
+                                throw "Failed to crawl";
+                            }
+                            return { result: result as AmazonItemDetail };
+                        }
+                    );
+                });
         });
 }
