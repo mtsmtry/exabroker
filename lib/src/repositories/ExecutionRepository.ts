@@ -84,7 +84,7 @@ export class ExecutionRepository {
         if (add?.web?.document) {
             const key = `ex${toTimestamp(new Date())}${randomPositiveInteger()}`;
             const reps = await getRepositories();
-            await reps.s3.putObject({ Bucket: "exabroker-crawled", Key: "traces/" + key, Body: add?.web?.document }).promise();
+            await reps.s3.putObject({ Bucket: "exabroker", Key: "traces/" + key, Body: add?.web?.document }).promise();
             add.web.document = key;
             return add;
         } else {

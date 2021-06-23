@@ -4,7 +4,35 @@ import { YahooAccountSetting } from "../../../../entities/website/YahooAccountSe
 import { getCurrentFilename } from "../../../../Utils";
 import { YahooSession } from "./GetSession";
 import { DBExecution } from "../../../../system/execution/DatabaseExecution";
-import { AccountSettingInfo } from "../../../../repositories/YahooRepository";
+
+export interface AccountSettingInfo {
+    userInfo: {
+        nameSei: string;
+        nameMei: string;
+        prefecture: string;
+        address1: string;
+        address2: string;
+        phone: string;
+        zip: string;
+        city: string;
+    }
+    wallet: {
+        nameSei: string;
+        nameMei: string;
+        nameSeiKana: string;
+        nameMeiKana: string;
+        phone: string;
+        zip: string;
+        prefecture: string;
+        city: string;
+        address1: string;
+        address2: string;
+        ccNumber: string;
+        ccExpMonth: string;
+        ccExpYear: string;
+        ccCVV: string;
+    }
+}
 
 export function setupAccount(session: YahooSession, setting: AccountSettingInfo, password: string) {
     return Execution.transaction("Yahoo", getCurrentFilename())
@@ -13,14 +41,14 @@ export function setupAccount(session: YahooSession, setting: AccountSettingInfo,
             .and(val => {
                 const userInfo: yahooDriver.PostYahooUserInfo = {
                     select: session.account.isPremium ? "premium" : "non_premium" as "non_premium" | "premium",
-                    last_name: setting.nameSei,
-                    first_name: setting.nameMei,
-                    zip: setting.zip,
-                    state: yahooDriver.Prefecture[setting.prefecture],
-                    city: setting.city,
-                    address1: setting.address1,
-                    address2: setting.address2,
-                    phone: setting.phone
+                    last_name: setting.userInfo.nameSei,
+                    first_name: setting.userInfo.nameMei,
+                    zip: setting.userInfo.zip,
+                    state: yahooDriver.Prefecture[setting.userInfo.prefecture],
+                    city: setting.userInfo.city,
+                    address1: setting.userInfo.address1,
+                    address2: setting.userInfo.address2,
+                    phone: setting.userInfo.phone
                 };
                 return yahooDriver.setUserInfo(session.cookie, userInfo);
             })
@@ -35,21 +63,21 @@ export function setupAccount(session: YahooSession, setting: AccountSettingInfo,
                             pay_type: "CC",
                             conttype: "regpay",
                             acttype: "regist",
-                            namel: setting.nameSei,
-                            namef: setting.nameMei,
-                            kanal: setting.nameSeiKana,
-                            kanaf: setting.nameMeiKana,
-                            zip: setting.zip,
-                            pref: setting.prefecture,
-                            city: setting.city,
-                            addr1: setting.address1,
-                            addr2: setting.address2,
-                            ph: setting.phone,
+                            namel: setting.wallet.nameSei,
+                            namef: setting.wallet.nameMei,
+                            kanal: setting.wallet.nameSeiKana,
+                            kanaf: setting.wallet.nameMeiKana,
+                            zip: setting.wallet.zip,
+                            pref: setting.wallet.prefecture,
+                            city: setting.wallet.city,
+                            addr1: setting.wallet.address1,
+                            addr2: setting.wallet.address2,
+                            ph: setting.wallet.phone,
                             credit_bank_check: "on",
-                            ccnum: setting.ccNumber,
-                            ccexpMo: setting.ccExpMonth,
-                            ccexpYr: setting.ccExpYear,
-                            cvv: setting.ccCVV
+                            ccnum: setting.wallet.ccNumber,
+                            ccexpMo: setting.wallet.ccExpMonth,
+                            ccexpYr: setting.wallet.ccExpYear,
+                            cvv: setting.wallet.ccCVV
                         }
                         return yahooDriver.signupWallet(session.cookie, wallet, password);
                     } else {

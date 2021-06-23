@@ -11,3 +11,5 @@ typeorm-src/
 
 chromedriver
 chromedriverLinux
+ormconfig.json
+lib/ormconfig.json
