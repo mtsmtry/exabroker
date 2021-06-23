@@ -9,7 +9,7 @@ export type AmazonCrawlingObject
 
 const browseNodeCrawler =
     Crawler.page<{ nodeId: string, page: number }>({
-        getUrl: val => `https://www.amazon.co.jp/s?rh=n%3A${val.nodeId}&page=${val.page}`,
+        getUrl: val => `https://www.amazon.co.jp/s?rh=n%3A${val.nodeId}&page=${val.page}&language=ja_JP`,
         getNextCrawlings: (val, itemCount) => {
             if (itemCount < 10) {
                 return [];
@@ -23,7 +23,7 @@ const browseNodeCrawler =
 
 export const amazonItemDetailCrawler =
     Crawler.page<{ asin: string }>({
-        getUrl: val => `https://www.amazon.co.jp/dp/${val.asin}`,
+        getUrl: val => `https://www.amazon.co.jp/dp/${val.asin}?language=ja_JP`,
         getNextCrawlings: _ => [],
         collection: amazonItemDetailCollection
     });
