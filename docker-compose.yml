@@ -7,14 +7,28 @@ services:
       dockerfile: Dockerfile_crawler
     depends_on:
       - db
+    volumes:
+      - ./:/code
     restart: always
-    
+  
+  exhibit:
+    build:
+      context: .
+      dockerfile: Dockerfile_exhibit
+    depends_on:
+      - db
+    volumes:
+      - ./:/code
+    restart: always
+
   exhibitimage:
     build:
       context: .
       dockerfile: Dockerfile_exhibitimage
     depends_on:
       - db
+    volumes:
+      - ./:/code
     restart: always
 
   db:
