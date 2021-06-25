@@ -2,4 +2,4 @@ FROM alpine:latest
 
 RUN apk add openssh
 
-CMD [ "ssh", "-t", "-t", "-o", "StrictHostKeyChecking no", "-i", "/key.pem", "-R", "13306:db:3306", "ubuntu@54.95.254.219" ]
+CMD [ "ssh", "-t", "-t", "-o", "StrictHostKeyChecking no", "-o", "ServerAliveInterval 15", "-i", "/key.pem", "-R", "13306:db:3306", "ubuntu@54.95.254.219" ]
