@@ -119,7 +119,7 @@ export class IntegrationRepository {
         return results.map(x => x.i_asin as string);
     }
 
-    async getExhibitableASINs(count: number) {
+    async getExhibitableASINs2(count: number) {
         const exhibitAsins = await this.getExhibitASINs();
 
         const ngWords = ["Amazon", "輸入", "Blu-ray", "DVD"];
@@ -137,7 +137,7 @@ export class IntegrationRepository {
         return rankedAsins.filter(asin => !exhibitAsins.includes(asin)).slice(0, count);
     }
 
-    async getExhibitableASINs2(count: number) {
+    async getExhibitableASINs(count: number) {
         const exhibitAsins = await this.getExhibitASINs();
 
         const ngWords = ["Amazon", "輸入", "Blu-ray", "DVD"];
@@ -150,7 +150,7 @@ export class IntegrationRepository {
         conds += " AND " + ngWords.map(x => `item.title NOT LIKE '%${x}%'`).join(" AND ");
         conds += " AND (s.hasStock IS NULL OR s.hasStock = 1)"
         conds += " AND (s.isAddon IS NULL OR s.isAddon = 0)"
-        conds += " AND s.timestamp > DATE_SUB(CURRENT_TIMESTAMP, INTERVAL 3 DAY)"
+        //conds += " AND s.timestamp > DATE_SUB(CURRENT_TIMESTAMP, INTERVAL 3 DAY)"
         const items = await this.amazonItems.createQueryBuilder("item")
             .select(["item.asin"])
             .leftJoin(AmazonItemState, "s", "s.asin = item.asin")

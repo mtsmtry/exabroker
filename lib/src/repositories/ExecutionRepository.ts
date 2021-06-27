@@ -24,6 +24,14 @@ export interface ExecutionSubmission {
 
 const NO_LOG = false;
 
+function getRandomInt(min, max): number {
+    return Math.floor(Math.random() * (max + 1 - min)) + min;
+}
+
+function genId() {
+    return (new Date()).getTime() * 1000 + getRandomInt(0, 999);
+}
+
 export class ExecutionRepository {
     records: Repository<ExecutionRecord>;
 
@@ -59,23 +67,24 @@ export class ExecutionRepository {
 
     private async createRecords(execs: DeepPartial<ExecutionRecord>[]) {
         if (NO_LOG) return [];
-        const rdbs = execs.map(x => this.records.create(x));
-        const rdbExecs = await this.records.save(rdbs);
+       // const rdbs = execs.map(x => this.records.create(x));
+       // const rdbExecs = await this.records.save(rdbs);
         const batch = this.firestore.batch();
         execs.forEach((exec, i) => {
-            const path = this.firestore.collection("execution_records2").doc(rdbExecs[i].id.toString());
-            exec.id = rdbExecs[i].id;
+            const id = genId();
+            const path = this.firestore.collection("execution_records2").doc(id.toString());
+            exec.id = id;
             batch.create(path, this.toObject(exec));
         });
         await batch.commit();
-        return rdbExecs.map(x => x.id);
+        return execs.map(x => x.id) as number[];
     }
 
     private async updateRecord(id: number, exec: DeepPartial<ExecutionRecord>) {
         if (NO_LOG) return;
         await Promise.all([
-            await this.records.update(id, exec),
-            await this.firestore.collection("execution_records2").doc(id.toString()).update(this.toObject(exec))
+        //    await this.records.update(id, exec),
+           await this.firestore.collection("execution_records2").doc(id.toString()).update(this.toObject(exec))
         ]);
     }
 

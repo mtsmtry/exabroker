@@ -29,9 +29,6 @@ import { readdirSync } from "fs"
 // これを、画像を出品するように編集する
 // DBのテーブル作って、ちゃんと画像出品してるかチェックしながらやっていく
 
-function getRandomInt(min, max) {
-    return Math.floor(Math.random() * (max + 1 - min)) + min;
-}
 
 export function getFileList(dirPath:string): string[] {
     let dirList: string[] = new Array();
