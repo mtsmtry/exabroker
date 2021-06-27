@@ -4,6 +4,7 @@ import { AmazonItemDetail } from "../website/AmazonItemDetail";
 import { AmazonItemState } from "../website/AmazonItemState";
 import { AmazonOrder } from "../website/AmazonOrder";
 import { YahooAuctionExhibit } from "../website/YahooAuctionExhibit";
+import { YahooAuctionDeal } from "../website/YahooAuctionDeal";
 
 @Entity()
 export class YahooImageAuction {
@@ -17,4 +18,8 @@ export class YahooImageAuction {
     @OneToOne(type => YahooAuctionExhibit)
     @JoinColumn({ name: "aid" })
     exhibit: YahooAuctionExhibit;
+
+    @OneToOne(type => YahooAuctionDeal)
+    @JoinColumn({ name: "aid"})
+    deal: YahooAuctionDeal;
 }

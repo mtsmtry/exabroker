@@ -10,6 +10,7 @@ import { AmazonOrder, DeliveryPlace, OrderStatus } from "../../entities/website/
 import { ArbYahooAmazonSold, MessageStatus } from "../../entities/integration/ArbYahooAmazonSold";
 import { AuctionDealStatus } from "../../entities/website/YahooAuctionDeal";
 import { CancelAuctionMessageStatus } from "../../entities/integration/ArbYahooAmazonCanceled";
+import { YahooImageAuction } from "../../entities/integration/YahooImageAuction";
 
 const tailMessage = "※このメッセージは自動で送信されました。内容の行き違いがございましたら申し訳ございません。";
 
@@ -63,6 +64,30 @@ function cancelAfterPaymentMessage() {
 お支払いいただいた代金は、ヤフオクより返金されます。
 当方の不手際でご迷惑おかけし、誠に申し訳ございません。`;
 }
+
+
+function initialImageMessage() {
+    const limit = new Date();
+    limit.setDate(limit.getDate() + 3);
+    const date = fromDateToString(limit);
+    return `この度は、ご落札いただき誠にありがとうございます。
+短い間ですがお取引終了までよろしくお願いいたします。
+${date}までに、お支払いをお願いします。その際は、送料を変更しないようにご注意ください。
+また、落札者様には、お手数おかけしますが、以下のことについてご了承ください。
+・こちらは相互評価を目的とした商品となりますので、お互い高評価よろしくお願いします。
+・画像の送付については、ご遠慮させていただいております。商品画像をスクリーンショット等で保存して、ご利用ください。
+
+${tailMessage}`;
+}
+
+function shippingImageMessage() {
+    return `お支払いいただきまして、ありがとうございます。発送通知の方させていただきました。
+実際に画像を送付することは、ご遠慮させていただいております。商品画像をスクリーンショット等で保存してご利用ください。
+
+お手数ですが、「受け取り連絡」をよろしくお願いいたします。
+${tailMessage}`;
+}
+
 
 function deliverInfoMessage(trackingId: string, company: string) {
     const URLS = {
@@ -221,6 +246,40 @@ export function messageAuction(arb: ArbYahooAmazonSold, session: YahooSession) {
         trx.then(_ => Execution.transaction("Inner", "Repay")
             .then(_ => yahooDriver.repayEscrow(session.cookie, arb.aid)))
             .then(_ => DBExecution.integration(rep => rep.setRepaid(canceled))
+        );
+    }
+
+    return trx;
+}
+
+
+export function messageImageAuction(img: YahooImageAuction, session: YahooSession) {
+    // 1円画像が落札されたらのメッセージ
+    
+    const trx = Execution.transaction("Integration", getCurrentFilename());
+    let status = img.deal.status;
+
+
+    // send initial message
+    if (status == AuctionDealStatus.NONE) {
+        trx.then(_ => Execution.transaction("Inner", "SendInitialImageMessage")
+            .then(_ => yahooDriver.sendMessage(img.aid, initialImageMessage(), session.cookie))
+        );
+    }
+
+    // inform shipping
+    if (img.deal.status == AuctionDealStatus.PAID) {
+        trx.then(_ => Execution.transaction("Inner", "InformImageShipping & SendShippingImageMessage")
+            .then(val => yahooDriver.informShipping(img.aid, session.cookie))
+            .then(val => yahooDriver.sendMessage(img.aid, shippingImageMessage(), session.cookie))
+        );
+    }
+
+
+    // leave feedback
+    if (img.deal.status == AuctionDealStatus.RECEIVED) {
+        trx.then(_ => Execution.transaction("Inner", "ImageLeaveFeedback")
+            .then(_ => yahooDriver.leaveFeedback(session.cookie, img.aid, img.deal.buyerId, FeedbackRaring.VeryGood))
         );
     }
 
