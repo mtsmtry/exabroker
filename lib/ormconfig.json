@@ -7,7 +7,7 @@
    "password": "password",
    "database": "exabroker",
 
-   "logging": [],
+   "logging": "all",
 
    "synchronize": true,
    "entities": [

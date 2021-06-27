@@ -17,4 +17,7 @@ export class YahooImageAuction {
     @OneToOne(type => YahooAuctionExhibit)
     @JoinColumn({ name: "aid" })
     exhibit: YahooAuctionExhibit;
+
+    @Column("varchar")
+    name: string;
 }

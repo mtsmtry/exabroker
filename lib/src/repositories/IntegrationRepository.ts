@@ -28,14 +28,24 @@ export class IntegrationRepository {
         this.imageAuctions = mng.getRepository(YahooImageAuction);
     }
 
-    async getImageAuctionExhibitCount(username: string) {
+    async createImageAuction(aid: string, name: string) {
+        const auction = this.imageAuctions.create({
+            aid, name
+        });
+        await this.imageAuctions.save(auction);
+    }
+
+    async getIsImageAuctionExhibited(username: string, name: string) {
         // 出品中の画像
-        return await this.imageAuctions
+        const count = await this.imageAuctions
             .createQueryBuilder('yia')
             .leftJoinAndSelect('yia.exhibit', 'exhibit')
-            .where('exhibit.actuallyEndDate IS NULL OR exhibit.endDate < NOW()')
+            .where('(exhibit.actuallyEndDate IS NULL OR exhibit.endDate < NOW())')
             .andWhere('exhibit.username = :username', { username })
+            .andWhere('yia.name = :name', { name })
             .getCount();
+        console.log(`${username} ${name} count: ${count}`);
+        return count > 0;
     }
 
     async createArb(aid: string, asin: string, state: AmazonItemState, price: number) {

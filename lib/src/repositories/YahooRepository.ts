@@ -33,8 +33,6 @@ export class YahooRepository {
 
     async getAccount(username: string) {
         return await this.accounts.createQueryBuilder("x")
-            .leftJoinAndSelect("x.lastSetting", "lastSetting")
-            .leftJoinAndSelect("x.desiredSetting", "desiredSetting")
             .where({ username })
             .getOne();
     }
@@ -45,7 +43,7 @@ export class YahooRepository {
     }
 
     async getExhibitableAccountUsernames() {
-        const accounts = await this.accounts.find({ isExhibitable: true });
+        const accounts = await this.accounts.find({ isExhibitable: true, enable: true });
         return accounts.map(x => x.username);
     }
 

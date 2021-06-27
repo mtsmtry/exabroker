@@ -34,4 +34,7 @@ export class YahooAccount {
 
     @Column("datetime", { nullable: true })
     statusUpdatedAt: Date | null;
+
+    @Column("bool", { default: true })
+    enable: boolean;
 }
