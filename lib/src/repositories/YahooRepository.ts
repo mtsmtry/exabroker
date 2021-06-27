@@ -1,6 +1,5 @@
 import { EntityManager, LessThan, MoreThan, Not, Repository } from "typeorm";
 import { YahooAccount } from "../entities/website/YahooAccount";
-import { YahooAccountSetting } from "../entities/website/YahooAccountSetting";
 import { YahooAuctionBid, BidStatus } from "../entities/website/YahooAuctionBid";
 import { AuctionImage, YahooAuctionExhibit } from "../entities/website/YahooAuctionExhibit";
 import { YahooAuctionNotice } from "../entities/website/YahooAuctionNotice";
@@ -16,7 +15,6 @@ export class YahooRepository {
     exhibits: Repository<YahooAuctionExhibit>;
     notices: Repository<YahooAuctionNotice>;
     bids: Repository<YahooAuctionBid>;
-    settings: Repository<YahooAccountSetting>;
     deals: Repository<YahooAuctionDeal>;
     messages: Repository<YahooAuctionMessage>;
     states: Repository<YahooAuctionState>;
@@ -27,7 +25,6 @@ export class YahooRepository {
         this.exhibits = mng.getRepository(YahooAuctionExhibit);
         this.notices = mng.getRepository(YahooAuctionNotice);
         this.bids = mng.getRepository(YahooAuctionBid);
-        this.settings = mng.getRepository(YahooAccountSetting);
         this.deals = mng.getRepository(YahooAuctionDeal);
         this.messages = mng.getRepository(YahooAuctionMessage);
         this.states = mng.getRepository(YahooAuctionState);
@@ -57,14 +54,6 @@ export class YahooRepository {
             username, password
         });
         await this.accounts.save(account);
-    }
-
-    async setAccountLastSetting(username: string, settingId: number) {
-        await this.accounts.update(username, { lastSettingId: settingId });
-    }
-
-    async setAccountDesiredSetting(username: string, settingId: number) {
-        await this.accounts.update(username, { desiredSettingId: settingId });
     }
 
     async saveCookies(username: string, cookies: { [name: string]: string }) {

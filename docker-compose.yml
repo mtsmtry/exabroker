@@ -45,3 +45,13 @@ services:
     ports:
       - "3306:3306"
     restart: always
+
+  portforward:
+    build:
+      context: .
+      dockerfile: Dockerfile_portforward
+    depends_on:
+      - db
+    volumes:
+      - ~/.ssh/exabroker-vpn.pem:/key.pem
+    restart: always
