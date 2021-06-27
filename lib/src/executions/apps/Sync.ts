@@ -5,7 +5,6 @@ import * as yahoo from "../website/yahoo/Yahoo";
 import * as yahooDriver from "../website/yahoo/YahooDriver";
 import * as amazon from "../website/amazon/Amazon";
 import { reviseAuction } from "../integration/ReviseAuction";
-import { AccountSettingInfo } from "../../repositories/YahooRepository";
 
 export function syncAccounts() {
     return Execution.transaction("Application", "SyncAccounts")

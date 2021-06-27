@@ -10,23 +10,6 @@ import { YahooAuctionMessage } from "../entities/website/YahooAuctionMessage";
 import { YahooAuctionState } from "../entities/website/YahooAuctionState";
 import { YahooAuctionBuyer } from "../entities/website/YahooAuctionBuyer";
 
-export interface AccountSettingInfo {
-    nameSei: string;
-    nameMei: string;
-    nameSeiKana: string;
-    nameMeiKana: string;
-    phone: string;
-    zip: string;
-    prefecture: string;
-    city: string;
-    address1: string;
-    address2: string;
-    ccNumber: string;
-    ccExpMonth: string;
-    ccExpYear: string;
-    ccCVV: string;
-}
-
 export class YahooRepository {
     accounts: Repository<YahooAccount>;
     exhibits: Repository<YahooAuctionExhibit>;

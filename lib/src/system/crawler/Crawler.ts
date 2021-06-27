@@ -55,7 +55,14 @@ export class CrawlerPage<T> extends Crawler<T> {
         try {
             // Download
             const downloadStart = Date.now();
-            const response = await fetch("http://api.scraperapi.com?api_key=68d6de532946616aae283bc9fd0ea7a2&url=" + url, { timeout });
+            const response = await fetch(
+                "http://api.scraperapi.com?api_key=68d6de532946616aae283bc9fd0ea7a2&keep_headers=true&url=" + encodeURIComponent(url), {
+                    timeout , 
+                    headers: {
+                        'Accept-Language': 'ja-JP',
+                    },
+                }
+            );
             downloadLatency = Date.now() - downloadStart;
             body = await response.text();
 

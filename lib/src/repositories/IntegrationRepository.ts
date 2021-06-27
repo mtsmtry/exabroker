@@ -114,6 +114,24 @@ export class IntegrationRepository {
 
         const ngWords = ["Amazon", "輸入", "Blu-ray", "DVD"];
         let conds = "true";
+        conds += " AND stockCount > 0";
+       // conds += " AND " + ngWords.map(x => `item.title NOT LIKE '%${x}%'`).join(" AND ");
+        const items = await this.amazonItems.createQueryBuilder("item")
+            .select(["item.asin"])
+            .where(conds)
+            .orderBy("item.reviewCount", "DESC")
+            .limit(exhibitAsins.length + count)
+            .getRawMany();
+        const rankedAsins = items.map(x => x.item_asin as string);
+
+        return rankedAsins.filter(asin => !exhibitAsins.includes(asin)).slice(0, count);
+    }
+
+    async getExhibitableASINs2(count: number) {
+        const exhibitAsins = await this.getExhibitASINs();
+
+        const ngWords = ["Amazon", "輸入", "Blu-ray", "DVD"];
+        let conds = "true";
         //  conds += " AND item.updatedAt > DATE_SUB(CURRENT_DATE, INTERVAL 3 DAY)";
         conds += " AND LENGTH(item.title) != CHARACTER_LENGTH(item.title)"
         conds += " AND LENGTH(item.title) > 100";
