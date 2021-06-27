@@ -12,22 +12,22 @@ export interface PostYahooUserInfo {
     first_name: string;
 
     // 郵便番号: 7918011
-    zip: string
+    zip_code: string; // zip
 
     // 県: 38 (愛媛県)
-    state: Prefecture;
+    prefecture_name: Prefecture; // state
 
     // 市: 松山市
-    city: string
+    city: string;
 
     // 住所: 中央1-1-1
-    address1: string
+    address1: string;
 
     // ビル、マンション名: オーブ
-    address2: string
+    address2: string;
 
     // 電話番号: 0899235652
-    phone: string
+    phone_number: string; // phone
 }
 
 export function setUserInfo(session: Cookie, userInfo: PostYahooUserInfo) {

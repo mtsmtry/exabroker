@@ -178,7 +178,8 @@ function createAuctionData(detail: AmazonItemDetail, price: number): AuctionExhi
         closingHours: random(0, 23),
         shipSchedule: ShipSchedule["1～2日で発送"],
         shipName: "Amazon FBA",
-        prefecture: Prefecture["東京都"]
+        prefecture: Prefecture["東京都"],
+        categoryId: null
     };
 }
 

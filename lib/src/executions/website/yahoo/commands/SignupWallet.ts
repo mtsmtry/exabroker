@@ -3,6 +3,7 @@ import { Cookie, WebExecution } from "../../../../system/execution/WebExecution"
 import { getCurrentFilename } from "../../../../Utils";
 import { relogin } from "./Login";
 import { getFormHiddenInputData } from "../../Utilts";
+import { Execution } from "../../../../system/execution/Execution";
 
 export interface WalletSingup {
     pay_type: "CC";
@@ -25,10 +26,14 @@ export interface WalletSingup {
     cvv: string;
 }
 
-export function signupWallet(cookie: Cookie, wallet: WalletSingup, password: string) {
+export function signupWallet(cookie: Cookie, wallet: WalletSingup, password: string | null) {
     return WebExecution.webTransaction(arguments, "YahooDriver", getCurrentFilename())
         .thenExecution(val => {
-            return relogin("https://edit.wallet.yahoo.co.jp/config/wallet_signup", password, cookie);
+            if (password) {
+                return relogin("https://edit.wallet.yahoo.co.jp/config/wallet_signup", password, cookie);
+            } else {
+                return Execution.resolve(cookie)
+            }
         })
         .setCookie(val => val)
         .thenGet("GetCrumb",
