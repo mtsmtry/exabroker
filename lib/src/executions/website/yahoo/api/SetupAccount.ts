@@ -1,6 +1,5 @@
 import { Execution } from "../../../../system/execution/Execution";
 import * as yahooDriver from "../YahooDriver";
-import { YahooAccountSetting } from "../../../../entities/website/YahooAccountSetting";
 import { getCurrentFilename } from "../../../../Utils";
 import { YahooSession } from "./GetSession";
 import { DBExecution } from "../../../../system/execution/DatabaseExecution";

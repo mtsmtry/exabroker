@@ -12,6 +12,7 @@
     "pack": "tsc && npm pack",
     "test": "jest",
     "crawl": "tsc && node dist/entries/Crawler.js",
+    "setup": "tsc && node dist/entries/SetupAccounts.js",
     "exhibitimage": "tsc && node dist/entries/ExhibitImage.js"
   },
   "files": [

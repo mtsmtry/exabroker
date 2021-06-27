@@ -10,6 +10,7 @@ WORKDIR /code/lib/
 RUN apk add python3
 RUN apk add alpine-sdk
 RUN npm install
+RUN npm install mysql --save
 
 # 実行
 ENTRYPOINT [ "npm", "run", "exhibitimage" ]

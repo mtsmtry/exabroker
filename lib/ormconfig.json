@@ -1,27 +1,27 @@
 {
-    "type": "mysql",
- 
-    "host": "localhost",
-    "port": 3306,
-    "username": "test",
-    "password": "test",
-    "database": "exabroker",
+   "type": "mysql",
 
-    "logging": [],
- 
-    "synchronize": true, 
-    "entities": [
-       "dist/src/entities/**/*.js"
-    ],
-    "migrations": [
-       "dist/src/migration/**/*.js"
-    ],
-    "subscribers": [
-       "dist/src/subscriber/**/*.js"
-    ],
-    "cli": {
-       "entitiesDir": "src/entity",
-       "migrationsDir": "src/migration",
-       "subscribersDir": "src/subscriber"
-    }
- }
+   "host": "54.95.254.219",
+   "port": 13306,
+   "username": "docker",
+   "password": "password",
+   "database": "exabroker",
+
+   "logging": [],
+
+   "synchronize": true,
+   "entities": [
+      "dist/src/entities/**/*.js"
+   ],
+   "migrations": [
+      "dist/src/migration/**/*.js"
+   ],
+   "subscribers": [
+      "dist/src/subscriber/**/*.js"
+   ],
+   "cli": {
+      "entitiesDir": "src/entity",
+      "migrationsDir": "src/migration",
+      "subscribersDir": "src/subscriber"
+   }
+}
