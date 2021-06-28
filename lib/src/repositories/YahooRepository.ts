@@ -31,6 +31,14 @@ export class YahooRepository {
         this.buyers = mng.getRepository(YahooAuctionBuyer);
     }
 
+    
+    async getImageDeal(aid: string) {
+        return await this.deals.createQueryBuilder("d")
+            .where("d.aid = " + aid)
+            .getOne();
+    }
+
+
     async getAccount(username: string) {
         return await this.accounts.createQueryBuilder("x")
             .where({ username })

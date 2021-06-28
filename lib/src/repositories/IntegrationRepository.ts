@@ -17,6 +17,7 @@ export class IntegrationRepository {
     yaCanceledArbs: Repository<ArbYahooAmazonCanceled>;
     yaSyncArbs: Repository<ArbYahooAmazonSync>;
     imageAuctions: Repository<YahooImageAuction>;
+    auctionDeal: Repository<YahooAuctionDeal>;
 
     constructor(mng: EntityManager) {
         this.exhibits = mng.getRepository(YahooAuctionExhibit);
@@ -26,6 +27,7 @@ export class IntegrationRepository {
         this.yaCanceledArbs = mng.getRepository(ArbYahooAmazonCanceled);
         this.yaSyncArbs = mng.getRepository(ArbYahooAmazonSync);
         this.imageAuctions = mng.getRepository(YahooImageAuction);
+        this.auctionDeal = mng.getRepository(YahooAuctionDeal);
     }
 
     async createImageAuction(aid: string, name: string) {
@@ -46,6 +48,16 @@ export class IntegrationRepository {
             .getCount();
         console.log(`${username} ${name} count: ${count}`);
         return count > 0;
+    }
+
+    async getSoldImageAuctions(username: string) {
+        // 出品中の画像
+        return await this.imageAuctions
+            .createQueryBuilder('yia')
+            .leftJoinAndSelect('yia.exhibit', 'exhibit')
+            .where('exhibit.actuallyEndDate IS NOT NULL')
+            .andWhere('exhibit.username = :username', { username })
+            .getMany();
     }
 
     async createArb(aid: string, asin: string, state: AmazonItemState, price: number) {
