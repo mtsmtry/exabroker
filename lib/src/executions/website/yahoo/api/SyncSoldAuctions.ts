@@ -13,7 +13,11 @@ export function syncSoldAuctions(session: YahooSession) {
             Execution.sequence(val, 10)
                 .element(aid => Execution.transaction()
                     .then(() => yahooDriver.getSoldAuction(aid, session.account.username, session.cookie))
-                    .then(val => DBExecution.yahoo(rep => rep.upsertDeal(val)))
+                    .then(val => 
+                        Execution.batch()
+                            .and(_ => DBExecution.yahoo(rep => rep.upsertDeal(val)))
+                            .and(_ => DBExecution.yahoo(rep => rep.setExhibitActuallyEndDate(val.aid, val.endDate)))
+                    )
                 )
         );
 }
