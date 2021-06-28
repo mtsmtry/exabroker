@@ -42,6 +42,15 @@ export class YahooRepository {
         return accounts.map(x => x.username);
     }
 
+    async getExhibitAIDs(username: string) {
+        const result = await this.exhibits.createQueryBuilder("e")
+            .select(["e.aid"])
+            .where({ username })
+            .andWhere("e.endDate > CURRENT_TIMESTAMP AND e.actuallyEndDate IS NULL")
+            .getRawMany();
+        return result.map(x => x.e_aid as string);
+    }
+
     async getExhibitableAccountUsernames() {
         const accounts = await this.accounts.find({ isExhibitable: true, enable: true });
         return accounts.map(x => x.username);

@@ -17,7 +17,8 @@
     "exhibit": "tsc && node dist/entries/Exhibit.js",
     "ei": "tsc && node dist/entries/ExhibitImage.js",
     "listup": "tsc && node dist/entries/ListupItems.js",
-    "mainte": "tsc && node dist/entries/Maintenance.js"
+    "mainte": "tsc && node dist/entries/Maintenance.js",
+    "cancel": "tsc && node dist/entries/CancelAuctions.js"
   },
   "files": [
     "dist",

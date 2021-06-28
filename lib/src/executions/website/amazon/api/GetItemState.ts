@@ -13,10 +13,12 @@ export function getItemState(asin: string) {
                 headers: { 'Accept-Language': 'ja-JP' }
             }, doc => {
                 const buybox = doc.get("//*[@id='price_inside_buybox']");
+                const availability = doc.get("//*[@id='availability']");
+                const availabilityText = availability?.text || "";
                 return {
                     price: buybox?.extractDigits() || null,
                     isAddon: doc.getNeeded("//form[@id='addToCart']").text.includes("あわせ買い対象商品"),
-                    hasStock: buybox != null
+                    hasStock: buybox != null && availabilityText.includes("在庫あり")
                 }
             })
         )
