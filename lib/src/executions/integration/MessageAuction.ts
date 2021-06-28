@@ -8,7 +8,7 @@ import * as yahooDriver from "../website/yahoo/YahooDriver";
 import { FeedbackRaring } from "../website/yahoo/YahooDriver";
 import { AmazonOrder, DeliveryPlace, OrderStatus } from "../../entities/website/AmazonOrder";
 import { ArbYahooAmazonSold, MessageStatus } from "../../entities/integration/ArbYahooAmazonSold";
-import { AuctionDealStatus } from "../../entities/website/YahooAuctionDeal";
+import { AuctionDealStatus, YahooAuctionDeal } from "../../entities/website/YahooAuctionDeal";
 import { CancelAuctionMessageStatus } from "../../entities/integration/ArbYahooAmazonCanceled";
 import { YahooImageAuction } from "../../entities/integration/YahooImageAuction";
 
@@ -253,33 +253,31 @@ export function messageAuction(arb: ArbYahooAmazonSold, session: YahooSession) {
 }
 
 
-export function messageImageAuction(img: YahooImageAuction, session: YahooSession) {
+export function messageImageAuction(deal: YahooAuctionDeal, session: YahooSession) {
     // 1円画像が落札されたらのメッセージ
     
     const trx = Execution.transaction("Integration", getCurrentFilename());
-    let status = img.deal.status;
-
 
     // send initial message
     if (status == AuctionDealStatus.NONE) {
         trx.then(_ => Execution.transaction("Inner", "SendInitialImageMessage")
-            .then(_ => yahooDriver.sendMessage(img.aid, initialImageMessage(), session.cookie))
+            .then(_ => yahooDriver.sendMessage(deal.aid, initialImageMessage(), session.cookie))
         );
     }
 
     // inform shipping
-    if (img.deal.status == AuctionDealStatus.PAID) {
+    if (deal.status == AuctionDealStatus.PAID) {
         trx.then(_ => Execution.transaction("Inner", "InformImageShipping & SendShippingImageMessage")
-            .then(val => yahooDriver.informShipping(img.aid, session.cookie))
-            .then(val => yahooDriver.sendMessage(img.aid, shippingImageMessage(), session.cookie))
+            .then(val => yahooDriver.informShipping(deal.aid, session.cookie))
+            .then(val => yahooDriver.sendMessage(deal.aid, shippingImageMessage(), session.cookie))
         );
     }
 
 
     // leave feedback
-    if (img.deal.status == AuctionDealStatus.RECEIVED) {
+    if (deal.status == AuctionDealStatus.RECEIVED) {
         trx.then(_ => Execution.transaction("Inner", "ImageLeaveFeedback")
-            .then(_ => yahooDriver.leaveFeedback(session.cookie, img.aid, img.deal.buyerId, FeedbackRaring.VeryGood))
+            .then(_ => yahooDriver.leaveFeedback(session.cookie, deal.aid, deal.buyerId, FeedbackRaring.VeryGood))
         );
     }
 

@@ -7,7 +7,7 @@ async function run() {
     await syncDeals().execute();
 
     // 1円画像の取引・評価
-    await dealMessage.execute();
+    await dealMessage().execute();
 
     await removeClosedAuction();
 }

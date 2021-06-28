@@ -19,7 +19,4 @@ export class YahooImageAuction {
     @JoinColumn({ name: "aid" })
     exhibit: YahooAuctionExhibit;
 
-    @OneToOne(type => YahooAuctionDeal)
-    @JoinColumn({ name: "aid"})
-    deal: YahooAuctionDeal;
 }

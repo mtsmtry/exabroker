@@ -40,11 +40,10 @@ export class IntegrationRepository {
             .getCount();
     }
 
-    async getSoldImageAuction(username: string) {
+    async getSoldImageAuctions(username: string) {
         // 出品中の画像
         return await this.imageAuctions
             .createQueryBuilder('yia')
-            .leftJoinAndSelect('yia.deal', 'deal')
             .leftJoinAndSelect('yia.exhibit', 'exhibit')
             .where('exhibit.actuallyEndDate IS NOT NULL')
             .andWhere('exhibit.username = :username', { username })
