@@ -16,7 +16,8 @@
     "setup": "tsc && node dist/entries/SetupAccount.js",
     "exhibit": "tsc && node dist/entries/Exhibit.js",
     "ei": "tsc && node dist/entries/ExhibitImage.js",
-    "listup": "tsc && node dist/entries/ListupItems.js"
+    "listup": "tsc && node dist/entries/ListupItems.js",
+    "mainte": "tsc && node dist/entries/Maintenance.js"
   },
   "files": [
     "dist",
