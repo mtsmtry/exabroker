@@ -30,17 +30,15 @@ export class YahooRepository {
         this.states = mng.getRepository(YahooAuctionState);
         this.buyers = mng.getRepository(YahooAuctionBuyer);
     }
-
     
     async getImageDeal(aid: string) {
-        return await this.deals.createQueryBuilder("d")
-            .where("d.aid = " + aid)
+        return await this.deals.createQueryBuilder()
+            .where({ aid })
             .getOne();
     }
 
-
     async getAccount(username: string) {
-        return await this.accounts.createQueryBuilder("x")
+        return await this.accounts.createQueryBuilder()
             .where({ username })
             .getOne();
     }

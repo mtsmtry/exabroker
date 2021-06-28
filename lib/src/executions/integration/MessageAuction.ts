@@ -259,7 +259,7 @@ export function messageImageAuction(deal: YahooAuctionDeal, session: YahooSessio
     const trx = Execution.transaction("Integration", getCurrentFilename());
 
     // send initial message
-    if (status == AuctionDealStatus.NONE) {
+    if (deal.status == AuctionDealStatus.NONE) {
         trx.then(_ => Execution.transaction("Inner", "SendInitialImageMessage")
             .then(_ => yahooDriver.sendMessage(deal.aid, initialImageMessage(), session.cookie))
         );

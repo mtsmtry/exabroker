@@ -18,9 +18,9 @@ export function dealMessage() {
                     .element(img => DBExecution.yahoo(rep => rep.getImageDeal(img.aid)
                         .then(function (deal) {
                             if (deal) {
-                                return messageImageAuction(deal, val.session).execute()
+                                return messageImageAuction(deal, val.session).execute();
                             } else {
-                                Execution.resolve(null)
+                                Execution.resolve(null);
                             }
                         })
                     ))
