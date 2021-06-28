@@ -9,7 +9,8 @@ export function getItemState(asin: string) {
         .then(val =>
             WebExecution.get({
                 url: "http://api.scraperapi.com",
-                params: { api_key: "68d6de532946616aae283bc9fd0ea7a2", url: `https://www.amazon.co.jp/dp/${asin}` }
+                params: { api_key: "68d6de532946616aae283bc9fd0ea7a2", url: `https://www.amazon.co.jp/dp/${asin}?language=ja_JP` },
+                headers: { 'Accept-Language': 'ja-JP' }
             }, doc => {
                 const buybox = doc.get("//*[@id='price_inside_buybox']");
                 return {

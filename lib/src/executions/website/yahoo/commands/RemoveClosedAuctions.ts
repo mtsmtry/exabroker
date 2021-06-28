@@ -25,5 +25,5 @@ export function removeClosedAuctions(cookie: Cookie, page: number) {
         .resolve(val => ({
             valid: val.text.includes("チェックした商品を終了分から削除しました"),
             result: val.aidlist.length > 0
-        }))
+        }));
 }

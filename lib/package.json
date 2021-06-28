@@ -11,11 +11,13 @@
     "build": "tsc",
     "pack": "tsc && npm pack",
     "test": "jest",
+    "migrate": "tsc && node dist/entries/Migrate.js",
     "crawl": "tsc && node dist/entries/Crawler.js",
     "setup": "tsc && node dist/entries/SetupAccount.js",
     "exhibit": "tsc && node dist/entries/Exhibit.js",
-    "exhibitimage": "tsc && node dist/entries/ExhibitImage.js",
-    "listup": "tsc && node dist/entries/ListupItems.js"
+    "ei": "tsc && node dist/entries/ExhibitImage.js",
+    "listup": "tsc && node dist/entries/ListupItems.js",
+    "mainte": "tsc && node dist/entries/Maintenance.js"
   },
   "files": [
     "dist",

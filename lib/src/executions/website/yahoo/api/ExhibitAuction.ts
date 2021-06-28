@@ -17,6 +17,7 @@ export interface AuctionExhibit {
     shipSchedule: yahooDriver.ShipSchedule;
     shipName: string;
     prefecture: yahooDriver.Prefecture;
+    categoryId: number | null;
 }
 
 export function exhibitAuction(session: YahooSession, auction: AuctionExhibit) {
@@ -24,7 +25,11 @@ export function exhibitAuction(session: YahooSession, auction: AuctionExhibit) {
         .then(val => {
             return Execution.batch()
                 .and(() => {
-                    return yahooDriver.getCategory(session.cookie, auction.title).map(x => ({ category: x[0].id }));
+                    if (auction.categoryId) {
+                        return Execution.resolve({ category: auction.categoryId });
+                    } else {
+                        return yahooDriver.getCategory(session.cookie, auction.title).map(x => ({ category: x[0].id }));
+                    }
                 })
                 .and(() => {
                     if (auction.images.length > 0) {

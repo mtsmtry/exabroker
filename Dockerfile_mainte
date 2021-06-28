@@ -1,0 +1,15 @@
+FROM node:16-alpine3.13
+
+
+RUN mkdir /code
+RUN mkdir /code/lib/
+
+WORKDIR /code/lib/
+
+# 依存関係
+RUN apk add python3
+RUN apk add alpine-sdk
+RUN npm install mysql --save
+
+# 実行
+ENTRYPOINT [ "npm", "run", "mainte" ]

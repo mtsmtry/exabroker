@@ -1,6 +1,5 @@
 import { Column, Entity, JoinColumn, ManyToOne, OneToOne, PrimaryColumn } from "typeorm";
 import { CreatedAt } from "../Utils";
-import { YahooAccountSetting } from "./YahooAccountSetting";
 
 @Entity()
 export class YahooAccount {
@@ -36,15 +35,6 @@ export class YahooAccount {
     @Column("datetime", { nullable: true })
     statusUpdatedAt: Date | null;
 
-    @ManyToOne(type => YahooAccountSetting, { onDelete: "RESTRICT" })
-    @JoinColumn({ name: "lastSettingId" })
-    lastSetting: YahooAccountSetting | null;
-    @Column("int", { nullable: true })
-    lastSettingId: number | null;
-
-    @ManyToOne(type => YahooAccountSetting, { onDelete: "RESTRICT" })
-    @JoinColumn({ name: "desiredSettingId" })
-    desiredSetting: YahooAccountSetting | null;
-    @Column("int", { nullable: true })
-    desiredSettingId: number | null;
+    @Column("bool", { default: true })
+    enable: boolean;
 }

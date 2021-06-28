@@ -30,14 +30,24 @@ export class IntegrationRepository {
         this.auctionDeal = mng.getRepository(YahooAuctionDeal);
     }
 
-    async getImageAuctionExhibitCount(username: string) {
+    async createImageAuction(aid: string, name: string) {
+        const auction = this.imageAuctions.create({
+            aid, name
+        });
+        await this.imageAuctions.save(auction);
+    }
+
+    async getIsImageAuctionExhibited(username: string, name: string) {
         // 出品中の画像
-        return await this.imageAuctions
+        const count = await this.imageAuctions
             .createQueryBuilder('yia')
             .leftJoinAndSelect('yia.exhibit', 'exhibit')
-            .where('exhibit.actuallyEndDate IS NULL OR exhibit.endDate < NOW()')
+            .where('(exhibit.actuallyEndDate IS NULL OR exhibit.endDate < NOW())')
             .andWhere('exhibit.username = :username', { username })
+            .andWhere('yia.name = :name', { name })
             .getCount();
+        console.log(`${username} ${name} count: ${count}`);
+        return count > 0;
     }
 
     async getSoldImageAuctions(username: string) {
@@ -121,7 +131,7 @@ export class IntegrationRepository {
         return results.map(x => x.i_asin as string);
     }
 
-    async getExhibitableASINs(count: number) {
+    async getExhibitableASINs2(count: number) {
         const exhibitAsins = await this.getExhibitASINs();
 
         const ngWords = ["Amazon", "輸入", "Blu-ray", "DVD"];
@@ -139,7 +149,7 @@ export class IntegrationRepository {
         return rankedAsins.filter(asin => !exhibitAsins.includes(asin)).slice(0, count);
     }
 
-    async getExhibitableASINs2(count: number) {
+    async getExhibitableASINs(count: number) {
         const exhibitAsins = await this.getExhibitASINs();
 
         const ngWords = ["Amazon", "輸入", "Blu-ray", "DVD"];
@@ -152,7 +162,7 @@ export class IntegrationRepository {
         conds += " AND " + ngWords.map(x => `item.title NOT LIKE '%${x}%'`).join(" AND ");
         conds += " AND (s.hasStock IS NULL OR s.hasStock = 1)"
         conds += " AND (s.isAddon IS NULL OR s.isAddon = 0)"
-        conds += " AND s.timestamp > DATE_SUB(CURRENT_TIMESTAMP, INTERVAL 3 DAY)"
+        //conds += " AND s.timestamp > DATE_SUB(CURRENT_TIMESTAMP, INTERVAL 3 DAY)"
         const items = await this.amazonItems.createQueryBuilder("item")
             .select(["item.asin"])
             .leftJoin(AmazonItemState, "s", "s.asin = item.asin")

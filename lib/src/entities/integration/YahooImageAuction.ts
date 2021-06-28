@@ -19,4 +19,6 @@ export class YahooImageAuction {
     @JoinColumn({ name: "aid" })
     exhibit: YahooAuctionExhibit;
 
+    @Column("varchar")
+    name: string;
 }

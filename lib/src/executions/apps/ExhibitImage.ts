@@ -7,6 +7,7 @@ import * as yahoo from "../website/yahoo/Yahoo";
 import { removeClosedAuction } from "./Sync";
 import { IntegrationRepository } from "../../repositories/IntegrationRepository";
 import { exhibitImageAuction } from "../integration/ExhibitImageAuction";
+import { readdirSync } from "fs"
 
 // export function exhibitimage_() {
 //     return Execution.transaction("Application", getCurrentFilename())  // 実行のカテゴリ: アプリ。 gCF: 実行の名前。ファイル名。
@@ -25,25 +26,41 @@ import { exhibitImageAuction } from "../integration/ExhibitImageAuction";
 //         );
 // }
 
-
 // これを、画像を出品するように編集する
 // DBのテーブル作って、ちゃんと画像出品してるかチェックしながらやっていく
 
-function getRandomInt(min, max) {
-    return Math.floor(Math.random() * (max + 1 - min)) + min;
-}
 
+export function getFileList(dirPath:string): string[] {
+    let dirList: string[] = new Array();
+
+    dirList = readdirSync(dirPath, {
+        withFileTypes: true, 
+    }).filter(dirent => dirent.isFile())
+    .map(dirent => dirent.name.split(".")[0])
+    .filter(x => x);
+
+    return dirList;
+}
 
 export function exhibitImage() {
     return Execution.transaction("Application", getCurrentFilename())  // 実行のカテゴリ: アプリ。 gCF: 実行の名前。ファイル名。
         .then(val => DBExecution.yahoo(rep => rep.getExhibitableAccountUsernames()))  // yahooというstatic関数 repはYahooに関するDBにアクセスができるオブジェクト。 出品可能なアカウントのユーザー名を全部取得
         .then(val => Execution.sequence(val, 1)  // アカウントの名前の配列がval. sequenceは最大同時実行数を指定して、配列の中からn分とりだしてelementの中で実行
             .element(username => Execution.transaction()
-                .then(_ => DBExecution.integration(rep => rep.getImageAuctionExhibitCount(username)).map(imageExhibitCount => ({ imageExhibitCount, username })))
-                .then(val => yahoo.getSession(val.username).map(s => ({ session: s, username: val.username, imageExhibitCount: val.imageExhibitCount })))
-                .then(val => Execution.sequence([...Array(10 - val.imageExhibitCount)], 1)
-                    .element(_ => exhibitImageAuction(val.session, getRandomInt(0, 9)))
+                .then(val => yahoo.getSession(username))
+                .then(session => Execution.sequence(getFileList("images"), 1)
+                    .element(name => 
+                        Execution.transaction()
+                            .then(_ => DBExecution.integration(rep => rep.getIsImageAuctionExhibited(username, name)))
+                            .then(exhibit => {
+                                if (!exhibit) {
+                                    return exhibitImageAuction(session, name)
+                                } else {
+                                    return Execution.resolve(null);
+                                }
+                            })
+                    )
                 )
-            )
+            )   
         );
 }

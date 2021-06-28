@@ -30,6 +30,16 @@ services:
     volumes:
       - ./:/code
     restart: always
+  
+  mainte:
+    build:
+      context: .
+      dockerfile: Dockerfile_mainte
+    depends_on: 
+      - db
+    volumes:
+      - ./:/code
+    restart: always
 
   db:
     image: mysql:5.7
