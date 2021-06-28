@@ -40,6 +40,16 @@ services:
     volumes:
       - ./:/code
     restart: always
+  
+  imagedeal:
+    build:
+      context: .
+      dockerfile: Dockerfile_imagedeal
+    depends_on: 
+      - db
+    volumes:
+      - ./:/code
+    restart: always
 
   db:
     image: mysql:5.7

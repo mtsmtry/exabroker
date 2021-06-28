@@ -1,5 +1,5 @@
 import {syncAccounts, syncDeals, removeClosedAuction} from "../executions/apps/Sync";
-import { dealMessage } from "../executions/apps/DealImage";
+import { dealImage } from "../executions/apps/DealImage";
 
 
 async function run() {
@@ -7,7 +7,7 @@ async function run() {
     await syncDeals().execute();
 
     // 1円画像の取引・評価
-    await dealMessage().execute();
+    await dealImage().execute();
 
     await removeClosedAuction();
 }
