@@ -7,7 +7,7 @@ import { messageImageAuction } from "../integration/MessageAuction";
 import { YahooAuctionDeal } from "../../entities/website/YahooAuctionDeal";
 
 
-export function dealMessage() {
+export function dealImage() {
     return Execution.transaction("Application", getCurrentFilename())
         .then(val => DBExecution.yahoo(rep => rep.getExhibitableAccountUsernames()))
         .then(val => Execution.sequence(val, 1)

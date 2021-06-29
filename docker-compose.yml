@@ -7,8 +7,6 @@ services:
       dockerfile: Dockerfile_crawler
     depends_on:
       - db
-    volumes:
-      - ./:/code
     restart: always
   
   exhibit:
@@ -17,8 +15,6 @@ services:
       dockerfile: Dockerfile_exhibit
     depends_on:
       - db
-    volumes:
-      - ./:/code
     restart: always
 
   exhibitimage:
@@ -27,8 +23,6 @@ services:
       dockerfile: Dockerfile_exhibitimage
     depends_on:
       - db
-    volumes:
-      - ./:/code
     restart: always
   
   mainte:
@@ -37,8 +31,14 @@ services:
       dockerfile: Dockerfile_mainte
     depends_on: 
       - db
-    volumes:
-      - ./:/code
+    restart: always
+  
+  imagedeal:
+    build:
+      context: .
+      dockerfile: Dockerfile_imagedeal
+    depends_on: 
+      - db
     restart: always
 
   db:
@@ -54,14 +54,4 @@ services:
       - ./db/conf.d:/etc/mysql/conf.d
     ports:
       - "3306:3306"
-    restart: always
-
-  portforward:
-    build:
-      context: .
-      dockerfile: Dockerfile_portforward
-    depends_on:
-      - db
-    volumes:
-      - ~/.ssh/exabroker-vpn.pem:/key.pem
     restart: always

@@ -9,7 +9,7 @@
 
    "logging": "all",
 
-   "synchronize": true,
+   "synchronize": false,
    "entities": [
       "dist/src/entities/**/*.js"
    ],
