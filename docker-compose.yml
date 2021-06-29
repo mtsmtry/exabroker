@@ -16,27 +16,11 @@ services:
     depends_on:
       - db
     restart: always
-
-  exhibitimage:
-    build:
-      context: .
-      dockerfile: Dockerfile_exhibitimage
-    depends_on:
-      - db
-    restart: always
   
   mainte:
     build:
       context: .
       dockerfile: Dockerfile_mainte
-    depends_on: 
-      - db
-    restart: always
-  
-  imagedeal:
-    build:
-      context: .
-      dockerfile: Dockerfile_imagedeal
     depends_on: 
       - db
     restart: always
