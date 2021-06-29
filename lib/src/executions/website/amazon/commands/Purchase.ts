@@ -70,12 +70,81 @@ export function purchase(asin: string, address: DeliveryAddress, cookie: Cookie,
                 }
             }),
             doc => {
-                const form = getFormHiddenInputData(doc, "//form[@id='spc-form']");
-                return toNotNull({
-                    purchaseId: form["purchaseID"],
-                    form
-                });
+                return getPaymentForm(doc, payment);
             })
+            .thenPost("SendCardNumber",
+                val => ({
+                    url: `https://www.amazon.co.jp/payments-portal/data/f1/widgets2/v1/customer/${val.customerId}/continueWidget`,
+                    form: {
+                        addCreditCardNumber: payment.number, //"4297 6901 3255 7382",
+                        "ppw-jsEnabled": true,
+                        "ppw-widgetEvent": "ConfirmAndUpdateCreditCardEvent",
+                        "ppw-installmentActivation": false,
+                        "ppw-refreshView": false,
+                        "ppw-instrumentId": val.form["ppw-instrumentRowSelection"].match(/instrumentId=(.*?)&/)[1],
+                        "ppw-instrumentRowSelection": val.form["ppw-instrumentRowSelection"],
+                        "ppw-widgetState": val.widgetState
+                    }
+                }),
+                (doc, val) => ({
+                    //purchaseForm: val.purchaseForm,
+                    customerId: val.customerId,
+                    widgetState: val.widgetState,
+                    form: val.form
+                }))
+            .thenPost("SelectPayType",
+                val => {
+                    function installmentCategory(category: string) {
+                        return Object.keys(val.form)
+                            .filter(x => x.endsWith("installmentCategory"))
+                            .reduce((m, x) => { m[x] = category; return m }, {});
+                    }
+                    let installment = {};
+                    if (payment.method == PaymentMethod.CREDIT) {
+                        installment = installmentCategory("ONETIME");
+                    } else if (payment.method == PaymentMethod.CREDIT_TWICE) {
+                        installment = installmentCategory("NTIMES_INTEREST_FREE");
+                    }
+                    return {
+                        url: "https://www.amazon.co.jp/gp/buy/shared/handlers/async-continue.html",
+                        form: {
+                            "ppw-widgetState": val.widgetState,
+                            hasWorkingJavascript: 1,
+                            "ppw-jsEnabled": true,
+                            "ppw-widgetEvent": "SetPaymentPlanSelectContinueEvent",
+                            isClientTimeBased: 1,
+                            handler: "/gp/buy/payselect/handlers/apx-submit-continue.html",
+                            "ppw-instrumentRowSelection": val.form["ppw-instrumentRowSelection"], // ONETIME, NTIMES_INTEREST_FREE, INSTALLMENT, REVOLVING
+                            ...installment,
+                            ...Object.keys(val.form)
+                                .filter(x => x.endsWith("addCreditCardNumber"))
+                                .reduce((m, x) => { m[x] = val.form[x]; return m }, {})
+                        }
+                    };
+                },
+                (doc, val) => {
+                    const shippingFormElm = doc.get("//form[@id='shippingOptionFormId']");
+                    const shippingForm = shippingFormElm ? getFormHiddenInputDataFromElement(shippingFormElm) : null;
+
+                    const purchaseForm = getFormHiddenInputData(doc, "//form[@id='spc-form']");
+                    return {
+                        purchaseId: purchaseForm["purchaseID"],
+                        purchaseForm,
+                        shippingForm
+                    };
+                })
+        .thenPost("ContinueShipOption",
+                val => ({
+                    url:  val.shippingForm ? "https://www.amazon.co.jp/gp/buy/shipoptionselect/handlers/continue.html/ref=chk_ship_option_continue?ie=UTF8&fromAnywhere=0" : "https://ja.wikipedia.org",
+                    form: { ...val.shippingForm, order_0_ShippingSpeed: "exp-jp-timed" }
+                }),
+                (doc, val) => {
+                    if (val.shippingForm) {
+                        return { ...getPaymentForm(doc, payment), purchaseId: val.purchaseId, purchaseForm: val.purchaseForm };
+                    } else {
+                        return { purchaseId: val.purchaseId, purchaseForm: val.purchaseForm };
+                    }
+                })
         .thenPost("SetAddress",
             val => ({
                 url: "https://www.amazon.co.jp/gp/buy/shipaddressselect/handlers/continue.html",
@@ -97,7 +166,7 @@ export function purchase(asin: string, address: DeliveryAddress, cookie: Cookie,
                 const shippingFormElm = doc.get("//form[@id='shippingOptionFormId']");
                 const shippingForm = shippingFormElm ? getFormHiddenInputDataFromElement(shippingFormElm) : null;
                 return {
-                    purchaseForm: val.form,
+                    purchaseForm: val.purchaseForm,
                     shippingForm,
                     ...(shippingForm ? {} : getPaymentForm(doc, payment))
                 };

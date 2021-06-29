@@ -1,3 +1,4 @@
+import { sleep } from "../../Utils";
 import { WebDriver } from "../WebDriver";
 import { Execution, LogType, TransactionExecution } from "./Execution";
 import { Cookie } from "./WebExecution";

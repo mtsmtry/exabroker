@@ -1,8 +1,8 @@
 {
    "type": "mysql",
 
-   "host": "54.95.254.219",
-   "port": 13306,
+   "host": "18.181.201.118",
+   "port": 3306,
    "username": "docker",
    "password": "password",
    "database": "exabroker",

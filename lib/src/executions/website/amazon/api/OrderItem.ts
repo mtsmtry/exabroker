@@ -8,8 +8,8 @@ import { PaymentInfo } from "../commands/Purchase";
 import { AmazonSession } from "./GetSession";
 
 const payment: PaymentInfo = {
-    number: "4619 3592 2682 9450",
-    method: PaymentMethod.DEBIT
+    number: "4297 6901 3255 7382",
+    method: PaymentMethod.CREDIT
 }
 
 export function orderItem(asin: string, address: DeliveryAddress, session: AmazonSession) {

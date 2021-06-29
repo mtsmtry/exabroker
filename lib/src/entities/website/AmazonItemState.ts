@@ -20,6 +20,9 @@ export class AmazonItemState {
     @Column()
     hasStock: boolean;
 
+    @Column("tinyint", { nullable: true })
+    hasEnoughStock: boolean;
+
     @Column()
     isAddon: boolean;
 
