@@ -1,7 +1,7 @@
 {
    "type": "mysql",
 
-   "host": "18.181.201.118",
+   "host": "db",
    "port": 3306,
    "username": "docker",
    "password": "password",
