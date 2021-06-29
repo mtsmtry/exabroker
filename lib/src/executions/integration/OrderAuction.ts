@@ -9,7 +9,7 @@ import * as amazonDriver from "../website/amazon/AmazonDriver";
 import { AmazonSession } from "../website/amazon/Amazon";
 import { getWideLength, replaceDict } from "./Utils";
 import { CancelReason } from "../../entities/integration/ArbYahooAmazonCanceled";
-import { isAvailableItem, isPurchasableItem } from "./Algorithm";
+import { isPurchasableItem } from "./Algorithm";
 
 const MAX_ADDRESS_LENGTH = 32;
 
