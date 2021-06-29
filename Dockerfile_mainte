@@ -1,8 +1,8 @@
 FROM node:16-alpine3.13
 
-
+# コードを/codeにコピー
 RUN mkdir /code
-RUN mkdir /code/lib/
+COPY ./ /code
 
 WORKDIR /code/lib/
 
@@ -10,7 +10,7 @@ WORKDIR /code/lib/
 RUN apk add python3
 RUN apk add alpine-sdk
 RUN npm install mysql --save
-
+RUN npm install
 
 # 実行
 ENTRYPOINT [ "python3", "mainte_run.py" ]
