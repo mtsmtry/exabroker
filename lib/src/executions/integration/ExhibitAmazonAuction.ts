@@ -174,7 +174,7 @@ function createAuctionData(detail: AmazonItemDetail, price: number): AuctionExhi
         title: normalizeTitle(detail.title),
         price,
         description: createDescription(detail),
-        days: 7,
+        days: 4,
         closingHours: random(0, 23),
         shipSchedule: ShipSchedule["1～2日で発送"],
         shipName: "Amazon FBA",
