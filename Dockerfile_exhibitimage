@@ -13,4 +13,4 @@ RUN npm install
 RUN npm install mysql --save
 
 # 実行
-ENTRYPOINT [ "npm", "run", "exhibitimage" ]
+ENTRYPOINT [ "npm", "run", "ei" ]
