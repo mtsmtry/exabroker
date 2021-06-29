@@ -30,7 +30,7 @@ export function exhibitImageAuction(session: YahooSession, imageName: string) {
                 title: "【相互評価】画像データ URL 即決1円 " + imageName,
                 price: 1,
                 description: description,
-                days: 7, // 最大出品日数は7日
+                days: 4, // 最大出品日数は7日
                 closingHours: random(0, 23),
                 shipSchedule: ShipSchedule["1～2日で発送"],
                 shipName: "ダウンロード",

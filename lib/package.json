@@ -13,7 +13,7 @@
     "test": "jest",
     "migrate": "tsc && node dist/entries/Migrate.js",
     "crawl": "tsc && node dist/entries/Crawler.js",
-    "setup": "tsc && node dist/entries/SetupAccount.js",
+    "setup": "tsc && node dist/entries/SetupAccounts.js",
     "exhibit": "tsc && node dist/entries/Exhibit.js",
     "ei": "tsc && node dist/entries/ExhibitImage.js",
     "listup": "tsc && node dist/entries/ListupItems.js",

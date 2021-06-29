@@ -42,5 +42,9 @@ function setupAccounts() {
         ));
 }
 
-addAccount();
-setupAccounts().execute();
+async function run() {
+    await addAccount();
+    await setupAccounts().execute();
+}
+
+run();

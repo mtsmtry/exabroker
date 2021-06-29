@@ -16,7 +16,7 @@ import { WebExecution } from "../../system/execution/WebExecution";
 import { getWideLength, replaceDict } from "./Utils";
 import { getAmazonItemDetail } from "./GetAmazonItemDetail";
 import { AuctionImage } from "../../entities/website/YahooAuctionExhibit";
-import { getAuctionPrice, isAvailableItem } from "./Algorithm";
+import { getAuctionPrice, isExhibitableItem } from "./Algorithm";
 import { getItemState, getItemStateWithProxy } from "../website/amazon/Amazon";
 
 const MAX_TITLE_LENGTH = 65;
@@ -196,7 +196,7 @@ export function exhibitAmazonAuction(session: YahooSession, asin: string) {
                     .and(() => DBExecution.integration(rep => rep.getAuctionImages(asin)).map(cacheImages => ({ cacheImages })))
                 )
                 .then(val => {
-                    if (!isAvailableItem(val.state)) {
+                    if (!isExhibitableItem(val.state)) {
                         return Execution.cancel();
                     }
                     return Execution.transaction()

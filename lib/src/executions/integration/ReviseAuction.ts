@@ -8,12 +8,12 @@ import * as yahoo from "../website/yahoo/Yahoo";
 import { DBExecution } from "../../system/execution/DatabaseExecution";
 import { AmazonItemState } from "../../entities/website/AmazonItemState";
 import { SyncMethod } from "../../entities/integration/ArbYahooAmazonSync";
-import { getAuctionPrice, isAvailableItem } from "./Algorithm";
+import { getAuctionPrice, isExhibitableItem } from "./Algorithm";
 
 type Arb = { id: number, aid: string, asin: string, price: number };
 
 function revise(session: YahooSession, arb: Arb, state: AmazonItemState) {
-    if (!isAvailableItem(state)) {
+    if (!isExhibitableItem(state)) {
         return Execution.transaction()
             .then(_ => yahoo.cancelAuction(session, arb.aid))
             .then(_ => DBExecution.integration(rep => rep.createArbSync({

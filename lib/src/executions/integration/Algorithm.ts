@@ -8,8 +8,8 @@ export function getAuctionPrice(price: number) {
     return result | 0;
 }
 
-export function isAvailableItem(state: AmazonItemState) {
-    return state.hasStock && !state.isAddon && state.price && state.price < 6000;
+export function isExhibitableItem(state: AmazonItemState) {
+    return state.hasEnoughStock && !state.isAddon && state.price && state.price < 6000;
 }
 
 export function isPurchasableItem(state: AmazonItemState, auctionPrice: number) {
