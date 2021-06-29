@@ -24,7 +24,7 @@ export function getItemState(asin: string) {
                 url: `https://www.amazon.co.jp/dp/${asin}?language=ja_JP`
             }, parse)
         )
-        .then(val => DBExecution.amazon(rep => rep.createItemState(asin, val.price, val.hasStock, val.isAddon)))
+        .then(val => DBExecution.amazon(rep => rep.createItemState(asin, val.price, val.hasStock, val.hasEnoughStock, val.isAddon)))
 }
 
 export function getItemStateWithProxy(asin: string) {
@@ -36,5 +36,5 @@ export function getItemStateWithProxy(asin: string) {
                 headers: { 'Accept-Language': 'ja-JP' }
             }, parse)
         )
-        .then(val => DBExecution.amazon(rep => rep.createItemState(asin, val.price, val.hasStock, val.isAddon)))
+        .then(val => DBExecution.amazon(rep => rep.createItemState(asin, val.price, val.hasStock, val.hasEnoughStock, val.isAddon)))
 }

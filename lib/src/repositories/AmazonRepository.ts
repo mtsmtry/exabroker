@@ -143,8 +143,8 @@ export class AmazonRepository {
         return await this.orders.findOne({ orderId });
     }
 
-    async createItemState(asin: string, price: number | null, hasStock: boolean, isAddon: boolean) {
-        const state = this.itemStates.create({ asin, price, hasStock, isAddon });
+    async createItemState(asin: string, price: number | null, hasStock: boolean, hasEnoughStock: boolean | null, isAddon: boolean) {
+        const state = this.itemStates.create({ asin, price, hasStock, hasEnoughStock, isAddon });
         return await this.itemStates.save(state);
     }
 }
