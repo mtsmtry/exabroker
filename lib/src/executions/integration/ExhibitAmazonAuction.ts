@@ -6,7 +6,6 @@ import { getCurrentFilename, notNull, random, randomPositiveInteger } from "../.
 import * as stripHtml from "string-strip-html";
 import * as normalizeWhitespace from "normalize-html-whitespace";
 import * as fs from "fs";
-import * as yahooDriver from "../website/yahoo/YahooDriver";
 import { Document } from "../../system/Document";
 import { AuctionExhibit, exhibitAuction } from "../website/yahoo/api/ExhibitAuction";
 import { Prefecture, ShipSchedule } from "../website/yahoo/YahooDriver";
@@ -186,22 +185,12 @@ function createAuctionData(detail: AmazonItemDetail, price: number): AuctionExhi
 
 export function exhibitAmazonAuction(session: YahooSession, asin: string) {
     return Execution.transaction("Integration", getCurrentFilename())
-        .then(val => Execution.batch()
-            .and(_ => DBExecution.integration(rep => rep.existsAuctionExhibit(asin)).map(exhibit => ({ exhibit })))
-            .and(_ => DBExecution.amazon(rep => rep.getItem(asin)).map(item => ({ item })))
-            .and(_ => DBExecution.integration(rep => rep.getAuctionHistory(asin)).map(history => ({ history })))
-            )
-        .then(val => (val.item?.title && !val.history ? yahooDriver.searchAuctionHistory(val.item?.title) : Execution.resolve({ dealCount: val.history?.dealCount })).map(x => ({ ...val, ...x })))
+        .then(val => DBExecution.integration(rep => rep.existsAuctionExhibit(asin)))
         .then(val => {
-            if (val.exhibit || !val.item || val.dealCount == 0) {
-                if (!val.history && val.dealCount != null) {
-                    return DBExecution.integration(rep => rep.upsertAuctionHistory(asin, val.dealCount || 0));
-                } else {
-                    return Execution.resolve({});
-                }
+            if (val) {
+                return Execution.cancel();
             }
             return Execution.transaction()
-                .then(_ => val.dealCount ? DBExecution.integration(rep => rep.upsertAuctionHistory(asin, val.dealCount || 0)) : Execution.resolve((() => {})()))
                 .then(() => Execution.batch()
                     .and(() => getItemStateWithProxy(asin).map(state => ({ state })))
                     .and(() => DBExecution.integration(rep => rep.getAuctionImages(asin)).map(cacheImages => ({ cacheImages })))

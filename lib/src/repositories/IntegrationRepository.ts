@@ -165,6 +165,17 @@ export class IntegrationRepository {
         return rankedAsins.filter(asin => !exhibitAsins.includes(asin)).slice(0, count);
     }
 
+    async hasNoYahooAuctionHistoryAmazonItems(count: number) {
+        const items = await this.amazonItems.createQueryBuilder("item")
+            .select(["item.asin", "item.title"])
+            .leftJoin(YahooAuctionHistory, "h", "h.asin = item.asin")
+            .where("h.dealCount IS NULL")
+            .orderBy("item.reviewCount", "DESC")
+            .limit(count)
+            .getRawMany();
+        return items.map(x => ({ asin: x.item_asin as string, title: x.item_title as string }));
+    }
+
     async getExhibitableASINs(count: number) {
         const exhibitAsins = await this.getExhibitASINs();
 
@@ -178,7 +189,7 @@ export class IntegrationRepository {
         conds += " AND " + ngWords.map(x => `item.title NOT LIKE '%${x}%'`).join(" AND ");
         conds += " AND (s.hasStock IS NULL OR s.hasEnoughStock = 1 OR s.timestamp < DATE_SUB(CURRENT_TIMESTAMP, INTERVAL 7 DAY))";
         conds += " AND (s.isAddon IS NULL OR s.isAddon = 0)";
-        conds += " AND (h.dealCount IS NULL OR h.dealCount > 0)";
+        conds += " AND h.dealCount > 0";
         const items = await this.amazonItems.createQueryBuilder("item")
             .select(["item.asin"])
             .leftJoin(AmazonItemState, "s", "s.asin = item.asin")

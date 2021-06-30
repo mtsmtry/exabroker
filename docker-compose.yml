@@ -9,7 +9,15 @@ services:
       - db
     restart: always
     mem_limit: 2g
-  
+    
+  crawleryahoo:
+    build:
+      context: .
+      dockerfile: Dockerfile_crawleryahoo
+    depends_on:
+      - db
+    restart: always
+
   exhibit:
     build:
       context: .
