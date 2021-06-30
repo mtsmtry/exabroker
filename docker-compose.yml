@@ -1,4 +1,4 @@
-version: "3"
+version: "2"
 
 services:
   crawler:
@@ -8,6 +8,7 @@ services:
     depends_on:
       - db
     restart: always
+    mem_limit: 2g
   
   exhibit:
     build:
