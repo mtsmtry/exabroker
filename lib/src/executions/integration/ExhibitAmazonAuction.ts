@@ -189,18 +189,19 @@ export function exhibitAmazonAuction(session: YahooSession, asin: string) {
         .then(val => Execution.batch()
             .and(_ => DBExecution.integration(rep => rep.existsAuctionExhibit(asin)).map(exhibit => ({ exhibit })))
             .and(_ => DBExecution.amazon(rep => rep.getItem(asin)).map(item => ({ item })))
+            .and(_ => DBExecution.integration(rep => rep.getAuctionHistory(asin)).map(history => ({ history })))
             )
-        .then(val => (val.item?.title ? yahooDriver.searchAuctionHistory(val.item?.title) : Execution.resolve({dealCount: 0})).map(x => ({ ...val, ...x })))
+        .then(val => (val.item?.title && !val.history ? yahooDriver.searchAuctionHistory(val.item?.title) : Execution.resolve({ dealCount: val.history?.dealCount })).map(x => ({ ...val, ...x })))
         .then(val => {
             if (val.exhibit || !val.item || val.dealCount == 0) {
-                if (val.dealCount) {
-                    return DBExecution.integration(rep => rep.upsertAuctionHistory(asin, val.dealCount));
+                if (!val.history && val.dealCount != null) {
+                    return DBExecution.integration(rep => rep.upsertAuctionHistory(asin, val.dealCount || 0));
                 } else {
-                    return Execution.cancel();
+                    return Execution.resolve({});
                 }
             }
             return Execution.transaction()
-                .then(_ => DBExecution.integration(rep => rep.upsertAuctionHistory(asin, val.dealCount)))
+                .then(_ => val.dealCount ? DBExecution.integration(rep => rep.upsertAuctionHistory(asin, val.dealCount || 0)) : Execution.resolve((() => {})()))
                 .then(() => Execution.batch()
                     .and(() => getItemStateWithProxy(asin).map(state => ({ state })))
                     .and(() => DBExecution.integration(rep => rep.getAuctionImages(asin)).map(cacheImages => ({ cacheImages })))
