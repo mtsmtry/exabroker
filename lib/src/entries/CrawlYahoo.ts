@@ -16,3 +16,4 @@ function run() {
 }
 
 run().execute();
+process.exit();

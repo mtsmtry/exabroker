@@ -4,4 +4,5 @@ async function run() {
     const reps = await getRepositories();
 }
 
-run()
+run();
+process.exit()
