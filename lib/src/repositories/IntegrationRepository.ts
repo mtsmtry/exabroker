@@ -160,9 +160,8 @@ export class IntegrationRepository {
         conds += " AND item.price > 700";
         conds += " AND item.price < 6000";
         conds += " AND " + ngWords.map(x => `item.title NOT LIKE '%${x}%'`).join(" AND ");
-        conds += " AND (s.hasStock IS NULL OR s.hasStock = 1)"
+        conds += " AND (s.hasStock IS NULL OR s.hasEnoughStock = 1 OR s.timestamp < DATE_SUB(CURRENT_TIMESTAMP, INTERVAL 7 DAY))"
         conds += " AND (s.isAddon IS NULL OR s.isAddon = 0)"
-        //conds += " AND s.timestamp > DATE_SUB(CURRENT_TIMESTAMP, INTERVAL 3 DAY)"
         const items = await this.amazonItems.createQueryBuilder("item")
             .select(["item.asin"])
             .leftJoin(AmazonItemState, "s", "s.asin = item.asin")
