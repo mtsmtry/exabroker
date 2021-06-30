@@ -14,12 +14,12 @@ export function getAccountStatus(username: string, session: Cookie) {
         cookie: session
     }, doc => {
         const tag = doc.getNeeded("//*[@id='acMdStatus']");
-        const rating = tag.get(`.//a[@href='https://auctions.yahoo.co.jp/jp/show/rating?userID=${username}']`);
+        const rating = doc.get(`//a[@href='https://auctions.yahoo.co.jp/jp/show/rating?userID=${username}']`);
         const balance = tag.get(`.//a[@href='https://receive.wallet.yahoo.co.jp/list']`);
         return {
             isPremium: tag.text.includes("プレミアム会員登録済み"),
             isExhibitable: !tag.text.includes("出品制限中") && !tag.text.includes("停止中"),
-            rating: (tag.text.includes("新規") ? 0 : rating?.extractDigits()) || null,
+            rating: (rating?.text.includes("新規") ? 0 : rating?.extractDigits()) || null,
             balance: balance?.extractDigits() || 0
         };
     }, "YahooDriver", getCurrentFilename());

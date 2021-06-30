@@ -48,7 +48,14 @@ async function requestGet(data: GetRequestData) {
     if (data.useBinary) {
         req.buffer(true).parse(superagent.parse.image);
     }
-    return await req;
+
+    // 404をエラーにしない
+    // ヤフオクは検索結果が存在しない時に404を吐く
+    const res = await new Promise((resolve: (res: superagent.Response) => void) => req.end((err, res) => resolve(res)));
+    if (res.status >= 400 && res.status != 404) {
+        throw res.status;
+    }
+    return res;
 }
 
 async function requestPost(data: PostRequestData) {
@@ -80,7 +87,7 @@ async function requestPost(data: PostRequestData) {
     }
     let res: superagent.Response;
     if (data.binary) {
-        req.ok(_ => true)
+        req.ok(_ => true);
         req.write(data.binary);
         res = await new Promise((resolve: (res: superagent.Response) => void) => req.end((err, res) => resolve(res)));
         if (res.status >= 400) {

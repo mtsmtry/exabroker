@@ -3,6 +3,7 @@ import { ArbYahooAmazon } from "../entities/integration/ArbYahooAmazon";
 import { ArbYahooAmazonCanceled, ArbYahooAmazonCanceledDto, CancelAuctionMessageStatus } from "../entities/integration/ArbYahooAmazonCanceled";
 import { ArbYahooAmazonSold, MessageStatus } from "../entities/integration/ArbYahooAmazonSold";
 import { ArbYahooAmazonSync, SyncMethod } from "../entities/integration/ArbYahooAmazonSync";
+import { YahooAuctionHistory } from "../entities/integration/YahooAmazonHistory";
 import { YahooImageAuction } from "../entities/integration/YahooImageAuction";
 import { AmazonItem } from "../entities/website/AmazonItem";
 import { AmazonItemState } from "../entities/website/AmazonItemState";
@@ -18,6 +19,7 @@ export class IntegrationRepository {
     yaSyncArbs: Repository<ArbYahooAmazonSync>;
     imageAuctions: Repository<YahooImageAuction>;
     auctionDeal: Repository<YahooAuctionDeal>;
+    auctionHistory: Repository<YahooAuctionHistory>;
 
     constructor(mng: EntityManager) {
         this.exhibits = mng.getRepository(YahooAuctionExhibit);
@@ -28,6 +30,20 @@ export class IntegrationRepository {
         this.yaSyncArbs = mng.getRepository(ArbYahooAmazonSync);
         this.imageAuctions = mng.getRepository(YahooImageAuction);
         this.auctionDeal = mng.getRepository(YahooAuctionDeal);
+        this.auctionHistory = mng.getRepository(YahooAuctionHistory);
+    }
+
+    async upsertAuctionHistory(asin: string, dealCount: number) {
+        if (await this.auctionHistory.findOne({ asin })) {
+            await this.auctionHistory.update({ asin }, { dealCount });
+        } else {
+            const history = this.auctionHistory.create({ asin, dealCount });
+            await this.auctionHistory.save(history);
+        }
+    }
+
+    async getAuctionHistory(asin: string) {
+        return await this.auctionHistory.findOne({ asin });
     }
 
     async createImageAuction(aid: string, name: string) {
@@ -160,11 +176,13 @@ export class IntegrationRepository {
         conds += " AND item.price > 700";
         conds += " AND item.price < 6000";
         conds += " AND " + ngWords.map(x => `item.title NOT LIKE '%${x}%'`).join(" AND ");
-        conds += " AND (s.hasStock IS NULL OR s.hasEnoughStock = 1 OR s.timestamp < DATE_SUB(CURRENT_TIMESTAMP, INTERVAL 7 DAY))"
-        conds += " AND (s.isAddon IS NULL OR s.isAddon = 0)"
+        conds += " AND (s.hasStock IS NULL OR s.hasEnoughStock = 1 OR s.timestamp < DATE_SUB(CURRENT_TIMESTAMP, INTERVAL 7 DAY))";
+        conds += " AND (s.isAddon IS NULL OR s.isAddon = 0)";
+        conds += " AND (h.dealCount IS NULL OR h.dealCount > 0)";
         const items = await this.amazonItems.createQueryBuilder("item")
             .select(["item.asin"])
             .leftJoin(AmazonItemState, "s", "s.asin = item.asin")
+            .leftJoin(YahooAuctionHistory, "h", "h.asin = item.asin")
             .where(conds)
             .orderBy("item.reviewCount", "DESC")
             .groupBy("item.asin")

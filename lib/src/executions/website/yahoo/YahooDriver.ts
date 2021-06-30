@@ -25,6 +25,7 @@ export * from "./queries/GetAuction";
 export * from "./queries/GetCategory";
 export * from "./queries/GetIsWalletSignedUp";
 export * from "./queries/SearchAution";
+export * from "./queries/SearchAuctionHistory";
 export * from "./queries/GetNotices";
 export * from "./queries/GetSoldAIDs";
 export * from "./queries/GetSoldAuction";

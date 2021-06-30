@@ -1,12 +1,12 @@
 # SSH
 chmod 600 Exabroker.cer
-ssh -i Exabroker.cer ubuntu@18.181.201.118
+ssh -i Exabroker.cer ubuntu@54.248.172.15
 
 # インスタンス作る時
 OS: ubuntu
 ネットワーク: 3306ポートを開けておく(外部からmysql繋げる用)
 
-mysql -u docker --port 3306 -h 18.181.201.118 -ppassword exabroker
+mysql -u docker --port 3306 -h 54.248.172.15 -ppassword exabroker
 
 # 初期設定
 ## clone
