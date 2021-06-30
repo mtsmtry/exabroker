@@ -5,7 +5,7 @@ async function run() {
     console.log("Exhibit Image: START");
     await syncAccounts().execute();
     await exhibitImage().execute();
+    process.exit();
 }
 
 run();
-process.exit();

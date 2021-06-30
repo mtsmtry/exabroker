@@ -35,4 +35,3 @@ async function run() {
 }
 
 run();
-process.exit();

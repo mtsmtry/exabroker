@@ -4,7 +4,7 @@ async function run() {
     const reps = await getRepositories();
     const asins = await reps.integration.getExhibitableASINs(100);
     console.log(asins);
+    process.exit();
 }
 
 run()
-process.exit();

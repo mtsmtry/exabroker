@@ -18,7 +18,7 @@ function support() {
 
 async function run() {
     await support().execute();
+    process.exit();
 }
 
 run();
-process.exit();

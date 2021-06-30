@@ -20,6 +20,7 @@ async function run() {
             const account = await scraperapi.getAccount().execute();
             console.log(account);
             if (account.requestCount >= account.requestLimit) {
+                process.exit();
                 return;
             }
             conCount = account.concurrencyLimit - account.concurrentRequests;
@@ -37,4 +38,3 @@ async function run() {
 }
 
 run();
-process.exit();

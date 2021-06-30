@@ -20,7 +20,7 @@ export function execution() {
 async function run() {
     await syncAccounts().execute();
     await execution().execute();
+    process.exit();
 }
 
 run();
-process.exit();

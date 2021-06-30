@@ -3,7 +3,7 @@ import { DBExecution } from "../system/execution/DatabaseExecution";
 import { Execution } from "../system/execution/Execution";
 import * as yahooDriver from "../executions/website/yahoo/YahooDriver";
 
-function run() {
+function execution() {
     return Execution.loop({}).routine(_ => Execution.transaction()
         .then(_ => DBExecution.integration(rep => rep.hasNoYahooAuctionHistoryAmazonItems(10)))
         .then(val => Execution.sequence(val, 10)
@@ -15,5 +15,9 @@ function run() {
         .then(val => Execution.resolve({ result: {}, continue: val.length > 0 })));
 }
 
-run().execute();
-process.exit();
+async function run() {
+    await execution().execute();
+    process.exit();
+}
+
+run();

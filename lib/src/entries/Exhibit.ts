@@ -5,8 +5,8 @@ import { syncAccounts } from "../executions/apps/Sync";
 async function run() {
     await syncAccounts().execute();
     await exhibit().execute();
+    process.exit();
+    
 }
 
 run();
-
-process.exit();

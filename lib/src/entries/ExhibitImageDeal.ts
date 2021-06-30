@@ -9,6 +9,7 @@ async function run() {
     const result2 = await searchAuctionHistory("ps4frewfrew").execute();
     console.log(result2)
 
+    process.exit();
     /*
     await syncAccounts().execute();
     await syncDeals().execute();
@@ -18,5 +19,3 @@ async function run() {
 }
 
 run();
-
-process.exit();

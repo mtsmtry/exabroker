@@ -8,7 +8,7 @@ async function run() {
     await exhibitImage().execute();
     await syncDeals().execute();
     await dealImage().execute();
+    process.exit();
 }
 
 run();
-process.exit();
