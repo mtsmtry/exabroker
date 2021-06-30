@@ -6,7 +6,7 @@ import time
 
 
 while True:
-    result = subprocess.run(['npm', 'run', 'mainte'])
+    result = subprocess.run(["node", "dist/entries/Maintenance.js"])
     if result.returncode != 0:
         print("異常終了: 再度実行")
         continue

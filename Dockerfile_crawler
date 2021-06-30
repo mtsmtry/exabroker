@@ -11,6 +11,7 @@ RUN apk add python3
 RUN apk add alpine-sdk
 RUN npm install
 RUN npm install mysql --save
+RUN tsc
 
 # 実行
 ENTRYPOINT [ "python3", "/code/crawler_run.py" ]

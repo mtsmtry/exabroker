@@ -11,6 +11,7 @@ RUN apk add python3
 RUN apk add alpine-sdk
 RUN npm install mysql --save
 RUN npm install
+RUN tsc
 
 # 実行
 ENTRYPOINT [ "python3", "mainte_run.py" ]
