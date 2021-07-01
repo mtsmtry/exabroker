@@ -1,13 +1,26 @@
 import { dealImage } from "../executions/apps/DealImage";
 import { exhibitImage } from "../executions/apps/ExhibitImage";
-import { syncAccounts, syncDeals, syncNotices } from "../executions/apps/Sync";
+import { message } from "../executions/apps/Message";
+import { order } from "../executions/apps/Order";
+import { syncAccounts, syncDeals, syncNotices, syncOrders } from "../executions/apps/Sync";
+import { Execution } from "../system/execution/Execution";
+import { getCurrentFilename } from "../Utils";
+
+function maintenance() {
+    return Execution.transaction("Application", getCurrentFilename())
+        //.then(val => payout())
+        .then(val => syncAccounts())
+        .then(val => syncNotices())
+        .then(val => syncDeals())
+        .then(val => syncOrders())
+        .then(val => order())
+        .then(val => message())
+        .then(val => exhibitImage())
+        .then(val => dealImage());
+}
 
 async function run() {
-    await syncNotices().execute();
-    await syncAccounts().execute();
-    await exhibitImage().execute();
-    await syncDeals().execute();
-    await dealImage().execute();
+    await maintenance().execute();
     process.exit();
 }
 

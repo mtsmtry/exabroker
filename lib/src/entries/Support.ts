@@ -7,12 +7,12 @@ import { syncAccounts, syncDeals, syncNotices, syncOrders } from "../executions/
 
 function support() {
     return Execution.transaction("Application", getCurrentFilename())
-       // .then(val => payout())
-        /*.then(val => syncAccounts())
+        .then(val => payout())
+        .then(val => syncAccounts())
         .then(val => syncNotices())
         .then(val => syncDeals())
-        .then(val => syncOrders())*/
-        //.then(val => order())
+        .then(val => syncOrders())
+        .then(val => order())
         .then(val => message());
 }
 

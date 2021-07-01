@@ -29,8 +29,8 @@ ${tailMessage}`;
 }
 
 function fromDateToString(date: Date) {
-    const yobi = ["月", "火", "水", "木", "金", "土", "日"]
-    return `${date.getMonth() + 1}月${date.getDate()}日(${yobi[date.getDay() - 1]}曜日)`;
+    const yobi = ["日", "月", "火", "水", "木", "金", "土"]
+    return `${date.getMonth() + 1}月${date.getDate()}日(${yobi[date.getDay()]}曜日)`;
 }
 
 function shippingMessage(deliverDay: Date, deliveryLatestDay: Date | null) {
