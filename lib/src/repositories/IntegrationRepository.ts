@@ -4,7 +4,7 @@ import { ArbYahooAmazonCanceled, ArbYahooAmazonCanceledDto, CancelAuctionMessage
 import { ArbYahooAmazonSold, MessageStatus } from "../entities/integration/ArbYahooAmazonSold";
 import { ArbYahooAmazonSync, SyncMethod } from "../entities/integration/ArbYahooAmazonSync";
 import { YahooAuctionHistory } from "../entities/integration/YahooAmazonHistory";
-import { YahooImageAuction } from "../entities/integration/YahooImageAuction";
+import { ImageAuctionStatus, YahooImageAuction } from "../entities/integration/YahooImageAuction";
 import { AmazonItem } from "../entities/website/AmazonItem";
 import { AmazonItemState } from "../entities/website/AmazonItemState";
 import { AuctionDealStatus, YahooAuctionDeal } from "../entities/website/YahooAuctionDeal";
@@ -93,6 +93,10 @@ export class IntegrationRepository {
 
     async setMessageStatus(aid: string, messageStatus: MessageStatus | null) {
         await this.yaSoldArbs.update({ aid }, { messageStatus });
+    }
+
+    async setImageAuctionStatus(aid: string, status: ImageAuctionStatus | null) {
+        await this.imageAuctions.update({ aid }, { status });
     }
 
     async setCancelMessageStatus(canceled: ArbYahooAmazonCanceled, messageStatus: CancelAuctionMessageStatus | null) {

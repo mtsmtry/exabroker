@@ -162,8 +162,8 @@ function createDescription(item: AmazonItemDetail) {
     desc += descriptionHtml(item.productDescription);
     desc += descriptionHtml(item.makerDescription);
     // desc += descriptionRelated();
-    desc += createSection("支払方法", desc1.replace(/\n/g, "<br>"));
     desc += createSection("発送詳細", desc2.replace(/\n/g, "<br>"));
+    desc += createSection("支払方法", desc1.replace(/\n/g, "<br>"));
     desc += createSection("注意事項", desc3.replace(/\n/g, "<br>"));
     return normalizeWhitespace(desc);
 }

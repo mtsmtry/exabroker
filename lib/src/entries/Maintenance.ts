@@ -10,13 +10,7 @@ function maintenance() {
     return Execution.transaction("Application", getCurrentFilename())
         //.then(val => payout())
         .then(val => syncAccounts())
-        .then(val => syncNotices())
-        .then(val => syncDeals())
-        .then(val => syncOrders())
-        .then(val => order())
-        .then(val => message())
-        .then(val => exhibitImage())
-        .then(val => dealImage());
+        .then(val => syncNotices());
 }
 
 async function run() {

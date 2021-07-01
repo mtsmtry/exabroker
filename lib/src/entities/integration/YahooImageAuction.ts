@@ -6,6 +6,12 @@ import { AmazonOrder } from "../website/AmazonOrder";
 import { YahooAuctionExhibit } from "../website/YahooAuctionExhibit";
 import { YahooAuctionDeal } from "../website/YahooAuctionDeal";
 
+export enum ImageAuctionStatus {
+    INITIAL = "initial",
+    SHIPPED = "shipped",
+    FEEDBACKED = "feedbacked"
+}
+
 @Entity()
 export class YahooImageAuction {
 
@@ -21,4 +27,7 @@ export class YahooImageAuction {
 
     @Column("varchar")
     name: string;
+
+    @Column("enum", { enum: ImageAuctionStatus, nullable: true })
+    status: ImageAuctionStatus | null;
 }

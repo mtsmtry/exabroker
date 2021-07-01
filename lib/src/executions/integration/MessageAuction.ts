@@ -10,7 +10,7 @@ import { AmazonOrder, DeliveryPlace, OrderStatus } from "../../entities/website/
 import { ArbYahooAmazonSold, MessageStatus } from "../../entities/integration/ArbYahooAmazonSold";
 import { AuctionDealStatus, YahooAuctionDeal } from "../../entities/website/YahooAuctionDeal";
 import { CancelAuctionMessageStatus } from "../../entities/integration/ArbYahooAmazonCanceled";
-import { YahooImageAuction } from "../../entities/integration/YahooImageAuction";
+import { ImageAuctionStatus, YahooImageAuction } from "../../entities/integration/YahooImageAuction";
 
 const tailMessage = "※このメッセージは自動で送信されました。内容の行き違いがございましたら申し訳ございません。";
 
@@ -253,31 +253,34 @@ export function messageAuction(arb: ArbYahooAmazonSold, session: YahooSession) {
 }
 
 
-export function messageImageAuction(deal: YahooAuctionDeal, session: YahooSession) {
+export function messageImageAuction(img: YahooImageAuction, deal: YahooAuctionDeal, session: YahooSession) {
     // 1円画像が落札されたらのメッセージ
     
     const trx = Execution.transaction("Integration", getCurrentFilename());
 
     // send initial message
-    if (deal.status == AuctionDealStatus.NONE) {
+    if (deal.status == AuctionDealStatus.NONE && img.status == null) {
         trx.then(_ => Execution.transaction("Inner", "SendInitialImageMessage")
             .then(_ => yahooDriver.sendMessage(deal.aid, initialImageMessage(), session.cookie))
+            .then(_ => DBExecution.integration(rep => rep.setImageAuctionStatus(img.aid, ImageAuctionStatus.INITIAL)))
         );
     }
 
     // inform shipping
-    if (deal.status == AuctionDealStatus.PAID) {
+    if (deal.status == AuctionDealStatus.PAID && img.status == ImageAuctionStatus.INITIAL) {
         trx.then(_ => Execution.transaction("Inner", "InformImageShipping & SendShippingImageMessage")
             .then(val => yahooDriver.informShipping(deal.aid, session.cookie))
             .then(val => yahooDriver.sendMessage(deal.aid, shippingImageMessage(), session.cookie))
+            .then(_ => DBExecution.integration(rep => rep.setImageAuctionStatus(img.aid, ImageAuctionStatus.SHIPPED)))
         );
     }
 
 
     // leave feedback
-    if (deal.status == AuctionDealStatus.RECEIVED) {
+    if (deal.status == AuctionDealStatus.RECEIVED && img.status == ImageAuctionStatus.SHIPPED) {
         trx.then(_ => Execution.transaction("Inner", "ImageLeaveFeedback")
             .then(_ => yahooDriver.leaveFeedback(session.cookie, deal.aid, deal.buyerId, FeedbackRaring.VeryGood))
+            .then(_ => DBExecution.integration(rep => rep.setImageAuctionStatus(img.aid, ImageAuctionStatus.FEEDBACKED)))
         );
     }
 
