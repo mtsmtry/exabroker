@@ -9,7 +9,7 @@ services:
       - db
     restart: always
     mem_limit: 2g
-    
+
   crawleryahoo:
     build:
       context: .
@@ -30,6 +30,14 @@ services:
     build:
       context: .
       dockerfile: Dockerfile_mainte
+    depends_on: 
+      - db
+    restart: always
+  
+  support:
+    build:
+      context: .
+      dockerfile: Dockerfile_support
     depends_on: 
       - db
     restart: always
