@@ -45,12 +45,15 @@ function getPaymentForm(doc: Document, payment: PaymentInfo) {
     const form = getInputData(doc.getById(rootId));
     return toNotNull({
         customerId: doc.text.match(/customerId: '(.*?)'/)?.[1],
+        jpPointsBalanceSelection: doc.getNeeded("//input[@name='ppw-jpPointsBalanceSelection_instrumentId']").attrNeeded("value"),
         widgetState: doc.getNeeded("//input[@name='ppw-widgetState']").attrNeeded("value"),
         form
     });
 }
 
 export function purchase(asin: string, address: DeliveryAddress, cookie: Cookie, payment: PaymentInfo) {
+    asin = "B07GBD3JLR";
+
     return WebExecution.webTransaction(cookie, "AmazonDriver", getCurrentFilename())
         .setCookie(val => val)
         .thenGet("GetForm",
@@ -72,7 +75,7 @@ export function purchase(asin: string, address: DeliveryAddress, cookie: Cookie,
             doc => {
                 return getPaymentForm(doc, payment);
             })
-            .thenPost("SendCardNumber",
+           /* .thenPost("SendCardNumber",
                 val => ({
                     url: `https://www.amazon.co.jp/payments-portal/data/f1/widgets2/v1/customer/${val.customerId}/continueWidget`,
                     form: {
@@ -91,7 +94,34 @@ export function purchase(asin: string, address: DeliveryAddress, cookie: Cookie,
                     customerId: val.customerId,
                     widgetState: val.widgetState,
                     form: val.form
-                }))
+                }))*/
+
+/*
+ie: UTF-8
+ppw-0h_PJ_CUS_3eb86b2f-10d4-46e8-9669-daf00ff6e3fe_installmentCategory: ONETIME
+ppw-0h_PJ_CUS_3eb86b2f-10d4-46e8-9669-daf00ff6e3fe_installmentsSelection_dropdown_ONETIME: amzn1.fos.8c8372e3-e814-426f-a586-cc21be00e34e
+ppw-0h_PJ_CUS_3eb86b2f-10d4-46e8-9669-daf00ff6e3fe_installmentsSelection_dropdown_NTIMES_INTEREST_FREE: amzn1.fos.6fcd01b5-984e-4511-a716-b22d58db4027
+ppw-0h_PJ_CUS_3eb86b2f-10d4-46e8-9669-daf00ff6e3fe_installmentsSelection_dropdown_INSTALLMENT: amzn1.fos.c81aba32-560d-4018-af55-15fcb21be015
+ppw-0h_PJ_CUS_3eb86b2f-10d4-46e8-9669-daf00ff6e3fe_installmentsSelection_dropdown_REVOLVING: amzn1.fos.debb6521-cda6-4118-b654-831860008d07
+0h_PJ_CUS_48eaa717-b001-4fbb-9f81-bfc3ccc4f126_addCreditCardNumber: 
+ppw-instrumentRowSelection: instrumentId=0h_PJ_CUS_3607dddb-4c32-4a98-b638-ba04d33cd68e&isExpired=false&paymentMethod=CC&tfxEligible=false
+ppw-0h_PJ_CUS_3607dddb-4c32-4a98-b638-ba04d33cd68e_installmentCategory: ONETIME
+ppw-0h_PJ_CUS_3607dddb-4c32-4a98-b638-ba04d33cd68e_installmentsSelection_dropdown_ONETIME: amzn1.fos.8c8372e3-e814-426f-a586-cc21be00e34e
+ppw-0h_PJ_CUS_3607dddb-4c32-4a98-b638-ba04d33cd68e_installmentsSelection_dropdown_NTIMES_INTEREST_FREE: amzn1.fos.6fcd01b5-984e-4511-a716-b22d58db4027
+ppw-0h_PJ_CUS_3607dddb-4c32-4a98-b638-ba04d33cd68e_installmentsSelection_dropdown_INSTALLMENT: amzn1.fos.c81aba32-560d-4018-af55-15fcb21be015
+ppw-0h_PJ_CUS_3607dddb-4c32-4a98-b638-ba04d33cd68e_installmentsSelection_dropdown_REVOLVING: amzn1.fos.debb6521-cda6-4118-b654-831860008d07
+0h_PJ_CUS_f645085e-fde7-4937-95aa-a23b0a2753f9_addCreditCardNumber: 
+ppw-jpPointsBalanceSelection_instrumentId: amzn1.monad2.ptsJPCustomers.701304171134ux45X03RSU2dNkfbeg+byg6917085645
+ppw-jpPointsBalanceSelection_partialPointsAmount: 
+ppw-jsEnabled: true
+ppw-widgetEvent:SetPaymentPlanSelectContinueEvent: 
+hasWorkingJavascript: 1
+isClientTimeBased: 1
+handler: /gp/buy/payselect/handlers/apx-submit-continue.html
+
+
+*/
+
             .thenPost("SelectPayType",
                 val => {
                     function installmentCategory(category: string) {
@@ -114,6 +144,8 @@ export function purchase(asin: string, address: DeliveryAddress, cookie: Cookie,
                             "ppw-widgetEvent": "SetPaymentPlanSelectContinueEvent",
                             isClientTimeBased: 1,
                             handler: "/gp/buy/payselect/handlers/apx-submit-continue.html",
+                            "ppw-jpPointsBalanceSelection_instrumentId": val.jpPointsBalanceSelection,
+                            "ppw-jpPointsBalanceSelection_partialPointsAmount": "",
                             "ppw-instrumentRowSelection": val.form["ppw-instrumentRowSelection"], // ONETIME, NTIMES_INTEREST_FREE, INSTALLMENT, REVOLVING
                             ...installment,
                             ...Object.keys(val.form)
@@ -125,7 +157,6 @@ export function purchase(asin: string, address: DeliveryAddress, cookie: Cookie,
                 (doc, val) => {
                     const shippingFormElm = doc.get("//form[@id='shippingOptionFormId']");
                     const shippingForm = shippingFormElm ? getFormHiddenInputDataFromElement(shippingFormElm) : null;
-
                     const purchaseForm = getFormHiddenInputData(doc, "//form[@id='spc-form']");
                     return {
                         purchaseId: purchaseForm["purchaseID"],

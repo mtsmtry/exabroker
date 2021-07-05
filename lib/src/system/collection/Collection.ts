@@ -235,10 +235,10 @@ class CollectionDocument<T> extends Collection<T> {
             }
 
             // Create a record
-            const recordId = await rep.createRecord({ url, itemCount, successCount, propertyCounts, error });
+          //  const recordId = await rep.createRecord({ url, itemCount, successCount, propertyCounts, error });
 
             // Create exceptions
-            await rep.createExceptions(recordId, url, exceptions);
+          //  await rep.createExceptions(recordId, url, exceptions);
 
             return { itemCount, successCount, propertyCounts, result: item };
         }

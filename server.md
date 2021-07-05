@@ -39,3 +39,7 @@ docker-compose down
 
 ## 一部だけ終了
 docker-compose down サービス名
+
+
+
+docker system prune

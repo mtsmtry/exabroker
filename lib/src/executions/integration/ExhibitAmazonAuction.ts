@@ -2,22 +2,21 @@ import { Connection, Transaction } from "typeorm";
 import { AmazonItemDetail } from "../../entities/website/AmazonItemDetail";
 import { AmazonRepository } from "../../repositories/AmazonRepository";
 import { YahooRepository } from "../../repositories/YahooRepository";
-import { getCurrentFilename, notNull, random, randomPositiveInteger } from "../../Utils";
+import { getCurrentFilename, notNull, random } from "../../Utils";
 import * as stripHtml from "string-strip-html";
 import * as normalizeWhitespace from "normalize-html-whitespace";
-import * as fs from "fs";
 import { Document } from "../../system/Document";
 import { AuctionExhibit, exhibitAuction } from "../website/yahoo/api/ExhibitAuction";
 import { Prefecture, ShipSchedule } from "../website/yahoo/YahooDriver";
 import { YahooSession } from "../website/yahoo/api/GetSession";
-import { Execution, LogType } from "../../system/execution/Execution";
+import { Execution } from "../../system/execution/Execution";
 import { DBExecution } from "../../system/execution/DatabaseExecution";
 import { WebExecution } from "../../system/execution/WebExecution";
 import { getWideLength, replaceDict } from "./Utils";
 import { getAmazonItemDetail } from "./GetAmazonItemDetail";
 import { AuctionImage } from "../../entities/website/YahooAuctionExhibit";
 import { getAuctionPrice, isExhibitableItem } from "./Algorithm";
-import { getItemState, getItemStateWithProxy } from "../website/amazon/Amazon";
+import { getItemStateWithProxy } from "../website/amazon/Amazon";
 
 const MAX_TITLE_LENGTH = 65;
 
@@ -141,18 +140,20 @@ const desc1 = `Yahoo!かんたん決済
 
 const desc2 = `・送料は、<b>全国一律で無料</b>となっております。
 ・お支払い後、<b>通常24時間以内</b>に発送いたします。
-・提携倉庫業者やAmazonに配送と管理を委託しております。業者名入りの梱包で配送になる場合がございます。
 ・着払いまたは代引き、営業所止め、局留め、コンビニ受取、他の商品との同梱には対応できません。
 ・ヤマト運輸、日本郵政、その他の配送業者での配達となります。配送業者の指定には対応できません。
-・発送委託業者より商品が発送される事があります。業者名入り、または無地以外の梱包で商品が届く事があります。
-・配送時の事故などは、免責とさせていただきます。配送時の外装パッケージの変形やヘコミなどの不良は保証対象外になります。
 `;
+
+// ・提携倉庫業者やAmazonに配送と管理を委託しております。業者名入りの梱包で配送になる場合がございます。
+// ・発送委託業者より商品が発送される事があります。業者名入り、または無地以外の梱包で商品が届く事があります。
+// ・配送時の事故などは、免責とさせていただきます。配送時の外装パッケージの変形やヘコミなどの不良は保証対象外になります。
 
 const desc3 = `・商品が不良品の場合は、<b>返送と返金</b>にて対応いたします。
 ・受け取り連絡を忘れてしまう落札者様が多いため、商品の到着後2日以内に受取ボタンを押されない場合には、申し訳ありませんが悪い評価とさせて頂きます。
-・商品の配送のため、発送委託など必要な範囲内において個人情報を利用させていただきます。
 ・領収証の発行には対応できません。
 `;
+
+// ・商品の配送のため、発送委託など必要な範囲内において個人情報を利用させていただきます。
 
 function createDescription(item: AmazonItemDetail) {
     let desc = "";
@@ -177,7 +178,7 @@ function createAuctionData(detail: AmazonItemDetail, price: number): AuctionExhi
         days: 4,
         closingHours: random(0, 23),
         shipSchedule: ShipSchedule["1～2日で発送"],
-        shipName: "Amazon FBA",
+        shipName: "宅配便",
         prefecture: Prefecture["東京都"],
         categoryId: null
     };

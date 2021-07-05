@@ -17,12 +17,14 @@
     "initcrawl": "tsc && node dist/entries/InitCrawler.js",
     "setup": "tsc && node dist/entries/SetupAccounts.js",
     "exhibit": "tsc && node dist/entries/Exhibit.js",
-    "ei": "tsc && node dist/entries/ExhibitImage.js",
-    "listup": "tsc && node dist/entries/ListupItems.js",
     "mainte": "tsc && node dist/entries/Maintenance.js",
     "support": "tsc && node dist/entries/Support.js",
-    "imagedeal": "tsc && node dist/entries/ExhibitImageDeal.js",
-    "cancel": "tsc && node dist/entries/CancelAuctions.js"
+    "cancel": "tsc && node dist/entries/CancelAuctions.js",
+    "listup": "tsc && node dist/entries/ListupItems.js",
+    "t1": "tsc && node dist/entries/Test1.js",
+    "t2": "tsc && node dist/entries/Test2.js",
+    "t3": "tsc && node dist/entries/Test3.js",
+    "t4": "tsc && node dist/entries/Test4.js"
   },
   "files": [
     "dist",

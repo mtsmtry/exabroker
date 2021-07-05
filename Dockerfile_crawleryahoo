@@ -14,4 +14,4 @@ RUN npm install mysql --save
 RUN npm run build
 
 # 実行
-ENTRYPOINT [ "node", "dist/entries/CrawlYahoo.js" ]
+ENTRYPOINT [ "node", "dist/entries/CrawlerYahoo.js" ]

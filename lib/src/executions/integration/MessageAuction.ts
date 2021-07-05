@@ -259,7 +259,8 @@ export function messageImageAuction(img: YahooImageAuction, deal: YahooAuctionDe
     const trx = Execution.transaction("Integration", getCurrentFilename());
 
     // send initial message
-    if (deal.status == AuctionDealStatus.NONE && img.status == null) {
+    if ((deal.status == AuctionDealStatus.NONE || deal.status == AuctionDealStatus.PAID) && img.status == null) {
+        img.status = ImageAuctionStatus.INITIAL;
         trx.then(_ => Execution.transaction("Inner", "SendInitialImageMessage")
             .then(_ => yahooDriver.sendMessage(deal.aid, initialImageMessage(), session.cookie))
             .then(_ => DBExecution.integration(rep => rep.setImageAuctionStatus(img.aid, ImageAuctionStatus.INITIAL)))
@@ -268,6 +269,7 @@ export function messageImageAuction(img: YahooImageAuction, deal: YahooAuctionDe
 
     // inform shipping
     if (deal.status == AuctionDealStatus.PAID && img.status == ImageAuctionStatus.INITIAL) {
+        img.status = ImageAuctionStatus.SHIPPED;
         trx.then(_ => Execution.transaction("Inner", "InformImageShipping & SendShippingImageMessage")
             .then(val => yahooDriver.informShipping(deal.aid, session.cookie))
             .then(val => yahooDriver.sendMessage(deal.aid, shippingImageMessage(), session.cookie))
@@ -275,9 +277,9 @@ export function messageImageAuction(img: YahooImageAuction, deal: YahooAuctionDe
         );
     }
 
-
     // leave feedback
     if (deal.status == AuctionDealStatus.RECEIVED && img.status == ImageAuctionStatus.SHIPPED) {
+        img.status = ImageAuctionStatus.FEEDBACKED;
         trx.then(_ => Execution.transaction("Inner", "ImageLeaveFeedback")
             .then(_ => yahooDriver.leaveFeedback(session.cookie, deal.aid, deal.buyerId, FeedbackRaring.VeryGood))
             .then(_ => DBExecution.integration(rep => rep.setImageAuctionStatus(img.aid, ImageAuctionStatus.FEEDBACKED)))
