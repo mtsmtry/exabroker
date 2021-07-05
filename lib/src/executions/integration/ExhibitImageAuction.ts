@@ -2,7 +2,7 @@ import { exhibitAuction, AuctionExhibit, YahooSession } from "../website/yahoo/Y
 import { Prefecture, ShipSchedule } from "../website/yahoo/YahooDriver";
 import * as fs from 'fs';
 import { IntegrationRepository } from "../../repositories/IntegrationRepository";
-import { getCurrentFilename, random } from "../../Utils";
+import { getCurrentFilename, random, randomString } from "../../Utils";
 import { Execution } from "../../system/execution/Execution";
 import { DBExecution } from "../../system/execution/DatabaseExecution";
 
@@ -27,7 +27,7 @@ export function exhibitImageAuction(session: YahooSession, imageName: string) {
 
             let auction: AuctionExhibit = {
                 images: [buf],
-                title: "【相互評価】画像データ URL 即決1円 " + imageName,
+                title: "【相互評価】画像データ URL 即決1円 " + imageName + " " + randomString(4),
                 price: 1,
                 description: description,
                 days: 4, // 最大出品日数は7日
