@@ -1,7 +1,7 @@
 {
    "type": "mysql",
 
-   "host": "db",
+   "host": "54.248.172.15",
    "port": 3306,
    "username": "docker",
    "password": "password",
@@ -9,7 +9,7 @@
 
    "logging": [],
 
-   "synchronize": false,
+   "synchronize": true,
    "entities": [
       "dist/src/entities/**/*.js"
    ],
