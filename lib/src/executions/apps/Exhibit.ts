@@ -17,7 +17,7 @@ export function exhibit() {
                 )
                 .then(val => Execution.batch()
                     .and(() => yahoo.getSession(val.username).map(val => ({ session: val })))
-                    .and(() => DBExecution.integration(rep => rep.getExhibitableASINs(val?.account?.rating && val.account.rating >= 5 ? 3000 - val.exhibitCount : 0)).map(val => ({ asins: val })))
+                    .and(() => DBExecution.integration(rep => rep.getExhibitableASINs(val.account?.maxExhibition ? val.account.maxExhibition - val.exhibitCount : 0)).map(val => ({ asins: val })))
                 )
                 .then(val => Execution.sequence(val.asins, 30)
                     .element(asin => exhibitAmazonAuction(val.session, asin))

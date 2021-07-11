@@ -35,6 +35,7 @@ export async function createDatabaseConnection(options: object={}) {
             .findOne(0)
             .then(_ => true)
             .catch(err => {
+                console.log("Connection Error!")
                 console.log(err);
                 return false
             });

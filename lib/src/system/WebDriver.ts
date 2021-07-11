@@ -17,7 +17,7 @@ export class WebDriver {
         cap.set("chromeOptions", {
             w3c: false,
             args: [
-             //   "--headless",
+                "--headless",
                 "--window-size=1920,1080"
             ]
         });

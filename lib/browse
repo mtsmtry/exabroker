@@ -1,0 +1,9 @@
+#!/bin/bash
+
+npm run build
+node dist/entries/Browse.js $1
+
+exit 0
+
+# sh browse aqfyz47565
+# node dist/entries/Browse.js aqfyz47565
