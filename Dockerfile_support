@@ -3,7 +3,6 @@ FROM node:16-alpine3.13
 # コードを/codeにコピー
 RUN mkdir /code
 COPY ./ /code
-COPY ./lib/ormconfig-server.json /code/lib/ornconfig.json
 
 WORKDIR /code/lib/
 
