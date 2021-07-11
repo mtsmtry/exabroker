@@ -10,3 +10,7 @@ GROUP BY DATE(d.endDate)
 ORDER BY DATE(d.endDate) DESC;
 
 SELECT table_name, table_rows FROM information_schema.TABLES WHERE table_schema = 'exabroker';
+
+SELECT username, count(*) FROM exabroker.yahoo_auction_exhibit
+WHERE endDate > NOW() AND actuallyEndDate IS NULL
+GROUP BY username;

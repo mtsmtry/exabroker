@@ -1,0 +1,27 @@
+{
+   "type": "mysql",
+
+   "host": "db",
+   "port": 3306,
+   "username": "docker",
+   "password": "password",
+   "database": "exabroker",
+
+   "logging": [],
+
+   "synchronize": false,
+   "entities": [
+      "dist/src/entities/**/*.js"
+   ],
+   "migrations": [
+      "dist/src/migration/**/*.js"
+   ],
+   "subscribers": [
+      "dist/src/subscriber/**/*.js"
+   ],
+   "cli": {
+      "entitiesDir": "src/entity",
+      "migrationsDir": "src/migration",
+      "subscribersDir": "src/subscriber"
+   }
+}
