@@ -140,7 +140,7 @@ export class IntegrationRepository {
             .leftJoinAndSelect("deal.buyer", "buyer")
             .leftJoinAndSelect("arb.order", "order")
             .leftJoinAndSelect("arb.canceled", "canceled")
-            .where("deal.orderId IS NULL AND (deal.status = 'paid' OR deal.status = 'shipped')", { status })
+            .where("arb.orderId IS NULL AND (deal.status = 'paid' OR deal.status = 'shipped')")
             .getMany();
     }
 
@@ -202,8 +202,7 @@ export class IntegrationRepository {
         conds += " AND item.price > 700";
         conds += " AND item.price < 6000";
         conds += " AND " + ngWords.map(x => `item.title NOT LIKE '%${x}%'`).join(" AND ");
-        conds += " AND (s.hasStock IS NULL OR s.hasEnoughStock = 1 OR s.timestamp < DATE_SUB(CURRENT_TIMESTAMP, INTERVAL 10 DAY))";
-        conds += " AND (s.isAddon IS NULL OR s.isAddon = 0)";
+        conds += " AND (s.hasStock IS NULL OR (s.hasEnoughStock = 1 AND s.isAddon = 0) OR s.timestamp < DATE_SUB(CURRENT_TIMESTAMP, INTERVAL 10 DAY))";
         conds += " AND h.dealCount > 0";
         const items = await this.amazonItems.createQueryBuilder("item")
             .select(["item.asin"])
@@ -211,7 +210,6 @@ export class IntegrationRepository {
             .leftJoin(YahooAuctionHistory, "h", "h.asin = item.asin")
             .where(conds)
             .orderBy("item.reviewCount", "DESC")
-            .groupBy("item.asin")
             .limit(exhibitAsins.length + count)
             .getRawMany();
         const rankedAsins = items.map(x => x.item_asin as string);
