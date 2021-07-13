@@ -8,7 +8,6 @@ import { getCurrentFilename } from "../../Utils";
 
 export function message() {
     return Execution.transaction("Application", getCurrentFilename())
-        .then(_ => DBExecution.integration(rep => rep.createAllSoldArb()))
         .then(val => DBExecution.yahoo(rep => rep.getAccountUsernames()))
         .then(val => Execution.sequence(val, 1)
             .element(username => Execution.transaction()

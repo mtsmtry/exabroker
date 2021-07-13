@@ -14,4 +14,4 @@ RUN npm install
 RUN npm run build
 
 # 実行
-ENTRYPOINT [ "node", "dist/entries/CrawlerYahoo.js" ]
+ENTRYPOINT [ "python3", "/code/run_crawleryahoo.py" ]

@@ -112,6 +112,7 @@ export class IntegrationRepository {
     }
 
     async getSoldArbsByUsername(username: string) {
+        await this.createAllSoldArb();
         return await this.yaSoldArbs.createQueryBuilder("arb")
             .leftJoinAndSelect("arb.arb", "arb2")
             .leftJoinAndSelect("arb.deal", "deal")
@@ -123,6 +124,7 @@ export class IntegrationRepository {
     }
 
     async getSoldArbsByStatus(status: AuctionDealStatus) {
+        await this.createAllSoldArb();
         return await this.yaSoldArbs.createQueryBuilder("arb")
             .leftJoinAndSelect("arb.arb", "arb2")
             .leftJoinAndSelect("arb.deal", "deal")
@@ -134,6 +136,7 @@ export class IntegrationRepository {
     }
 
     async getMustOrderArbs() {
+        await this.createAllSoldArb();
         return await this.yaSoldArbs.createQueryBuilder("arb")
             .leftJoinAndSelect("arb.arb", "arb2")
             .leftJoinAndSelect("arb.deal", "deal")
@@ -202,7 +205,9 @@ export class IntegrationRepository {
         conds += " AND item.price > 700";
         conds += " AND item.price < 6000";
         conds += " AND " + ngWords.map(x => `item.title NOT LIKE '%${x}%'`).join(" AND ");
+        // 2週間以内の記録で在庫がある
         conds += " AND ((s.hasEnoughStock = 1 AND s.isAddon = 0) OR s.id IS NULL OR s.timestamp < DATE_SUB(CURRENT_TIMESTAMP, INTERVAL 14 DAY))";
+        // 過去1週間以内に出品を試みていない
         conds += " AND (s.timestamp IS NULL OR s.timestamp < DATE_SUB(CURRENT_TIMESTAMP, INTERVAL 7 DAY))"
         conds += " AND h.dealCount > 0";
         const items = await this.amazonItems.createQueryBuilder("item")
@@ -218,7 +223,7 @@ export class IntegrationRepository {
         return rankedAsins.filter(asin => !exhibitAsins.includes(asin)).slice(0, count);
     }
 
-    async createAllSoldArb() {
+    private async createAllSoldArb() {
         const notExists = (query: string) => `NOT EXISTS(${query})`;
         const arbs = await this.yaArbs.createQueryBuilder("arb")
             .innerJoin(YahooAuctionDeal, "deal", "deal.aid = arb.aid")
