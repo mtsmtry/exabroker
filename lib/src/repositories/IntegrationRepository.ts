@@ -202,11 +202,12 @@ export class IntegrationRepository {
         conds += " AND item.price > 700";
         conds += " AND item.price < 6000";
         conds += " AND " + ngWords.map(x => `item.title NOT LIKE '%${x}%'`).join(" AND ");
-        conds += " AND (s.hasStock IS NULL OR (s.hasEnoughStock = 1 AND s.isAddon = 0) OR s.timestamp < DATE_SUB(CURRENT_TIMESTAMP, INTERVAL 10 DAY))";
+        conds += " AND ((s.hasEnoughStock = 1 AND s.isAddon = 0) OR s.id IS NULL OR s.timestamp < DATE_SUB(CURRENT_TIMESTAMP, INTERVAL 14 DAY))";
+        conds += " AND (s.timestamp IS NULL OR s.timestamp < DATE_SUB(CURRENT_TIMESTAMP, INTERVAL 7 DAY))"
         conds += " AND h.dealCount > 0";
         const items = await this.amazonItems.createQueryBuilder("item")
             .select(["item.asin"])
-            .leftJoinAndSelect("item.latestState", "s")
+            .leftJoin(AmazonItemState, "s", "s.id = item.latestStateId")
             .leftJoin(YahooAuctionHistory, "h", "h.asin = item.asin")
             .where(conds)
             .orderBy("item.reviewCount", "DESC")

@@ -24,6 +24,10 @@ SELECT username, count(*) FROM exabroker.yahoo_auction_exhibit
 WHERE endDate > NOW() AND actuallyEndDate IS NULL
 GROUP BY username;
 
+-- 合計出品数
+SELECT count(*) FROM exabroker.yahoo_auction_exhibit
+WHERE endDate > NOW() AND actuallyEndDate IS NULL
+
 UPDATE exabroker.amazon_item AS i
 INNER JOIN 
 (SELECT max(id) mid, asin FROM exabroker.amazon_item_state GROUP BY asin) s

@@ -9,6 +9,7 @@ import { YahooAuctionDeal, YahooAuctionDealDto } from "../entities/website/Yahoo
 import { YahooAuctionMessage } from "../entities/website/YahooAuctionMessage";
 import { YahooAuctionState } from "../entities/website/YahooAuctionState";
 import { YahooAuctionBuyer } from "../entities/website/YahooAuctionBuyer";
+import { YahooAmazonExhibitFailure } from "../entities/integration/YahooAmazonExhibitFailure";
 
 export class YahooRepository {
     accounts: Repository<YahooAccount>;
@@ -19,6 +20,7 @@ export class YahooRepository {
     messages: Repository<YahooAuctionMessage>;
     states: Repository<YahooAuctionState>;
     buyers: Repository<YahooAuctionBuyer>;
+    failures: Repository<YahooAmazonExhibitFailure>;
 
     constructor(mng: EntityManager) {
         this.accounts = mng.getRepository(YahooAccount);
@@ -29,6 +31,12 @@ export class YahooRepository {
         this.messages = mng.getRepository(YahooAuctionMessage);
         this.states = mng.getRepository(YahooAuctionState);
         this.buyers = mng.getRepository(YahooAuctionBuyer);
+    }
+
+    async createExhibitFailure(asin: string) {
+        let failure = await this.failures.create({ asin })
+        failure = await this.failures.save(failure);
+        return failure.id;
     }
     
     async getImageDeal(aid: string) {

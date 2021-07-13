@@ -203,13 +203,13 @@ export function exhibitAmazonAuction(session: YahooSession, asin: string) {
                     return Execution.transaction()
                         .then(() => getAmazonItemDetail(asin, val.state.body).map(detail => ({ ...val, detail })))
                         .then(val => {
-                            if (Array.isArray(val.cacheImages) && val.cacheImages.length > 0) {
-                                return Execution.resolve({ ...val, images: val.cacheImages as Buffer[] | AuctionImage[] })
-                            } else {
+                            //if (Array.isArray(val.cacheImages) && val.cacheImages.length > 0) {
+                            //    return Execution.resolve({ ...val, images: val.cacheImages as Buffer[] | AuctionImage[] })
+                            //} else {
                                 return Execution.sequence<string, Buffer>(val.detail.images?.slice(0, 10) || [], 5, "Inner", "DownloadImages")
                                     .element(val => WebExecution.get({ url: val, useBinary: true }, doc => doc.buffer))
                                     .map(images => ({ ...val, images: images as Buffer[] | AuctionImage[] }))
-                            }
+                            //}
                         })
                         .then(val => {
                             if (val.images.length > 0 && val.state.price) {
