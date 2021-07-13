@@ -43,3 +43,4 @@ docker-compose down サービス名
 
 
 docker system prune
+docker-compose down --rmi all --volumes --remove-orphans

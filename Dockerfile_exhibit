@@ -9,6 +9,7 @@ WORKDIR /code/lib/
 # 依存関係
 RUN apk add python3
 RUN apk add alpine-sdk
+RUN npm upgrade @mapbox/node-pre-gy -g
 RUN npm install
 # RUN npm install mysql --save
 RUN npm run build
