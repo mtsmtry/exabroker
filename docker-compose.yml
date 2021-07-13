@@ -4,43 +4,48 @@ services:
   crawler:
     build:
       context: .
-      dockerfile: Dockerfile_crawler
+      dockerfile: Dockerfile
     depends_on:
       - db
     restart: always
     mem_limit: 2g
+    entrypoint: "python3 /code/run_crawler.py"
 
   crawleryahoo:
     build:
       context: .
-      dockerfile: Dockerfile_crawleryahoo
+      dockerfile: Dockerfile
     depends_on:
       - db
     restart: always
+    entrypoint: "python3 /code/run_crawleryahoo.py"
 
   exhibit:
     build:
       context: .
-      dockerfile: Dockerfile_exhibit
+      dockerfile: Dockerfile
     depends_on:
       - db
     restart: always
+    entrypoint: "python3 /code/run_exhibit.py"
   
   mainte:
     build:
       context: .
-      dockerfile: Dockerfile_mainte
+      dockerfile: Dockerfile
     depends_on: 
       - db
     restart: always
+    entrypoint: "python3 /code/run_mainte.py"
   
   support:
     build:
       context: .
-      dockerfile: Dockerfile_support
+      dockerfile: Dockerfile
     depends_on: 
       - db
     restart: always
+    entrypoint: "python3 /code/run_support.py"
 
   db:
     image: mysql:5.7
