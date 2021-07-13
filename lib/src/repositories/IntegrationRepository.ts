@@ -215,7 +215,7 @@ export class IntegrationRepository {
             .leftJoin(AmazonItemState, "s", "s.id = item.latestStateId")
             .leftJoin(YahooAuctionHistory, "h", "h.asin = item.asin")
             .where(conds)
-            .orderBy("item.reviewCount", "DESC")
+            .orderBy("h.dealCount", "DESC")
             .limit(exhibitAsins.length + count)
             .getRawMany();
         const rankedAsins = items.map(x => x.item_asin as string);

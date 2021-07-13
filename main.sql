@@ -67,6 +67,24 @@ GROUP BY username;
 SELECT count(*) FROM exabroker.yahoo_auction_exhibit
 WHERE endDate > NOW() AND actuallyEndDate IS NULL
 
+-- 落札される商品についての分析
+SELECT e.username, d.buyerId, d.endDate, e.title, e.price, a.asin, s.messageStatus, h.dealCount, am.reviewCount, am.rating
+FROM exabroker.arb_yahoo_amazon_sold as s
+INNER JOIN exabroker.arb_yahoo_amazon as a on a.id = s.id
+INNER JOIN exabroker.yahoo_auction_exhibit as e ON e.aid = a.aid
+INNER JOIN exabroker.yahoo_auction_deal as d ON d.aid = a.aid
+INNER JOIN exabroker.amazon_item as am ON am.asin = a.asin
+LEFT JOIN exabroker.yahoo_auction_history as h ON h.asin = a.asin
+ORDER BY d.endDate desc
+
+-- 過去の落札の数
+SELECT h.dealCount, count(*), AVG(a.reviewCount), AVG(a.rating) FROM exabroker.yahoo_auction_history as h
+INNER JOIN exabroker.amazon_item as a ON a.asin = h.asin
+WHERE h.dealCount > 0
+GROUP BY h.dealCount
+ORDER BY h.dealCount
+
+-- 
 UPDATE exabroker.amazon_item AS i
 INNER JOIN 
 (SELECT max(id) mid, asin FROM exabroker.amazon_item_state GROUP BY asin) s
