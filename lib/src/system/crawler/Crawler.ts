@@ -25,12 +25,12 @@ export class Crawler<T> {
         return new CrawlerBranch<T>();
     }
 
-    async crawl(taskId: number, target: T) {
+    async crawl(taskId: number, target: T, body: string | null = null) {
         const reps = await getRepositories();
-        return this.crawlImpl(taskId, target, reps.crawling);
+        return this.crawlImpl(taskId, target, reps.crawling, body);
     }
 
-    async crawlImpl(taskId: number, target: T, rep: CrawlingRepository): Promise<any> {
+    async crawlImpl(taskId: number, target: T, rep: CrawlingRepository, body: string | null): Promise<any> {
         return null;
     }
 }
@@ -41,33 +41,34 @@ export class CrawlerPage<T> extends Crawler<T> {
         super();
     }
 
-    async crawlImpl(taskId: number, target: T, rep: CrawlingRepository) {
+    async crawlImpl(taskId: number, target: T, rep: CrawlingRepository, body: string | null) {
         const url = this.config.getUrl(target);
 
         let downloadLatency: number | null = null;
         let uploadLatency: number | null = null;
         let processLatency: number | null = null;
         let error: string | null = null;
-        let body: string | null = null;
         let collectionCount: number | null = null;
         let collectionResult: any = null;
         const timeout = 60 * 1000; // Scraperapi
         try {
             // Download
             const downloadStart = Date.now();
-            const response = await fetch(
-                "http://api.scraperapi.com?api_key=68d6de532946616aae283bc9fd0ea7a2&keep_headers=true&url=" + encodeURIComponent(url), {
-                    timeout , 
-                    headers: {
-                        'Accept-Language': 'ja-JP',
-                    },
-                }
-            );
-            downloadLatency = Date.now() - downloadStart;
-            body = await response.text();
+            if (!body) {
+                const response = await fetch(
+                    "http://api.scraperapi.com?api_key=68d6de532946616aae283bc9fd0ea7a2&keep_headers=true&url=" + encodeURIComponent(url), {
+                        timeout , 
+                        headers: {
+                            'Accept-Language': 'ja-JP',
+                        },
+                    }
+                );
+                downloadLatency = Date.now() - downloadStart;
+                body = await response.text();
 
-            if (body.length < 5000) {
-                throw body;
+                if (body.length < 5000) {
+                    throw body;
+                }
             }
 
             // Upload

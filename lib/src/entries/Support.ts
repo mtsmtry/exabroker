@@ -14,7 +14,6 @@ function support() {
         .then(val => syncNotices())
         .then(val => syncDeals())
         .then(val => syncOrders())
-        .then(val => order())
         .then(val => message())
         .then(val => exhibitImage())
         .then(val => dealImage());

@@ -6,7 +6,7 @@ import { Document } from "../../system/Document";
 import { AmazonItemDetail } from "../../entities/website/AmazonItemDetail";
 import { getCurrentFilename } from "../../Utils";
 
-export function getAmazonItemDetail(asin: string) {
+export function getAmazonItemDetail(asin: string, body: string | null = null) {
     const s3Key = "items/" + asin;
     return Execution.transaction("Integration", getCurrentFilename())
         .then(val => DBExecution.amazon(rep => rep.getItemDetail(asin)))
@@ -18,7 +18,7 @@ export function getAmazonItemDetail(asin: string) {
                 .then(val => {
                     return Execution.atom("Inner", "CrawlAmazonItemDetail",
                         async () => {
-                            const result = await amazonItemDetailCrawler.crawl(-1, { asin });
+                            const result = await amazonItemDetailCrawler.crawl(-1, { asin }, body);
                             if (!result) {
                                 throw "Failed to crawl";
                             }

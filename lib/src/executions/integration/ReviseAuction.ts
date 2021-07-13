@@ -45,7 +45,7 @@ function process(session: YahooSession, arbs: Arb[]) {
         .then(val => scraperapi.getAccount())
         .then(val => Execution.transaction()
             .then(_ => Execution.sequence<Arb, { arb: Arb, state: AmazonItemState }>(arbs.slice(0, val.concurrencyLimit))
-                .element(arb => amazon.getItemStateWithProxy(arb.asin).map(state => ({ arb, state })))
+                .element(arb => amazon.getItemState(arb.asin).map(state => ({ arb, state })))
             )
             .then(val => Execution.sequence(val)
                 .element(val => revise(session, val.arb, val.state)))

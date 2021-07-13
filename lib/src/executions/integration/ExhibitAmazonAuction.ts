@@ -16,7 +16,7 @@ import { getWideLength, replaceDict } from "./Utils";
 import { getAmazonItemDetail } from "./GetAmazonItemDetail";
 import { AuctionImage } from "../../entities/website/YahooAuctionExhibit";
 import { getAuctionPrice, isExhibitableItem } from "./Algorithm";
-import { getItemStateWithProxy } from "../website/amazon/Amazon";
+import { getItemState, getItemStateWithProxy } from "../website/amazon/Amazon";
 
 const MAX_TITLE_LENGTH = 65;
 
@@ -201,7 +201,7 @@ export function exhibitAmazonAuction(session: YahooSession, asin: string) {
                         return Execution.cancel();
                     }
                     return Execution.transaction()
-                        .then(() => getAmazonItemDetail(asin).map(detail => ({ ...val, detail })))
+                        .then(() => getAmazonItemDetail(asin, val.state.body).map(detail => ({ ...val, detail })))
                         .then(val => {
                             if (Array.isArray(val.cacheImages) && val.cacheImages.length > 0) {
                                 return Execution.resolve({ ...val, images: val.cacheImages as Buffer[] | AuctionImage[] })

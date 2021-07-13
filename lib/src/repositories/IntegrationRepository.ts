@@ -133,6 +133,17 @@ export class IntegrationRepository {
             .getMany();
     }
 
+    async getMustOrderArbs() {
+        return await this.yaSoldArbs.createQueryBuilder("arb")
+            .leftJoinAndSelect("arb.arb", "arb2")
+            .leftJoinAndSelect("arb.deal", "deal")
+            .leftJoinAndSelect("deal.buyer", "buyer")
+            .leftJoinAndSelect("arb.order", "order")
+            .leftJoinAndSelect("arb.canceled", "canceled")
+            .where("deal.orderId IS NULL AND (deal.status = 'paid' OR deal.status = 'shipped')", { status })
+            .getMany();
+    }
+
     async existsAuctionExhibit(asin: string) {
         const count = await this.yaArbs.createQueryBuilder("i")
             .innerJoin(YahooAuctionExhibit, "e", "i.aid = e.aid")
@@ -191,12 +202,12 @@ export class IntegrationRepository {
         conds += " AND item.price > 700";
         conds += " AND item.price < 6000";
         conds += " AND " + ngWords.map(x => `item.title NOT LIKE '%${x}%'`).join(" AND ");
-        conds += " AND (s.hasStock IS NULL OR s.hasEnoughStock = 1 OR s.timestamp < DATE_SUB(CURRENT_TIMESTAMP, INTERVAL 7 DAY))";
+        conds += " AND (s.hasStock IS NULL OR s.hasEnoughStock = 1 OR s.timestamp < DATE_SUB(CURRENT_TIMESTAMP, INTERVAL 10 DAY))";
         conds += " AND (s.isAddon IS NULL OR s.isAddon = 0)";
         conds += " AND h.dealCount > 0";
         const items = await this.amazonItems.createQueryBuilder("item")
             .select(["item.asin"])
-            .leftJoin(AmazonItemState, "s", "s.asin = item.asin")
+            .leftJoinAndSelect("item.latestState", "s")
             .leftJoin(YahooAuctionHistory, "h", "h.asin = item.asin")
             .where(conds)
             .orderBy("item.reviewCount", "DESC")

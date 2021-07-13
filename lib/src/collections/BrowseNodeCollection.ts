@@ -41,7 +41,7 @@ const browseNodeCollectionHead =
             }
             return { deliverBy: null, deliverDay: null };
         })
-        .default({ stockCount: null })
+        .default({ stockCount: null, latestStateId: null, latestState: null })
         .saveMany(saveItems);
 
 const browseNodeCollectionTail =
@@ -74,6 +74,7 @@ const browseNodeCollectionTail =
             }
             return { deliverBy: null, deliverDay: null };
         })
+        .default({ latestStateId: null, latestState: null })
         .saveMany(saveItems);
 
 export const browseNodeCollection =

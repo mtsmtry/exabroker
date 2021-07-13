@@ -52,8 +52,6 @@ function getPaymentForm(doc: Document, payment: PaymentInfo) {
 }
 
 export function purchase(asin: string, address: DeliveryAddress, cookie: Cookie, payment: PaymentInfo) {
-    asin = "B07GBD3JLR";
-
     return WebExecution.webTransaction(cookie, "AmazonDriver", getCurrentFilename())
         .setCookie(val => val)
         .thenGet("GetForm",

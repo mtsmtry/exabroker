@@ -144,7 +144,9 @@ export class AmazonRepository {
     }
 
     async createItemState(asin: string, price: number | null, hasStock: boolean, hasEnoughStock: boolean | null, isAddon: boolean) {
-        const state = this.itemStates.create({ asin, price, hasStock, hasEnoughStock, isAddon });
-        return await this.itemStates.save(state);
+        let state = this.itemStates.create({ asin, price, hasStock, hasEnoughStock, isAddon });
+        state = await this.itemStates.save(state);
+        await this.amazonItems.update({ asin }, { latestStateId: state.id });
+        return state;
     }
 }

@@ -18,11 +18,15 @@ export async function createDatabaseConnection(options: object={}) {
 
     let connectOption: any = null;
     console.log(__dirname);
+    let mode = "";
+    if (__dirname.includes("ryoui")) {
+        mode = "-local";
+    }
     try {
-        connectOption = require(`../../../ormconfig.json`);
+        connectOption = require(`../../../ormconfig${mode}.json`);
         connectOption.entities = [__dirname + "/../entities/**/*.js"];
     } catch(ex) {
-        connectOption = require(`../../ormconfig.json`);
+        connectOption = require(`../../ormconfig${mode}.json`);
         connectOption.entities = [__dirname + "/../../dist/entities/**/*.js"];
     }
     Object.assign(connectOption, options);

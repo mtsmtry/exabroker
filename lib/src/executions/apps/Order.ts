@@ -10,7 +10,7 @@ import { AuctionDealStatus } from "../../entities/website/YahooAuctionDeal";
 
 function orderWithSession(amazonSession: AmazonSession) {
     return Execution.transaction()
-        .then(val => DBExecution.integration(rep => rep.getSoldArbsByStatus(AuctionDealStatus.PAID)))
+        .then(val => DBExecution.integration(rep => rep.getMustOrderArbs()))
         .then(val => Execution.sequence(val, 1)
             .element(val => orderAuction(val, amazonSession))
         )

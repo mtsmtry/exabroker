@@ -46,7 +46,7 @@
     "aws-sdk": "^2.808.0",
     "firebase-admin": "^9.4.2",
     "ip": "^1.1.5",
-    "libxmljs": "^0.19.7",
+    "libxmljs": "^0.19.6",
     "mysql": "^2.18.1",
     "node-fetch": "^2.6.1",
     "normalize-html-whitespace": "^1.0.0",

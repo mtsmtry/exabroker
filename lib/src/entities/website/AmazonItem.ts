@@ -1,6 +1,7 @@
 import { BaseEntity, Column, Entity, In, Index, JoinColumn, JoinTable, OneToOne, PrimaryColumn } from "typeorm";
 import { AmazonItemDetail } from "./AmazonItemDetail";
 import { UpdatedAt } from "../Utils";
+import { AmazonItemState } from "./AmazonItemState";
 
 @Entity()
 export class AmazonItem {
@@ -49,4 +50,10 @@ export class AmazonItem {
 
     @Column({ default: false })
     isCrawledDetail?: boolean;
+
+    @Column("tinyint", { nullable: true })
+    latestStateId: number | null;
+    @OneToOne(type => AmazonItemState, state => state.item)
+    @JoinColumn({ name: "latestStateId" })
+    latestState: AmazonItemState | null;
 }

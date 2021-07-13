@@ -1,4 +1,5 @@
 import { Transaction } from "typeorm";
+import { AmazonItemState } from "../../../../entities/website/AmazonItemState";
 import { Document } from "../../../../system/Document";
 import { DBExecution } from "../../../../system/execution/DatabaseExecution";
 import { Execution } from "../../../../system/execution/Execution";
@@ -13,7 +14,8 @@ function parse(doc: Document) {
         price: buybox?.extractDigits() || null,
         isAddon: doc.getNeeded("//form[@id='addToCart']").text.includes("あわせ買い対象商品"),
         hasStock: availabilityText.includes("在庫あり") || availabilityText.includes("残り"),
-        hasEnoughStock: availabilityText.includes("在庫あり")
+        hasEnoughStock: availabilityText.includes("在庫あり"),
+        body: doc.text
     }
 }
 
@@ -24,7 +26,7 @@ export function getItemState(asin: string) {
                 url: `https://www.amazon.co.jp/dp/${asin}?language=ja_JP`
             }, parse)
         )
-        .then(val => DBExecution.amazon(rep => rep.createItemState(asin, val.price, val.hasStock, val.hasEnoughStock, val.isAddon)))
+        .then(val => DBExecution.amazon(rep => rep.createItemState(asin, val.price, val.hasStock, val.hasEnoughStock, val.isAddon)).map(state => ({ ...state, body: val.body }) as AmazonItemState & { body: string } ))
 }
 
 export function getItemStateWithProxy(asin: string) {
@@ -39,5 +41,5 @@ export function getItemStateWithProxy(asin: string) {
                 }
             }, parse)
         )
-        .then(val => DBExecution.amazon(rep => rep.createItemState(asin, val.price, val.hasStock, val.hasEnoughStock, val.isAddon)))
+        .then(val => DBExecution.amazon(rep => rep.createItemState(asin, val.price, val.hasStock, val.hasEnoughStock, val.isAddon)).map(state => ({ ...state, body: val.body }) as AmazonItemState & { body: string } ))
 }
