@@ -9,7 +9,7 @@ import { YahooAuctionDeal } from "../../entities/website/YahooAuctionDeal";
 
 export function dealImage() {
     return Execution.transaction("Application", getCurrentFilename())
-        .then(val => DBExecution.yahoo(rep => rep.getExhibitableAccountUsernames()))
+        .then(val => DBExecution.yahoo(rep => rep.getImageExhibitableAccountUsernames()))
         .then(val => Execution.sequence(val, 1)
             .element(username => Execution.transaction()
                 .then(_ => DBExecution.integration(rep => rep.getSoldImageAuctions(username)).map(images => ({ images, username })))

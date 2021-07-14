@@ -20,7 +20,6 @@ export class YahooImageAuction {
 
     @Column("char", { length: 10 })
     aid: string;
-
     @OneToOne(type => YahooAuctionExhibit)
     @JoinColumn({ name: "aid" })
     exhibit: YahooAuctionExhibit;

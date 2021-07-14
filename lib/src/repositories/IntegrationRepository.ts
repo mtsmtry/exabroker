@@ -68,12 +68,15 @@ export class IntegrationRepository {
 
     async getSoldImageAuctions(username: string) {
         // 出品中の画像
-        return await this.imageAuctions
+        const r = await this.imageAuctions
             .createQueryBuilder('yia')
             .leftJoinAndSelect('yia.exhibit', 'exhibit')
             .where('exhibit.actuallyEndDate IS NOT NULL')
             .andWhere('exhibit.username = :username', { username })
             .getMany();
+        console.log("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+        console.log(r);
+        return r;
     }
 
     async createArb(aid: string, asin: string, state: AmazonItemState, price: number) {

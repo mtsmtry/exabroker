@@ -40,9 +40,13 @@ export class YahooRepository {
     }
     
     async getImageDeal(aid: string) {
-        return await this.deals.createQueryBuilder()
+        const d = await this.deals.createQueryBuilder()
             .where({ aid })
             .getOne();
+        if (!d) {
+            console.log("d IS NULL !!!!!!!!!!! " + aid)
+        }
+        return d;
     }
 
     async getAccount(username: string) {
@@ -70,8 +74,11 @@ export class YahooRepository {
             .where({ isExhibitable: true, published: true })
             .andWhere("maxExhibition IS NOT NULL AND maxExhibition > 0")
             .getMany();
-        return accounts.map(x => x.username);
+        const us = accounts.map(x => x.username);
+        console.log(us);
+        return us;
     }
+    
     async getImageExhibitableAccountUsernames() {
         const accounts = await this.accounts.createQueryBuilder()
             .where({ isExhibitable: true, published: true })

@@ -16,7 +16,7 @@ function support() {
        // .then(val => syncOrders())
         .then(val => dealImage())
        // .then(val => message())
-        .then(val => exhibitImage());
+       // .then(val => exhibitImage());
        // .then(val => dealImage());
 }
 
