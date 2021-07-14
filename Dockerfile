@@ -1,4 +1,5 @@
-FROM node:16-alpine3.13
+# FROM node:16-alpine3.13
+FROM node:14-alpine3.13
 
 # コードを/codeにコピー
 RUN mkdir /code
@@ -10,8 +11,8 @@ WORKDIR /code/lib/
 RUN apk add python3
 RUN apk add alpine-sdk
 
-RUN npm uninstall node-pre-gyp --save
-RUN npm install @mapbox/node-pre-gyp --save
+# RUN npm uninstall node-pre-gyp --save
+# RUN npm install @mapbox/node-pre-gyp --save
 
 RUN npm install
 # RUN npm install mysql --save

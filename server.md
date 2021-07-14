@@ -44,3 +44,8 @@ docker-compose down サービス名
 
 docker system prune
 docker-compose down --rmi all --volumes --remove-orphans
+
+
+
+# libxmljsはnodev14でのみコンパイルできる
+https://stackoverflow.com/questions/67241196/error-no-template-named-remove-cv-t-in-namespace-std-did-you-mean-remove
