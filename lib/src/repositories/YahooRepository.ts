@@ -67,8 +67,14 @@ export class YahooRepository {
 
     async getExhibitableAccountUsernames() {
         const accounts = await this.accounts.createQueryBuilder()
-            .where({ isExhibitable: true })
-            .andWhere("maxExhibition IS NOT NULL")
+            .where({ isExhibitable: true, published: true })
+            .andWhere("maxExhibition IS NOT NULL AND maxExhibition > 0")
+            .getMany();
+        return accounts.map(x => x.username);
+    }
+    async getImageExhibitableAccountUsernames() {
+        const accounts = await this.accounts.createQueryBuilder()
+            .where({ isExhibitable: true, published: true })
             .getMany();
         return accounts.map(x => x.username);
     }

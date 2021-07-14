@@ -37,4 +37,7 @@ export class YahooAccount {
 
     @Column("int", { nullable: true })
     maxExhibition: number;
+
+    @Column("bool", { default: true })
+    published: boolean;
 }

@@ -215,7 +215,7 @@ export class IntegrationRepository {
             .leftJoin(AmazonItemState, "s", "s.id = item.latestStateId")
             .leftJoin(YahooAuctionHistory, "h", "h.asin = item.asin")
             .where(conds)
-            .orderBy("h.dealCount", "DESC")
+            .orderBy("item.reviewCount", "DESC")
             .limit(exhibitAsins.length + count)
             .getRawMany();
         const rankedAsins = items.map(x => x.item_asin as string);
@@ -223,7 +223,7 @@ export class IntegrationRepository {
         return rankedAsins.filter(asin => !exhibitAsins.includes(asin)).slice(0, count);
     }
 
-    private async createAllSoldArb() {
+    async createAllSoldArb() {
         const notExists = (query: string) => `NOT EXISTS(${query})`;
         const arbs = await this.yaArbs.createQueryBuilder("arb")
             .innerJoin(YahooAuctionDeal, "deal", "deal.aid = arb.aid")

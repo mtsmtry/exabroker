@@ -44,7 +44,7 @@ export function getFileList(dirPath:string): string[] {
 
 export function exhibitImage() {
     return Execution.transaction("Application", getCurrentFilename())  // 実行のカテゴリ: アプリ。 gCF: 実行の名前。ファイル名。
-        .then(val => DBExecution.yahoo(rep => rep.getExhibitableAccountUsernames()))  // yahooというstatic関数 repはYahooに関するDBにアクセスができるオブジェクト。 出品可能なアカウントのユーザー名を全部取得
+        .then(val => DBExecution.yahoo(rep => rep.getImageExhibitableAccountUsernames()))  // yahooというstatic関数 repはYahooに関するDBにアクセスができるオブジェクト。 出品可能なアカウントのユーザー名を全部取得
         .then(val => Execution.sequence(val, 1)  // アカウントの名前の配列がval. sequenceは最大同時実行数を指定して、配列の中からn分とりだしてelementの中で実行
             .element(username => Execution.transaction()
                 .then(val => yahoo.getSession(username))
