@@ -14,7 +14,7 @@ RUN apk add python3
 # RUN npm uninstall node-pre-gyp --save
 # RUN npm install @mapbox/node-pre-gyp --save
 
-# RUN npm install
+RUN npm install
 # RUN npm install mysql --save
 RUN npm run build
 
