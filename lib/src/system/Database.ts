@@ -12,6 +12,7 @@ import { sleep } from "../Utils";
 import { AmazonItem } from "../entities/website/AmazonItem";
 import { ArbYahooAmazon } from "../entities/integration/ArbYahooAmazon";
 import { ExecutionRecord } from "../entities/system/ExecutionRecord";
+import { Qoo10Repository } from "../repositories/Qoo10Repository";
 
 export async function createDatabaseConnection(options: object={}) {
     aws.config.httpOptions = { timeout: 60 * 1000 };
@@ -81,6 +82,7 @@ let repositories: null |  {
     collection: CollectionRepository,
     exception: ExceptionRepository,
     integration: IntegrationRepository,
+    qoo10: Qoo10Repository,
     connection: Connection,
     firestore: FirebaseFirestore.Firestore,
     s3: aws.S3
@@ -101,6 +103,7 @@ export async function getRepositories() {
             collection: new CollectionRepository(conn.manager),
             exception: new ExceptionRepository(conn.manager),
             integration: new IntegrationRepository(conn.manager),
+            qoo10: new Qoo10Repository(conn.manager),
             connection: conn,
             firestore,
             s3

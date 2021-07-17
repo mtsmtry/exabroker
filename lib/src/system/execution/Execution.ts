@@ -42,6 +42,10 @@ export class Execution<T> {
         return new ExecutionAtom<T>(layer, name, run, logType);
     }
 
+    static throw() {
+        return new ExecutionAtom<any>("", "", async () => { throw "Error" }, LogType.IMMEDIATE);
+    }
+
     static batch(layer: string = "Inner", name: string = "Lambda") {
         return new BatchExecution<{}, {}>(layer, name, {});
     }

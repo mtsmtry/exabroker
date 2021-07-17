@@ -1,4 +1,5 @@
 import { EntityManager, Repository } from "typeorm";
+import { ArbQoo10Amazon } from "../entities/integration/ArbQoo10Amazon";
 import { ArbYahooAmazon } from "../entities/integration/ArbYahooAmazon";
 import { ArbYahooAmazonCanceled, ArbYahooAmazonCanceledDto, CancelAuctionMessageStatus } from "../entities/integration/ArbYahooAmazonCanceled";
 import { ArbYahooAmazonSold, MessageStatus } from "../entities/integration/ArbYahooAmazonSold";
@@ -7,27 +8,32 @@ import { YahooAuctionHistory } from "../entities/integration/YahooAmazonHistory"
 import { ImageAuctionStatus, YahooImageAuction } from "../entities/integration/YahooImageAuction";
 import { AmazonItem } from "../entities/website/AmazonItem";
 import { AmazonItemState } from "../entities/website/AmazonItemState";
+import { Qoo10Exhibit } from "../entities/website/Qoo10Exhibit";
 import { AuctionDealStatus, YahooAuctionDeal } from "../entities/website/YahooAuctionDeal";
 import { AuctionImage, YahooAuctionExhibit } from "../entities/website/YahooAuctionExhibit";
 
 export class IntegrationRepository {
     exhibits: Repository<YahooAuctionExhibit>;
+    qoo10exhibits: Repository<Qoo10Exhibit>;
     amazonItems: Repository<AmazonItem>;
     yaArbs: Repository<ArbYahooAmazon>;
     yaSoldArbs: Repository<ArbYahooAmazonSold>;
     yaCanceledArbs: Repository<ArbYahooAmazonCanceled>;
     yaSyncArbs: Repository<ArbYahooAmazonSync>;
+    qoo10Arbs: Repository<ArbQoo10Amazon>;
     imageAuctions: Repository<YahooImageAuction>;
     auctionDeal: Repository<YahooAuctionDeal>;
     auctionHistory: Repository<YahooAuctionHistory>;
 
     constructor(mng: EntityManager) {
         this.exhibits = mng.getRepository(YahooAuctionExhibit);
+        this.qoo10exhibits = mng.getRepository(Qoo10Exhibit);
         this.amazonItems = mng.getRepository(AmazonItem);
         this.yaArbs = mng.getRepository(ArbYahooAmazon);
         this.yaSoldArbs = mng.getRepository(ArbYahooAmazonSold);
         this.yaCanceledArbs = mng.getRepository(ArbYahooAmazonCanceled);
         this.yaSyncArbs = mng.getRepository(ArbYahooAmazonSync);
+        this.qoo10Arbs = mng.getRepository(ArbQoo10Amazon);
         this.imageAuctions = mng.getRepository(YahooImageAuction);
         this.auctionDeal = mng.getRepository(YahooAuctionDeal);
         this.auctionHistory = mng.getRepository(YahooAuctionHistory);
@@ -88,6 +94,11 @@ export class IntegrationRepository {
             method: SyncMethod.INITIAL,
             newPrice: price
         });
+    }
+
+    async createArbQoo10(itemCode: string, asin: string) {
+        const auction = this.qoo10Arbs.create({ itemCode, asin });
+        await this.qoo10Arbs.save(auction);
     }
 
     async setOrderId(aid: string, orderId: string) {
@@ -159,11 +170,29 @@ export class IntegrationRepository {
         return count > 0;
     }
 
+    async existsQoo10Exhibit(asin: string) {
+        const count = await this.qoo10Arbs.createQueryBuilder("i")
+            .innerJoin(Qoo10Exhibit, "e", "i.itemCode = e.itemCode")
+            .where({ asin })
+            .andWhere("e.deletedAt IS NULL")
+            .getCount();
+        return count > 0;
+    }
+
     private async getExhibitASINs() {
         const results = await this.exhibits.createQueryBuilder("e")
             .select(["i.asin"])
             .innerJoin(ArbYahooAmazon, "i", "i.aid = e.aid")
             .where("e.endDate > CURRENT_TIMESTAMP AND e.actuallyEndDate IS NULL")
+            .getRawMany();
+        return results.map(x => x.i_asin as string);
+    }
+
+    private async getQoo10ExhibitASINs() {
+        const results = await this.qoo10exhibits.createQueryBuilder("e")
+            .select(["i.asin"])
+            .innerJoin(ArbQoo10Amazon, "i", "i.itemCode = e.itemCode")
+            .where("e.deletedAt IS NULL")
             .getRawMany();
         return results.map(x => x.i_asin as string);
     }
@@ -198,6 +227,35 @@ export class IntegrationRepository {
     }
 
     async getExhibitableASINs(count: number) {
+        const exhibitAsins = await this.getExhibitASINs();
+
+        const ngWords = ["Amazon", "輸入", "Blu-ray", "DVD"];
+        let conds = "true";
+        //  conds += " AND item.updatedAt > DATE_SUB(CURRENT_DATE, INTERVAL 3 DAY)";
+        conds += " AND LENGTH(item.title) != CHARACTER_LENGTH(item.title)"
+        conds += " AND LENGTH(item.title) > 100";
+        conds += " AND item.price > 700";
+        conds += " AND item.price < 6000";
+        conds += " AND " + ngWords.map(x => `item.title NOT LIKE '%${x}%'`).join(" AND ");
+        // 2週間以内の記録で在庫がある
+        conds += " AND ((s.hasEnoughStock = 1 AND s.isAddon = 0) OR s.id IS NULL OR s.timestamp < DATE_SUB(CURRENT_TIMESTAMP, INTERVAL 14 DAY))";
+        // 過去1週間以内に出品を試みていない
+        conds += " AND (s.timestamp IS NULL OR s.timestamp < DATE_SUB(CURRENT_TIMESTAMP, INTERVAL 7 DAY))"
+        conds += " AND h.dealCount > 0";
+        const items = await this.amazonItems.createQueryBuilder("item")
+            .select(["item.asin"])
+            .leftJoin(AmazonItemState, "s", "s.id = item.latestStateId")
+            .leftJoin(YahooAuctionHistory, "h", "h.asin = item.asin")
+            .where(conds)
+            .orderBy("item.reviewCount", "DESC")
+            .limit(exhibitAsins.length + count)
+            .getRawMany();
+        const rankedAsins = items.map(x => x.item_asin as string);
+
+        return rankedAsins.filter(asin => !exhibitAsins.includes(asin)).slice(0, count);
+    }
+
+    async getQoo10ExhibitableASINs(count: number) {
         const exhibitAsins = await this.getExhibitASINs();
 
         const ngWords = ["Amazon", "輸入", "Blu-ray", "DVD"];

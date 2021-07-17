@@ -6,6 +6,7 @@ import { YahooRepository } from "../../repositories/YahooRepository";
 import { getRepositories } from "../Database";
 import { ExecutionAtom, LogType } from "./Execution";
 import * as aws from "aws-sdk";
+import { Qoo10Repository } from "../../repositories/Qoo10Repository";
 
 export class DBExecution<T, TRep> extends ExecutionAtom<T> {
     constructor(getRep: () => Promise<TRep>,  exec: (rep: TRep) => Promise<T>) {
@@ -27,6 +28,10 @@ export class DBExecution<T, TRep> extends ExecutionAtom<T> {
 
     static yahoo<T>(exec: (rep: YahooRepository) => Promise<T>) {
         return new DBExecution(async () => (await getRepositories()).yahoo, exec);
+    }
+
+    static qoo10<T>(exec: (rep: Qoo10Repository) => Promise<T>) {
+        return new DBExecution(async () => (await getRepositories()).qoo10, exec);
     }
 
     static crawling<T>(exec: (rep: CrawlingRepository) => Promise<T>) {

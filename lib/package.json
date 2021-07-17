@@ -17,6 +17,7 @@
     "initcrawl": "tsc && node dist/entries/InitCrawler.js",
     "setup": "tsc && node dist/entries/SetupAccounts.js",
     "exhibit": "tsc && node dist/entries/Exhibit.js",
+    "exhibitqoo10": "tsc && node dist/entries/ExhibitQoo10.js",
     "mainte": "tsc && node dist/entries/Maintenance.js",
     "support": "tsc && node dist/entries/Support.js",
     "cancel": "tsc && node dist/entries/CancelAuctions.js",

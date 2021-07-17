@@ -28,6 +28,15 @@ services:
       - db
     restart: always
     entrypoint: "python3 /code/run_exhibit.py"
+
+  exhibitqoo10:
+      build:
+        context: .
+        dockerfile: Dockerfile
+      depends_on:
+        - db
+      restart: always
+      entrypoint: "python3 /code/run_exhibitQoo10.py"
   
   mainte:
     build:

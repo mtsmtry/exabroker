@@ -9,7 +9,7 @@ WORKDIR /code/lib/
 
 # 依存関係
 RUN apk add python3
-RUN apk add alpine-sdk
+# RUN apk add alpine-sdk
 
 # RUN npm uninstall node-pre-gyp --save
 # RUN npm install @mapbox/node-pre-gyp --save

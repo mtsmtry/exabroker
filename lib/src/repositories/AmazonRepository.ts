@@ -71,7 +71,7 @@ export class AmazonRepository {
     }
 
     async deleteItem(asin: string) {
-        await this.amazonItems.delete(asin);
+        await this.amazonItems.update(asin, { price: 0 });
     }
 
     async getItemDetail(asin: string) {
