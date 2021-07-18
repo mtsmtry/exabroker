@@ -12,7 +12,7 @@ interface Result {
 }
 
 function getForm(data: Qoo10MultiImage) {
-    const form = { itemCode: data.itemCode };
+    const form = { ItemCode: data.itemCode };
     for (let i = 0; i <= 10; i++) {
         if (data.images.length > i) {
             form[`EnlargedImage${i + 1}`] = data.images[i];
@@ -20,6 +20,7 @@ function getForm(data: Qoo10MultiImage) {
             form[`EnlargedImage${i + 1}`] = "";
         }
     }
+    console.log(form);
     return form;
 }
 

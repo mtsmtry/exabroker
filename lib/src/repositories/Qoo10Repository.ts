@@ -35,4 +35,8 @@ export class Qoo10Repository {
     async getAccounts() {
         return await this.accounts.createQueryBuilder().getMany();
     }
+
+    async getExhibitCount(userId: string) {
+        return await this.exhibits.createQueryBuilder().where({ userId }).andWhere("deletedAt IS NOT NULL").getCount();
+    }
 }
