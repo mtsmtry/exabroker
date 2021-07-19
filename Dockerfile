@@ -4,7 +4,7 @@ FROM node:14-alpine3.13
 # コードを/codeにコピー
 RUN mkdir /code
 COPY ./ /code
-COPY ./lib/node_modules /code/lib/node_modules
+#COPY ./lib/node_modules /code/lib/node_modules
 
 WORKDIR /code/lib/
 
