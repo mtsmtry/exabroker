@@ -7,7 +7,7 @@ import { removeClosedAuction } from "./Sync";
 
 export function exhibit() {
     return Execution.transaction("Application", getCurrentFilename())
-        .then(val => removeClosedAuction())
+        //.then(val => removeClosedAuction())
         .then(val => DBExecution.yahoo(rep => rep.getExhibitableAccountUsernames()))
         .then(val => Execution.sequence(val, 1)
             .element(username => Execution.transaction()

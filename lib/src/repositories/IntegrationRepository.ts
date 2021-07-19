@@ -240,7 +240,7 @@ export class IntegrationRepository {
         // 2週間以内の記録で在庫がある
         conds += " AND ((s.hasEnoughStock = 1 AND s.isAddon = 0) OR s.id IS NULL OR s.timestamp < DATE_SUB(CURRENT_TIMESTAMP, INTERVAL 14 DAY))";
         // 過去1週間以内に出品を試みていない
-        conds += " AND (s.timestamp IS NULL OR s.timestamp < DATE_SUB(CURRENT_TIMESTAMP, INTERVAL 7 DAY))"
+        conds += " AND (s.timestamp IS NULL OR s.timestamp < DATE_SUB(CURRENT_TIMESTAMP, INTERVAL 1 DAY))"
         conds += " AND h.dealCount > 0";
         const items = await this.amazonItems.createQueryBuilder("item")
             .select(["item.asin"])

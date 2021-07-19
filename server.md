@@ -1,6 +1,6 @@
 # SSH
 chmod 600 Exabroker.cer
-ssh -i Exabroker.cer ubuntu@54.248.172.15
+ssh -i Exabroker.cer ubuntu@54.248.172.15 "cd exabroker && git pull && docker-compose build && docker-compose restart support"
 
 # インスタンス作る時
 OS: ubuntu

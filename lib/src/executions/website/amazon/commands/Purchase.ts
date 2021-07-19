@@ -45,7 +45,7 @@ function getPaymentForm(doc: Document, payment: PaymentInfo) {
     const form = getInputData(doc.getById(rootId));
     return toNotNull({
         customerId: doc.text.match(/customerId: '(.*?)'/)?.[1],
-        jpPointsBalanceSelection: doc.getNeeded("//input[@name='ppw-jpPointsBalanceSelection_instrumentId']").attrNeeded("value"),
+        //jpPointsBalanceSelection: doc.getNeeded("//input[@name='ppw-jpPointsBalanceSelection_instrumentId']").attrNeeded("value"),
         widgetState: doc.getNeeded("//input[@name='ppw-widgetState']").attrNeeded("value"),
         form
     });
@@ -142,7 +142,7 @@ handler: /gp/buy/payselect/handlers/apx-submit-continue.html
                             "ppw-widgetEvent": "SetPaymentPlanSelectContinueEvent",
                             isClientTimeBased: 1,
                             handler: "/gp/buy/payselect/handlers/apx-submit-continue.html",
-                            "ppw-jpPointsBalanceSelection_instrumentId": val.jpPointsBalanceSelection,
+                            //"ppw-jpPointsBalanceSelection_instrumentId": val.jpPointsBalanceSelection,
                             "ppw-jpPointsBalanceSelection_partialPointsAmount": "",
                             "ppw-instrumentRowSelection": val.form["ppw-instrumentRowSelection"], // ONETIME, NTIMES_INTEREST_FREE, INSTALLMENT, REVOLVING
                             ...installment,
