@@ -11,7 +11,7 @@ export function exhibitQoo10() {
         .then(val => DBExecution.qoo10(rep => rep.getAccounts()))
         .then(val => Execution.sequence(val, 1)
             .element(account => Execution.transaction()
-                .then(val => DBExecution.yahoo(rep => rep.getExhibitCount(account.userId)))
+                .then(val => DBExecution.qoo10(rep => rep.getExhibitCount(account.userId)))
                 .then(exhibitCount => DBExecution.integration(rep => rep.getQoo10ExhibitableASINs(5000 - exhibitCount)).map(val => ({ asins: val })))
                 .then(val => Execution.sequence(val.asins, 30)
                     .element(asin => exhibitAmazonQoo10(account, asin))

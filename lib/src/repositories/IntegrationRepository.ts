@@ -234,6 +234,35 @@ export class IntegrationRepository {
         //  conds += " AND item.updatedAt > DATE_SUB(CURRENT_DATE, INTERVAL 3 DAY)";
         conds += " AND LENGTH(item.title) != CHARACTER_LENGTH(item.title)"
         conds += " AND LENGTH(item.title) > 100";
+        conds += " AND item.price > 500";
+        conds += " AND item.price < 1000";
+        conds += " AND " + ngWords.map(x => `item.title NOT LIKE '%${x}%'`).join(" AND ");
+        // 2週間以内の記録で在庫がある
+        conds += " AND ((s.hasEnoughStock = 1 AND s.isAddon = 0) OR s.id IS NULL OR s.timestamp < DATE_SUB(CURRENT_TIMESTAMP, INTERVAL 14 DAY))";
+        // 過去1週間以内に出品を試みていない
+        conds += " AND (s.timestamp IS NULL OR s.timestamp < DATE_SUB(CURRENT_TIMESTAMP, INTERVAL 7 DAY))"
+        conds += " AND h.dealCount > 0";
+        const items = await this.amazonItems.createQueryBuilder("item")
+            .select(["item.asin"])
+            .leftJoin(AmazonItemState, "s", "s.id = item.latestStateId")
+            .leftJoin(YahooAuctionHistory, "h", "h.asin = item.asin")
+            .where(conds)
+            .orderBy("item.reviewCount", "DESC")
+            .limit(exhibitAsins.length + count)
+            .getRawMany();
+        const rankedAsins = items.map(x => x.item_asin as string);
+
+        return rankedAsins.filter(asin => !exhibitAsins.includes(asin)).slice(0, count);
+    }
+
+    async getExhibitableASINs3(count: number) {
+        const exhibitAsins = await this.getExhibitASINs();
+
+        const ngWords = ["Amazon", "輸入", "Blu-ray", "DVD"];
+        let conds = "true";
+        //  conds += " AND item.updatedAt > DATE_SUB(CURRENT_DATE, INTERVAL 3 DAY)";
+        conds += " AND LENGTH(item.title) != CHARACTER_LENGTH(item.title)"
+        conds += " AND LENGTH(item.title) > 100";
         conds += " AND item.price > 700";
         conds += " AND item.price < 6000";
         conds += " AND " + ngWords.map(x => `item.title NOT LIKE '%${x}%'`).join(" AND ");
