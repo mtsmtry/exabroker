@@ -10,6 +10,7 @@ RUN apk add alpine-sdk
 #COPY ./lib/node_modules /code/lib/node_modules
 
 COPY /lib/package.json /tmp/package.json
+COPY /lib/typeorm-0.2.29.tgz /tmp/typeorm-0.2.29.tgz
 RUN cd /tmp && npm install
 RUN mkdir -p /code/lib
 RUN cp -a /tmp/node_modules /code/lib/
