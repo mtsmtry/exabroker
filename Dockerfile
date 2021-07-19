@@ -17,6 +17,7 @@ RUN apk add alpine-sdk
 
 # RUN npm install
 # RUN npm install mysql --save
+RUN npm install typescript -g
 RUN npm run build
 
 # 実行
