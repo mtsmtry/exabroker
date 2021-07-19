@@ -48,7 +48,7 @@ services:
     entrypoint: "python3 /code/run_mainte.py"
   
   support:
-    build:getGoods
+    build:
       context: .
       dockerfile: Dockerfile
     depends_on: 
