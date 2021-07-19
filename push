@@ -1,4 +1,4 @@
 git add .
 git commit -m "update"
 git push
-ssh -i Exabroker.cer ubuntu@54.248.172.15 "cd exabroker && git pull && docker-compose build && docker-compose up -d exhibit"
+ssh -i Exabroker.cer ubuntu@54.248.172.15 "cd exabroker && git pull && docker-compose build && docker-compose up -d support"
