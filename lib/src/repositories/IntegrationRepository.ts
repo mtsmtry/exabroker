@@ -64,7 +64,7 @@ export class IntegrationRepository {
         const count = await this.imageAuctions
             .createQueryBuilder('yia')
             .leftJoinAndSelect('yia.exhibit', 'exhibit')
-            .where('(exhibit.actuallyEndDate IS NULL OR exhibit.endDate < NOW())')
+            .where('(exhibit.actuallyEndDate IS NULL AND exhibit.endDate < NOW())')
             .andWhere('exhibit.username = :username', { username })
             .andWhere('yia.name = :name', { name })
             .getCount();
